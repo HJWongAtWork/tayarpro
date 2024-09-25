@@ -14,5 +14,7 @@ declare module 'vue' {
     Hero: typeof import('./components/Hero.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TextAreaInput: typeof import('./components/TextAreaInput.vue')['default']
+    TextInput: typeof import('./components/TextInput.vue')['default']
   }
 }
