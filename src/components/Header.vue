@@ -1,10 +1,12 @@
 <template>
   <v-app-bar class="px-3" color="red" height="80" width="100">
     <div>
-      <img
-        src="../assets/logo_tayarpro_partial-removebg-preview.png"
-        height="100"
-      />
+      <router-link to="/" class="link">
+        <img
+          src="../assets/logo_tayarpro_partial-removebg-preview.png"
+          height="100"
+        />
+      </router-link>
     </div>
 
     <v-spacer></v-spacer>
