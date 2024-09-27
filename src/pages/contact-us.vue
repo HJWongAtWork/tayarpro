@@ -11,7 +11,7 @@
                   <TextAreaInput labelName="Content"/>
               </v-col>
               <v-col cols="12" sm="12" md="6">
-                  <div style="padding-left: 100px;">
+                  <div class="justify-center align-center" style="padding-left: 100px;">
                       <label class="italicBold" style="font-size: 24px; display: flex; margin-bottom: 20px;"> Other Channels </label>
                       <label style="font-size: 18px; display: flex; margin-bottom: 20px;">General Tel No. : +60123456789</label>
 
