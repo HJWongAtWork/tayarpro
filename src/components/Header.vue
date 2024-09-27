@@ -19,7 +19,7 @@
       <router-link to="/location" class="link"
         ><v-tab><v-icon>mdi mdi-map-marker</v-icon>Location</v-tab></router-link
       >
-      <router-link to="/contactus" class="link"
+      <router-link to="/contact-us" class="link"
         ><v-tab
           ><v-icon>mdi mdi-phone-incoming</v-icon>Contact Us</v-tab
         ></router-link
