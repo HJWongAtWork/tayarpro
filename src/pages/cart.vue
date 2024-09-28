@@ -1,5 +1,5 @@
 <template>
-  <Header />
+  <!-- <Header /> -->
   <h2 class="text-h3 text-center weight-bold sticky" style="padding: 10px">
     My Cart
   </h2>
@@ -65,17 +65,36 @@
     </v-table>
   </div>
   <v-container>
-    <v-row>
-      <v-col cols="12">
-        <v-input
-          :messages="['Messages']"
-          append-icon="mdi-close"
-          prepend-icon="mdi-phone"
-        >
-          Default Slot
-        </v-input>
-      </v-col>
-    </v-row>
+    <div>
+      <v-row>
+        <v-col cols="6">
+          <div>
+            <v-form class="code-container" validate-on="submit" @submit.prevent>
+              <input
+                v-model="RedeemCode"
+                :rules="rules"
+                label="Voucher Code"
+                border="2px solid black"
+                outlined
+                width="200"
+              />
+
+              <v-btn
+                background-color="primary"
+                density="default"
+                elevation="4"
+                type="submit"
+                color="error"
+                height="55"
+                width="200"
+                :disabled="!RedeemCode"
+                >Submit</v-btn
+              >
+            </v-form>
+          </div>
+        </v-col>
+      </v-row>
+    </div>
   </v-container>
 </template>
 
@@ -127,6 +146,11 @@ export default {
           image_path: "images/BRIDGESTONE_EP300_205-55-16.jpg",
         },
       ],
+      RedeemCode: "",
+      rules: [
+        (v) => v.length <= 10 || "Max 10 characters",
+        "The code must be in 10 characters",
+      ],
     };
   },
   methods: {
@@ -151,6 +175,10 @@ export default {
 </script>
 
 <style>
+.code-container {
+  display: flex;
+  gap: 0;
+}
 .cart-container {
   width: 100%;
   padding: 0 20px;
