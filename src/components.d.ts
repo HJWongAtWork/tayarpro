@@ -10,7 +10,7 @@ declare module 'vue' {
     AppBar: typeof import('./components/AppBar.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     Carousel: typeof import('./components/Carousel.vue')['default']
-    Carousel3D: typeof import('./components/Carousel3D.vue')['default']
+    Disclaimer: typeof import('./components/Disclaimer.vue')['default']
     Header: typeof import('./components/Header.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Hero: typeof import('./components/Hero.vue')['default']
