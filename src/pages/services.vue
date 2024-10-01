@@ -72,7 +72,7 @@ export default {
 
     methods: {
         getServicesData() {
-            fetch('http://localhost:5200/api/get_services')
+            fetch('http://tayar.pro/api/get_services')
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
