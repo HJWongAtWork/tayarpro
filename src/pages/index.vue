@@ -70,7 +70,7 @@
               <v-img height="200" :src="item.image" :alt="item.title"></v-img>
               <v-card-title class="text-h7 text-wrap">{{
                 item.title
-              }}</v-card-title>
+                }}</v-card-title>
               <v-card-text>
                 <div>{{ item.description }}</div>
                 <div class="text-h6 mt-2">RM {{ item.price.toFixed(2) }}</div>
@@ -222,8 +222,8 @@ export default {
   data() {
     return {
       homeImages: [
-        { src: 'http://tayar.pro:5200/static/images/tayarpro/home-banner-01.png', alt: 'Elegant TayarPro banner with general description and opening times.' },
-        { src: 'http://tayar.pro:5200/static/images/tayarpro/home-banner-02.png', alt: 'TayarPro banner promoting services and showing addresses.' }
+        { src: 'http://tayar.pro:5200/static/images/tayarpro/home-banner-01.webp', alt: 'Elegant TayarPro banner with general description and opening times.' },
+        { src: 'http://tayar.pro:5200/static/images/tayarpro/home-banner-02.webp', alt: 'TayarPro banner promoting services and showing addresses.' }
       ],
       cardDataList: [
         {
