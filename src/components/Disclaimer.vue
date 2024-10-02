@@ -22,16 +22,17 @@ export default {
     data() {
         return {
             showDisclaimer: true,
+            dateSalt: (Date.now() / 86400000).toFixed(0)
         };
     },
     methods: {
         acceptDisclaimer() {
             this.showDisclaimer = false;
-            localStorage.setItem('disclaimerAccepted', true);
+            localStorage.setItem(`disclaimerAcceptedTayarPro${this.dateSalt}`, true);
         },
     },
     mounted() {
-        if (localStorage.getItem('disclaimerAccepted')) {
+        if (localStorage.getItem(`disclaimerAcceptedTayarPro${this.dateSalt}`)) {
             this.showDisclaimer = false;
         }
     },
