@@ -74,6 +74,7 @@
 import { useVuelidate } from '@vuelidate/core'
 import { required, email, minLength } from '@vuelidate/validators'
 import { ref, reactive, computed } from 'vue';
+import axios from 'axios';
 
 export default {
     setup() {
@@ -111,13 +112,31 @@ export default {
             agree: v$.value.agree.$errors.map(e => e.$message)
         }));
 
+        // Refer to /vue.config.js for CORS and redirection
         const submitForm = async () => {
-            const isFormCorrect = await v$.value.$validate()
+            const isFormCorrect = await v$.value.$validate();
             if (isFormCorrect) {
-                console.log('Form submitted successfully')
-                // Add your form submission logic here
+                console.log('Form submitted successfully');
+                try {
+                    const registerForm = {
+                        "email": form.newEmail,
+                        "password": form.newPassword,
+                        "username": form.newEmail,
+                        "first_name": "",
+                        "last_name": "",
+                        "gender": "",
+                        "address": "",
+                        "city": "",
+                        "state": "",
+                        "zip_code": 0
+                    };
+                    const response = await axios.post('/api/register', registerForm);
+                    console.log('Registration successful');
+                } catch (error) {
+                    console.log('Registration failed:', error);
+                }
             } else {
-                console.log('Form has errors')
+                console.log('Form has errors');
             }
         }
 
