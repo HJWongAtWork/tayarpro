@@ -15,7 +15,7 @@
                             <v-card-subtitle class="my-3 font-weight-medium text-subtitle-1">Appointment {{
                                 formData['appointment_id'] }}</v-card-subtitle>
                             <v-text-field :min="minDate" v-model="formData['date']"
-                                :label="'date'.charAt(0).toUpperCase() + 'date'.slice(1)" type="date"></v-text-field>
+                                :label="'date'.charAt(0).toUpperCase() + 'date'.slice(1)" type="date" onkeydown="return false"></v-text-field>
                             <v-time-picker class="mx-0 px-0 text-center" align="center" justify="center" v-model="formData['time']" :allowed-minutes="allowedMinutes" format="ampm" ampm-in-title
                                 min="07:59" max="22:01" scrollable></v-time-picker>
                         </v-col>
@@ -39,7 +39,10 @@
 <script setup>
 import { ref, reactive, computed, watch } from 'vue';
 
-const minDate = ref(new Date().toISOString().split("T")[0]);
+/* const minDate = ref(new Date().toISOString().split("T")[0]); */
+
+const nowDate = ref(new Date)
+const minDate = ref(new Date(nowDate.value.getTime() + 24 * 60 * 60 * 1000).toISOString().split("T")[0])
 
 const props = defineProps({
     modelValue: {
