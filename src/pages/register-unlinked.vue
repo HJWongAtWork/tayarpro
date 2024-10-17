@@ -25,7 +25,10 @@
                                     :error-messages="errorMessages.confirmEmail"></v-text-field>
                             </v-col>
                             <v-col cols="12" align="justify" class="py-0">
-                                <v-card-text class="text-subtitle-1 font-weight-medium pt-3 pb-1">Password</v-card-text>
+                                <v-card-text class="text-subtitle-1 font-weight-medium pt-3 pb-0">Password</v-card-text>
+                                <v-card-text class="text-caption font-weight-small py-0 font-italic">
+                                    Minimum of 10 characters, with 1 capital letter, number and symbol
+                                </v-card-text>
                                 <v-text-field v-model="form.newPassword" hide-details="auto" density="compact"
                                     label="Enter password" prepend-inner-icon="mdi-lock"
                                     :append-icon="showNew ? 'mdi-eye' : 'mdi-eye-off'"
@@ -68,6 +71,24 @@
             </v-row>
         </v-card>
     </v-container>
+    <v-container fluid>
+        <v-row>
+            <v-col cols="12" align="center">
+                <v-dialog v-model="showSuccess" width="500">
+                    <v-card class="pa-10 text-center">
+                        <v-card-title>Registration Success!</v-card-title>
+                        <v-card-subtitle>You will be redirected to the main page momentarily...</v-card-subtitle>
+                    </v-card>
+                </v-dialog>
+                <v-dialog v-model="showFail" width="500">
+                    <v-card @blur="handleBlur" class="pa-10 text-center">
+                        <v-card-title>Registration Failed.</v-card-title>
+                        <v-card-subtitle>Please re-enter your registration details and try again.</v-card-subtitle>
+                    </v-card>
+                </v-dialog>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
@@ -75,9 +96,12 @@ import { useVuelidate } from '@vuelidate/core'
 import { required, email, minLength } from '@vuelidate/validators'
 import { ref, reactive, computed } from 'vue';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 export default {
     setup() {
+        const router = useRouter();
+
         const form = reactive({
             newEmail: '',
             confirmEmail: '',
@@ -88,16 +112,21 @@ export default {
 
         const showNew = ref(false);
         const showConfirm = ref(false);
+        const showSuccess = ref(false);
+        const showFail = ref(false);
 
         // Custom validators
         const sameAsNewEmail = (value) => value === form.newEmail;
         const sameAsNewPassword = (value) => value === form.newPassword;
         const sameAsTrue = (value) => value;
+        const hasCapitalLetter = (value) => /[A-Z]/.test(value);
+        const hasSymbol = (value) => /[!@#$%^&*()_+[\]{}|;:,.<>?]/g.test(value);
+        const hasNumber = (value) => /\d/.test(value);
 
         const rules = {
             newEmail: { required, email },
             confirmEmail: { required, email, sameAsNewEmail },
-            newPassword: { required, minLength: minLength(10) },
+            newPassword: { required, minLength: minLength(10), hasCapitalLetter, hasSymbol, hasNumber },
             confirmPassword: { required, sameAsNewPassword },
             agree: { required, sameAsTrue }
         };
@@ -132,13 +161,22 @@ export default {
                     };
                     const response = await axios.post('/api/register', registerForm);
                     console.log('Registration successful');
+                    showSuccess.value = true;
+                    setTimeout(() => {
+                        router.push('/');
+                    }, 5000);
                 } catch (error) {
                     console.log('Registration failed:', error);
+                    showFail.value = true;
                 }
             } else {
                 console.log('Form has errors');
             }
         }
+
+        const handleBlur = () => {
+            showFail.value = false;
+        };
 
         return {
             form,
@@ -146,6 +184,9 @@ export default {
             showNew,
             showConfirm,
             submitForm,
+            showSuccess,
+            showFail,
+            handleBlur,
             errorMessages
         };
     },
