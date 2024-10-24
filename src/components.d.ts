@@ -7,12 +7,17 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AddModifyVehicle: typeof import('./components/AddModifyVehicle.vue')['default']
     AppBar: typeof import('./components/AppBar.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     DatePicker: typeof import('./components/DatePicker.vue')['default']
+    Carousel: typeof import('./components/Carousel.vue')['default']
+    CartButton: typeof import('./components/cartButton.vue')['default']
+    Disclaimer: typeof import('./components/Disclaimer.vue')['default']
     Header: typeof import('./components/Header.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Hero: typeof import('./components/Hero.vue')['default']
+    ModifyApptDialog: typeof import('./components/ModifyApptDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Testinputcomp: typeof import('./components/testinputcomp.vue')['default']

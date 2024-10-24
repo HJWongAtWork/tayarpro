@@ -9,10 +9,17 @@
   },
   "dependencies": {
     "@mdi/font": "7.4.47",
+    "@vuelidate/core": "^2.0.3",
+    "@vuelidate/validators": "^2.0.4",
+    "axios": "^1.7.7",
     "core-js": "^3.37.1",
+    "firebase": "^10.14.1",
     "leaflet": "^1.9.4",
     "roboto-fontface": "*",
     "vue": "^3.4.31",
+    "vue-carousel-3d": "^1.0.1",
+    "vue3-carousel": "^0.3.4",
+    "vue3-carousel-3d": "^1.0.4",
     "vuetify": "^3.6.11"
   },
   "devDependencies": {
