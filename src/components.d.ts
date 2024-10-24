@@ -9,12 +9,16 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppBar: typeof import('./components/AppBar.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
+    DatePicker: typeof import('./components/DatePicker.vue')['default']
     Header: typeof import('./components/Header.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Hero: typeof import('./components/Hero.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Testinputcomp: typeof import('./components/testinputcomp.vue')['default']
     TextAreaInput: typeof import('./components/TextAreaInput.vue')['default']
+    TextAreaInputComponent: typeof import('./components/TextAreaInputComponent.vue')['default']
     TextInput: typeof import('./components/TextInput.vue')['default']
+    TextInputComponent: typeof import('./components/TextInputComponent.vue')['default']
   }
 }
