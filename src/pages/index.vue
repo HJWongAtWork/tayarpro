@@ -155,7 +155,7 @@
               class="mr-1">mdi-map-marker</v-icon>
             Location ></v-btn>
         </RouterLink>
-        <RouterLink to="/contactus"><v-btn color="#ff3131" class="ma-2" width="200"><v-icon
+        <RouterLink to="/contact-us"><v-btn color="#ff3131" class="ma-2" width="200"><v-icon
               class="mr-1">mdi-phone-incoming</v-icon>
             Contact Us
             ></v-btn></RouterLink>

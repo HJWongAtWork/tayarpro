@@ -70,5 +70,13 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    // API proxy pathing
+    proxy: {
+      '/api': {
+        target: 'http://api.tayar.pro/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      },
+    },
   },
 })
