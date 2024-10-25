@@ -70,7 +70,7 @@
               <v-img height="200" :src="item.image" :alt="item.title"></v-img>
               <v-card-title class="text-h7 text-wrap">{{
                 item.title
-              }}</v-card-title>
+                }}</v-card-title>
               <v-card-text>
                 <div>{{ item.description }}</div>
                 <div class="text-h6 mt-2">RM {{ item.price.toFixed(2) }}</div>
@@ -151,10 +151,12 @@
         <h2 class="font-weight-bold text-capitalize">Reach Out To Us!</h2>
       </v-col>
       <v-col cols="12" md="6" class="ma-0 px-0" align="center">
-        <RouterLink to="/location"><v-btn color="#ff3131" class="ma-2" width="200"><v-icon class="mr-1">mdi-map-marker</v-icon>
+        <RouterLink to="/location"><v-btn color="#ff3131" class="ma-2" width="200"><v-icon
+              class="mr-1">mdi-map-marker</v-icon>
             Location ></v-btn>
         </RouterLink>
-        <RouterLink to="/contactus"><v-btn color="#ff3131" class="ma-2" width="200"><v-icon class="mr-1">mdi-phone-incoming</v-icon>
+        <RouterLink to="/contact-us"><v-btn color="#ff3131" class="ma-2" width="200"><v-icon
+              class="mr-1">mdi-phone-incoming</v-icon>
             Contact Us
             ></v-btn></RouterLink>
       </v-col>
@@ -220,26 +222,26 @@ export default {
   data() {
     return {
       homeImages: [
-        { src: 'src/assets/images/home/home-banner-01.png', alt: 'Elegant TayarPro banner with general description and opening times.' },
-        { src: 'src/assets/images/home/home-banner-02.png', alt: 'TayarPro banner promoting services and showing addresses.' }
+        { src: 'http://tayar.pro:5200/static/images/tayarpro/home-banner-01.webp', alt: 'Elegant TayarPro banner with general description and opening times.' },
+        { src: 'http://tayar.pro:5200/static/images/tayarpro/home-banner-02.webp', alt: 'TayarPro banner promoting services and showing addresses.' }
       ],
       cardDataList: [
         {
-          imageSrc: "src/assets/images/home/tyre-install-01.jpg",
+          imageSrc: "http://tayar.pro:5200/static/images/tayarpro/services-tyre-install-01.jpg",
           title: "Tyre Installation",
           elevation: 2,
           showAdditionalText: false,
           additionalText: "Tyre installation services involve professionally fitting new tires onto a vehicle's wheels. This includes removing old tires, cleaning wheels, mounting new tires, balancing them, and checking torque. These services are crucial for vehicle safety, performance, and tire longevity.",
         },
         {
-          imageSrc: "src/assets/images/home/tyre-tuning-01.jpg",
+          imageSrc: "http://tayar.pro:5200/static/images/tayarpro/services-tyre-tuning-01.jpg",
           title: "Tyre Tuning",
           elevation: 2,
           showAdditionalText: false,
           additionalText: "Tyre tuning services involve optimizing a vehicle's tires for performance and efficiency. This can include adjusting tire pressure, alignment, and rotation. By ensuring that tires are properly tuned, drivers can improve fuel economy, enhance handling, and extend tire life.",
         },
         {
-          imageSrc: "src/assets/images/home/tyre-consult-01.jpg",
+          imageSrc: "http://tayar.pro:5200/static/images/tayarpro/services-tyre-consult-01.jpg",
           title: "Tyre Consulting",
           elevation: 2,
           showAdditionalText: false,
@@ -306,25 +308,25 @@ export default {
       /* https://www.svgrepo.com/ */
       tayarProStrengths: [
         {
-          src: "src/assets/images/home/certificate-svgrepo-com.svg",
+          src: "http://tayar.pro:5200/static/images/tayarpro/why-us-certificate-svgrepo-com.svg",
           title: "Certified",
           desc: "Tires are guaranteed to meet or exceed industry standards.",
           cert: ''
         },
         {
-          src: "src/assets/images/home/warranty-security-ecommerce-svgrepo-com.svg",
+          src: "http://tayar.pro:5200/static/images/tayarpro/why-us-warranty-security-ecommerce-svgrepo-com.svg",
           title: "5-Year Warranty",
           desc: "Enjoy peace of mind with a comprehensive warranty.",
           cert: ''
         },
         {
-          src: "src/assets/images/home/lifter-car-repair-svgrepo-com.svg",
+          src: "http://tayar.pro:5200/static/images/tayarpro/why-us-lifter-car-repair-svgrepo-com.svg",
           title: "Quality Service",
           desc: "Receive expert care and attention from our skilled technicians.",
           cert: 'ISO 9001:2015 (Pending)'
         },
         {
-          src: "src/assets/images/home/robot-futurist-svgrepo-com.svg",
+          src: "http://tayar.pro:5200/static/images/tayarpro/why-us-robot-futurist-svgrepo-com.svg",
           title: "AI Assistant",
           desc: "Benefit from cutting-edge and secure technology to streamline your tire servicing experience.",
           cert: 'ISO 27001:2013 (Pending)'
