@@ -9,7 +9,7 @@
     <v-row class="mt-0 px-8" justify="space-between">
       <v-col cols="12" class="ma-0 px-0 d-flex d-md-none">
         <div>
-          <h1 class="font-weight-black text-capitalize">Your One Stop Tyre Service Center</h1>
+          <h1 class="font-weight-black text-capitalize">Your Two Stop Tyre Service Center</h1>
           <p class="text-grey font-weight-bold font-italic text-subtitle-1 text-capitalize">Automotive tyre services and
             maintenance that keeps your vehicle driving</p>
         </div>
