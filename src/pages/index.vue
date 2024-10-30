@@ -16,7 +16,7 @@
       </v-col>
       <v-col cols="9" class="ma-0 px-0 d-none d-md-flex">
         <div>
-          <h1 class="font-weight-black text-capitalize">Your One Stop Tyre Service Center</h1>
+          <h1 class="font-weight-black text-capitalize">Your Two Stop Tyre Service Center</h1>
           <p class="text-grey font-weight-bold font-italic text-subtitle-1 text-capitalize">Automotive tyre services and
             maintenance that keeps your vehicle driving</p>
         </div>
