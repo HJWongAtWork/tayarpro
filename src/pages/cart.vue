@@ -109,137 +109,7 @@
                 </tr>
                 <tr>
                   <td colspan="12">
-                    <cartButton
-                      @click="showOrderDialog = true"
-                      min="260px"
-                      height="55px"
-                      color="#FF6875"
-                      display="flex"
-                      width="-webkit-fill-available"
-                    >
-                      Checkout
-                    </cartButton>
-
-                    <v-dialog
-                      v-model="showOrderDialog"
-                      max-width="800"
-                      persistent
-                    >
-                      <v-card class="pa-5" height="600" width="1000">
-                        <div position="relative;">
-                          <v-btn
-                            @click="showOrderDialog = false"
-                            style="position: absolute; top: 10px; right: 10px"
-                            ><v-icon color="red">mdi-close</v-icon></v-btn
-                          >
-                        </div>
-                        <br />
-                        <v-stepper
-                          v-model="step"
-                          non-linear
-                          flat
-                          :items="items"
-                        >
-                          <template v-slot:item.1>
-                            <v-row>
-                              <v-col flex>
-                                <v-form>
-                                  <v-text-field v-model="name" label="Name">
-                                  </v-text-field>
-                                  <v-text-field v-model="email" label="Email">
-                                  </v-text-field>
-                                  <v-checkbox
-                                    v-model="paymentType"
-                                    prepend-icon="mdi-credit-card"
-                                    label="Credit Card"
-                                    value="CreditCard"
-                                    color="red"
-                                  ></v-checkbox>
-                                  <v-checkbox
-                                    v-model="paymentType"
-                                    prepend-icon="mdi-touch-n-go"
-                                    label="TouchNGo"
-                                    value="TouchNGo"
-                                    color="red"
-                                    ><template v-slot:prepend>
-                                      <img
-                                        src="@/assets/tng.svg"
-                                        alt="TouchNGo"
-                                        class="small-image"
-                                      /> </template
-                                  ></v-checkbox>
-                                  <v-checkbox
-                                    v-model="paymentType"
-                                    label="Bank Transfer"
-                                    value="BankTransfer"
-                                    prepend-icon="mdi-bank"
-                                    color="red"
-                                  ></v-checkbox>
-                                </v-form>
-                              </v-col>
-                              <v-col flex>
-                                <v-form>
-                                  <v-text-field
-                                    v-model="membership"
-                                    label="membership"
-                                  >
-                                  </v-text-field>
-                                  <v-text-field
-                                    v-model="email"
-                                    label="email"
-                                    required
-                                  >
-                                  </v-text-field>
-                                </v-form>
-                              </v-col>
-                            </v-row>
-                          </template>
-                          <template v-slot:item.2>
-                            <v-row>
-                              <v-col cols="12">
-                                <v-form>
-                                  <v-text-field
-                                    v-model="cardNumber"
-                                    label="Card Number"
-                                  ></v-text-field>
-                                  <v-text-field
-                                    v-model="cardExpiry"
-                                    label="Expiry Date"
-                                  ></v-text-field>
-                                  <v-text-field
-                                    v-model="cardCVC"
-                                    label="CVC"
-                                  ></v-text-field>
-                                </v-form>
-                              </v-col> </v-row
-                          ></template>
-                          <template v-slot:item.3>
-                            <v-row>
-                              <v-col cols="12">
-                                <v-form>
-                                  <v-date-picker
-                                    v-model="scheduleDate"
-                                    label="Select Schedule Date"
-                                  ></v-date-picker>
-                                </v-form>
-                              </v-col>
-                            </v-row>
-                          </template>
-                          <template v-slot:item.4>
-                            <v-row class="d-flex justify-center">
-                              <v-alert type="success" text>
-                                Payment Successful! Your appointment is
-                                scheduled.
-                              </v-alert>
-                            </v-row>
-                          </template>
-                          <v-btn if>
-
-                          </v-btn>
-                        </v-stepper>
-                       
-                      </v-card>
-                    </v-dialog>
+                    <CheckoutDialog />
                   </td>
                 </tr>
               </tbody>
@@ -254,15 +124,23 @@
 <script>
 import { parse } from "vue/compiler-sfc";
 import cartButton from "../components/cartButton.vue";
-import OrderDialog from "@/components/OrderDialog.vue";
+import checkoutDialog from "../components/checkoutDialog.vue";
+import CheckoutDialog from "../components/checkoutDialog.vue";
 
 export default {
   components: {
     cartButton,
-    OrderDialog,
+    checkoutDialog,
   },
   data() {
     return {
+      appointment: {
+        name: "",
+        date: "",
+        time: "",
+        description: "",
+      },
+      appointments: [],
       carts: [
         {
           title: "CONTINENTAL UC6 225-50-18",
@@ -331,6 +209,13 @@ export default {
     };
   },
   methods: {
+    addAppointment() {
+      this.appointments.push({ ...this.appointment });
+      this.appointment.name = "";
+      this.appointment.date = "";
+      this.appointment.time = "";
+      this.appointment.description = "";
+    },
     submitCode() {
       const validCode = this.ValidRedeemCode.find(
         (element) => element.code === this.RedeemCode
@@ -358,9 +243,6 @@ export default {
     formatNumber(value) {
       const number = typeof value === "string" ? parseInt(value) : value;
       return number.toLocaleString("en-US");
-    },
-    completeProcess() {
-      this.showOrderDialog = false;
     },
   },
   computed: {
@@ -416,8 +298,11 @@ export default {
   gap: 0;
 }
 .cart-container {
+  padding: 0 20px;
   width: 100%;
-  padding: 0 10px;
+  max-width: 1200;
+  align-items: center;
+  justify-content: center;
 }
 .v-table {
   border-spacing: 4px 8px;
