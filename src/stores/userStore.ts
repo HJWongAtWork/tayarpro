@@ -14,7 +14,8 @@ export const userStore = defineStore('userStore', {
       postalcode: string,
       city: string,
       state: string,
-      country: string
+      country: string,
+      password: string
     }[]
   }),
   getters: {
@@ -35,7 +36,8 @@ export const userStore = defineStore('userStore', {
         postalcode: '58200',
         city: 'Bangsar',
         state: 'Kuala Lumpur',
-        country: 'Malaysia'
+        country: 'Malaysia',
+        password: '1234'
       };
       
       this.users.push(userData);

@@ -4,6 +4,7 @@
     <v-text-field
       v-model="inputValue"
       :label="labelName"
+      :rules="rules"
       color="primary"
       @input="$emit('update:modelValue', inputValue)"
       :disabled="isDisable"
@@ -33,7 +34,11 @@ export default defineComponent({
     modelValue: {
       type: String,
       default: ""
-    }
+    },
+    rules: {
+      type: Array as PropType<((v: any) => boolean | string)[]>,
+      default: () => [],
+    },
   },
   watch: {
     modelValue(newValue) {

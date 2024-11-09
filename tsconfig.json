@@ -22,7 +22,9 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "declaration": true,         // Emit type declarations (`.d.ts` files)
+    "emitDeclarationOnly": true, // Emit only the `.d.ts` files (no JS)
   },
   "include": [
     "src/**/*",

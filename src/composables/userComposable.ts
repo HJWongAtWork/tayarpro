@@ -16,6 +16,7 @@ export const userComposable = () => {
   const cityInput = ref("");
   const stateInput = ref("");
   const countryInput = ref("");
+  const passwordInput = ref("");
 
   const fetchUser = async () => {
     await user_store.fetchUser();
@@ -33,6 +34,8 @@ export const userComposable = () => {
     users.value[0].city = cityInput.value;
     users.value[0].state = stateInput.value;
     users.value[0].country = countryInput.value;
+    users.value[0].password = passwordInput.value;
+    console.log(users.value[0]);
   };
 
   const setInputToUserData = () => {
@@ -48,6 +51,7 @@ export const userComposable = () => {
     cityInput.value = users.value[0].city;
     stateInput.value = users.value[0].state;
     countryInput.value = users.value[0].country;
+    passwordInput.value = users.value[0].password;
   };
 
   return {
@@ -66,6 +70,7 @@ export const userComposable = () => {
     postalcodeInput,
     cityInput,
     stateInput,
-    countryInput
+    countryInput,
+    passwordInput
   };
 }

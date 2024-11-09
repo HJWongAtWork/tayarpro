@@ -36,7 +36,7 @@
     <!-- <router-link to="/account" class="link"><v-tab><v-icon>mdi mdi-account</v-icon></v-tab></router-link>
         <v-tab value="1002"><v-icon>mdi mdi-cart-variant</v-icon></v-tab> -->
     <div class="d-flex align-center">
-      <router-link to="/yourprofile" class="link mr-4"
+      <router-link to="/your-profile" class="link mr-4"
         ><v-icon size="30">mdi-account</v-icon></router-link
       >
       <router-link to="" class="link ma-4"
