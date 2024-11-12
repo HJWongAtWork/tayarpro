@@ -362,10 +362,23 @@ v-card {
 
 <script setup>
 import { ref, computed } from 'vue';
+import { onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
 /* import axios from 'axios'; */
 import ModifyApptDialog from '@/components/ModifyApptDialog.vue';
 
 const activeTab = ref('tab-future');
+const route = useRoute();
+
+watch(
+      () => route.query.tab,
+      (newTab) => {
+        if (newTab) {
+          activeTab.value = newTab;
+        }
+      },
+      { immediate: true }
+    );
 
 /* // Create an Axios instance with a base URL
 const api = axios.create({

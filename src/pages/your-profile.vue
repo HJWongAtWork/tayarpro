@@ -57,10 +57,12 @@
                   <v-list-item @click="changePasswordClicked"
                     >Change Password</v-list-item
                   >
+                  <router-link to="/appointments" style="color: black; text-decoration: none">
                   <v-list-item @click="menu = false"
                     >Manage Appointments</v-list-item
                   >
-                  <v-list-item @click="menu = false"
+                </router-link>
+                  <v-list-item @click="pastAppointmentsDialog = true"
                     >Past Appointments</v-list-item
                   >
                   <v-list-item @click="confirmLogout = true" style="color: red"
@@ -90,10 +92,12 @@
                       <v-list-item @click="changePasswordClicked"
                         >Change Password</v-list-item
                       >
-                      <v-list-item @click="menu = false"
-                        >Manage Appointments</v-list-item
-                      >
-                      <v-list-item @click="menu = false"
+                      <router-link to="/appointments" style="color: black; text-decoration: none">
+                  <v-list-item @click="menu = false"
+                    >Manage Appointments</v-list-item
+                  >
+                </router-link>
+                      <v-list-item @click="pastAppointmentsDialog = true"
                         >Past Appointments</v-list-item
                       >
                       <v-list-item
@@ -283,10 +287,10 @@
             <h1>Vehicles</h1>
           </v-col>
           <v-col cols="12" sm="12" md="12">
-            <v-btn class="save-btn"> + Add Vehicle </v-btn>
+            <v-btn class="save-btn" @click="handleVehicleDialog(newCar, 'add', null)"> + Add Vehicle </v-btn>
           </v-col>
           <v-col
-            v-for="car in vehicles"
+            v-for="car in displayedVehicles"
             :key="car.id"
             cols="12"
             sm="12"
@@ -302,14 +306,21 @@
                 class="d-flex justify-end"
                 style="padding-top: 20px"
               >
-                <v-btn icon style="margin-right: 20px">
-                  <v-icon class="small-icon">mdi-pencil</v-icon>
-                </v-btn>
-                <v-btn icon class="save-btn" style="margin-right: 0px">
-                  <v-icon class="small-icon">mdi-delete</v-icon>
-                </v-btn>
+                <v-icon 
+                class="small-icon text-green glow-on-hover" 
+                style="margin-right: 20px"
+                @click="handleVehicleDialog(car, 'edit', car.id)"
+                > 
+                  mdi-pencil
+                </v-icon>
+                <v-icon class="small-icon text-red glow-on-hover" @click="handleVehicleDialog(car, 'delete', car.id)">mdi-delete</v-icon>
               </v-card-actions>
             </v-card>
+          </v-col>
+          <v-col v-if="vehicles.length > 3" cols="12" class="text-center mt-4">
+            <v-btn text @click="this.showAll = !this.showAll">
+              {{ showAll ? 'Hide some...' : 'Show more...' }}
+            </v-btn>
           </v-col>
         </v-card>
       </v-col>
@@ -412,6 +423,97 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <v-dialog v-model="pastAppointmentsDialog" max-width="2000px">
+      <v-card>
+        <v-card-title>Past Appointments</v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col v-for="appt in pastAppointments.slice(0, 3)" :key="appt.id" cols="12" sm="12" md="3">
+              <v-card>
+                <v-card-title>
+                  <p>ID: {{ appt.id }}</p>
+                </v-card-title>
+                <v-card-subtitle>
+                  <p>Date: {{ appt.dateTime.toLocaleDateString() }}</p>
+                  <p>Time: {{ appt.dateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}</p>
+                </v-card-subtitle>
+                <v-card-text>
+                  <p>Service: {{ appt.service }}</p>
+                  <p>Bay: {{ appt.bay }}</p>
+                  <p>Vehicle: {{ appt.brand }} {{ appt.model }} ({{ appt.year }})</p>
+                  <p>Status: {{ appt.status }}</p>
+                </v-card-text>
+              </v-card>
+            </v-col>
+            <v-col cols="12" sm="12" md="3" v-if="pastAppointments.length > 3">
+            <v-card outlined class="d-flex align-center justify-center" height="100%">
+              <v-card-title class="text-center">
+                <router-link :to="{ path: '/appointments', query: { tab: 'tab-complete' } }">
+                  Show more...
+                </router-link>
+              </v-card-title>
+            </v-card>
+          </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="pastAppointmentsDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="vehicleDialog" max-width="500px">
+        <v-card>
+          <v-card-title class="text-h5">
+            <span class="headline">
+              <span v-if="vehicleDialogAction === 'add'">Add Vehicle</span>
+              <span v-if="vehicleDialogAction === 'edit'">Edit Vehicle</span>
+              <span v-if="vehicleDialogAction === 'delete'">Delete Vehicle</span>
+            </span>
+          </v-card-title>
+          <v-card-text>
+            <v-form ref="form" v-model="isValidAddVehicle">
+              <v-text-field
+                label="Plate Number"
+                v-model="plateNumberInput"
+                :rules="[rules.required]"
+                required
+                :disabled="vehicleDialogAction === 'delete'"
+              ></v-text-field>
+              <v-text-field
+                label="Brand"
+                v-model="brandInput"
+                :rules="[rules.required]"
+                required
+                :disabled="vehicleDialogAction === 'delete'"
+              ></v-text-field>
+              <v-text-field
+                label="Model"
+                v-model="modelInput"
+                :rules="[rules.required]"
+                required
+                :disabled="vehicleDialogAction === 'delete'"
+              ></v-text-field>
+              <v-text-field
+                label="Year"
+                v-model="yearInput"
+                type="number"
+                :rules="[rules.required, rules.year]"
+                required
+                :disabled="vehicleDialogAction === 'delete'"
+              ></v-text-field>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text @click="vehicleDialog = false">Cancel</v-btn>
+            <v-btn v-if="vehicleDialogAction === 'add'" class="save-btn" style="margin-right: 0px;" :disabled="!isValidAddVehicle" @click="handleAddVehicleBtn">Add</v-btn>
+            <v-btn v-if="vehicleDialogAction === 'edit'" class="save-btn" style="margin-right: 0px;" :disabled="!isValidAddVehicle" @click="handleEditVehicleBtn">Save</v-btn>
+            <v-btn v-if="vehicleDialogAction === 'delete'" class="save-btn" style="margin-right: 0px;" :disabled="!isValidAddVehicle" @click="handleDeleteVehicleBtn">Delete</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 </template>
 
 <script>
@@ -421,7 +523,7 @@
   import { userComposable } from '@/composables/userComposable';
   import { onMounted } from 'vue';
   import { vehicleComposable } from '@/composables/vehicleComposable';
-
+  import { appointmentComposable } from '@/composables/appointmentComposable';
 
   export default {
     data() {
@@ -470,9 +572,22 @@
           emailValid: v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
           numberOnly: v => /^\d+$/.test(v) || 'Must contain digits only',
           phoneLength: v => v.length >= 10 && v.length <= 15 || 'Phone number must be 10-15 digits',
+          year: value => (value >= 1900 && value <= new Date().getFullYear()) || 'Invalid year.',
+          bay: value => value > 0 || 'Bay number must be greater than zero.',
         },
+        pastAppointmentsDialog: false,
+        showAll: false,
+        vehicleDialog: false,
+        isValidAddVehicle: false,
+        vehicleDialogAction: '',
+        selectedVehicleId: null,
       }
     },
+    computed: {
+    displayedVehicles() {
+      return this.showAll ? this.vehicles : this.vehicles.slice(0, 3);
+    },
+  },
     components: {
       TextInput,
       DatePicker
@@ -500,8 +615,21 @@
 
       const {
         vehicles,
+        plateNumberInput,
+        brandInput,
+        modelInput,
+        yearInput,
         fetchVehicles,
+        getLatestVehicleId,
+        addVehicle,
+        editVehicle,
+        deleteVehicle,
       } = vehicleComposable();
+
+      const {
+        pastAppointments,
+        fetchPastAppointments,
+      } = appointmentComposable();
 
       const file = ref(null);
       const imageUrl = ref(null);
@@ -511,6 +639,7 @@
         fetchUser();
         setInputToUserData();
         fetchVehicles();
+        fetchPastAppointments();
       });
 
       const handleFileChange = () => {
@@ -557,7 +686,17 @@
         file,
         imageUrl,
         vehicles,
+        plateNumberInput,
+        brandInput,
+        modelInput,
+        yearInput,
         fetchVehicles,
+        getLatestVehicleId,
+        addVehicle,
+        editVehicle,
+        deleteVehicle,
+        pastAppointments,
+        fetchPastAppointments
       };
     },
     mounted() {
@@ -603,6 +742,44 @@
         this.passwordInput = this.newPassword;
         this.editUserData();
         this.changePassword = false;
+      },
+      handleVehicleDialog(car, action, id) {
+        this.vehicleDialog = true;
+        this.vehicleDialogAction = action;
+        this.selectedVehicleId = id;
+        if (action === 'add') {
+          this.plateNumberInput = '';
+          this.brandInput = '';
+          this.modelInput = '';
+          this.yearInput = '';
+        }
+        else {
+          this.plateNumberInput = car.plateNumber;
+          this.brandInput = car.brand;
+          this.modelInput = car.model;
+          this.yearInput = car.year;
+        }
+      },
+      handleAddVehicleBtn() {
+        if (this.isValidAddVehicle) {
+          this.addVehicle();
+          this.vehicleDialog = false;
+          this.vehicleDialogAction = '';
+        }
+      },
+      handleEditVehicleBtn() {
+        if (this.isValidAddVehicle) {
+          this.editVehicle(this.selectedVehicleId);
+          this.vehicleDialog = false;
+          this.vehicleDialogAction = '';
+          this.selectedVehicleId = null;
+        }
+      },
+      handleDeleteVehicleBtn() {
+        this.deleteVehicle(this.selectedVehicleId);
+        this.vehicleDialog = false;
+        this.vehicleDialogAction = '';
+        this.selectedVehicleId = null;
       }
     }
   }
@@ -643,5 +820,9 @@
   }
   .small-icon {
     font-size: 1.25rem; /* Adjust the size to 50% smaller (about 1.25rem) */
+  }
+
+  .glow-on-hover:hover {
+    box-shadow: 0 0 15px grey, 0 0 30px grey;
   }
 </style>
