@@ -109,7 +109,7 @@
                 </tr>
                 <tr>
                   <td colspan="12">
-                    <CheckoutDialog />
+                    <CheckoutDialog v-bind:subtotal="Subtotal" />
                   </td>
                 </tr>
               </tbody>
@@ -126,6 +126,7 @@ import { parse } from "vue/compiler-sfc";
 import cartButton from "../components/cartButton.vue";
 import checkoutDialog from "../components/checkoutDialog.vue";
 import CheckoutDialog from "../components/checkoutDialog.vue";
+import { isLogicalExpression } from "@babel/types";
 
 export default {
   components: {

@@ -1,6 +1,6 @@
 <template>
   <cartButton
-    @click="showOrderDialog = true"
+    @click="handleCheckout"
     min="260px"
     height="55px"
     color="#FF6875"
@@ -16,7 +16,7 @@
     class="red-dialog"
   >
     <v-card color="#FFE2E5">
-      <v-card-title class="text-center">Order dialog</v-card-title>
+      <v-card-title class="text-center">Order Dialog</v-card-title>
       <v-stepper
         :items="[
           'Select Payment Method',
@@ -28,7 +28,11 @@
         <template v-slot:item.1>
           <v-card title="Select Payment Method" flat>
             <v-form ref="form1" lazy-validation>
-              <v-radio-group v-model="paymentType">
+              <v-radio-group
+                v-model="paymentType"
+                :rules="[required]"
+                @input="handleInput"
+              >
                 <v-radio
                   label="Credit Card"
                   value="CreditCard"
@@ -99,16 +103,18 @@
         </template>
 
         <template v-slot:item.3>
-          <v-card title="Confirm Total Amount" flat>
-            <v-form ref="form3" lazy-validation>
-              <v-text-field
-                v-model="totalAmount"
-                label="Total Amount"
-                :rules="[required]"
-              ></v-text-field>
-              <v-btn color="primary" @click="proceedToNextStep">Next</v-btn>
-            </v-form>
-          </v-card>
+          <v-stepper-content step="3">
+            <v-card title="Confirm Total Amount" flat>
+              <v-form ref="form3" lazy-validation>
+                <v-text-field
+                  v-model="totalAmount"
+                  label="Total Amount"
+                  :rules="[required]"
+                  >{{ this.subtotal }}</v-text-field
+                >
+              </v-form>
+            </v-card>
+          </v-stepper-content>
         </template>
 
         <template v-slot:item.4>
@@ -124,12 +130,24 @@
 <script>
 import { required } from "@vuelidate/validators";
 import cartButton from "../components/cartButton.vue";
+import router from "@/router";
 
 export default {
+  validation: {
+    paymentType: { required },
+  },
+  props: {
+    subtotal: {
+      type: Number,
+      required: true,
+    },
+  },
   components: { cartButton },
+
   data() {
     return {
       showOrderDialog: false,
+      isLoggedIn: false,
       paymentType: [],
       step: 1,
       name: "",
@@ -144,17 +162,44 @@ export default {
       eWalletNumber: "",
     };
   },
+  mounted() {
+    this.checkLoginStatus();
+  },
   methods: {
+    checkLoginStatus() {
+      this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    },
+    handleCheckout() {
+      this.checkLoginStatus();
+
+      if (!this.isLoggedIn) {
+        // 3. Store the return path
+        localStorage.setItem("checkoutRedirect", "/cart");
+
+        // 4. Redirect to login page
+        router.push("/login");
+
+        // 5. Stop the method here
+        return;
+      }
+      this.showOrderDialog = true;
+    },
+    handleInput(value) {
+      console.log("Input changed: ", value);
+    },
     placeOrder() {
       // Call API to place order
       console.log("Order placed successfully!");
     },
+
     closeDialog() {
       this.showOrderDialog = false;
     },
     proceedToNextStep() {
-      if (this.step < 1) {
+      if (this.$refs.form1.validate()) {
         this.step++;
+      } else {
+        console.log("error");
       }
     },
   },
