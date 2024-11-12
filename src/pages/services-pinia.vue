@@ -1,6 +1,6 @@
 <template>
     <h2 class="no-background text-center mt-2">
-        <span><strong>Tyres</strong></span>
+        <span><strong>Services</strong></span>
     </h2>
 
     <v-responsive width="100%" class="mt-2">
@@ -9,15 +9,15 @@
                 <v-container>
                     <v-row>
                         <v-col cols="12" class="pa-0">
-                            <div class="text-center"><strong>Product Categories</strong></div>
+                            <div class="text-center"><strong>Service Categories</strong></div>
                             <div>
                                 <v-list class="text-left ma-5 pa-0">
-                                    <v-list-item v-for="(item, index) in TyreList" :key="index">
+                                    <v-list-item v-for="(item, index) in serviceList" :key="index">
                                         <div class="d-flex align-center">
                                             <v-list-item-title class="flex-grow-1 text-body-2 mr-2">{{
                                                 item.title
-                                                }}</v-list-item-title>
-                                            <v-checkbox class="ma-0 pa-0" hide-details v-model="selectedTyres"
+                                            }}</v-list-item-title>
+                                            <v-checkbox class="ma-0 pa-0" hide-details v-model="selectedServices"
                                                 :value="item"></v-checkbox>
                                         </div>
                                     </v-list-item>
@@ -55,15 +55,15 @@
                         </v-col>
                     </v-row>
                     <v-row>
-                        <v-col v-for="tyre in filteredTyres" :key="tyre.itemId" cols="3">
+                        <v-col v-for="service in filteredServices" :key="service.serviceId" cols="3">
                             <v-card height="400">
-                                <v-img height="200" :src="tyrePic" :alt="tyre.description"></v-img>
+                                <v-img height="200" :src="servicePic" :alt="service.description"></v-img>
                                 <v-card-title class="text-h7 text-wrap">{{
-                                    tyre.description
-                                    }}</v-card-title>
+                                    service.description
+                                }}</v-card-title>
                                 <v-card-text>
-                                    <div>{{ tyre.cartype }}</div>
-                                    <div class="text-h6 mt-2">RM {{ tyre.unitprice.toFixed(2) }}</div>
+                                    <div>{{ service.cartype }}</div>
+                                    <div class="text-h6 mt-2">RM {{ service.price.toFixed(2) }}</div>
                                 </v-card-text>
                             </v-card>
                         </v-col>
@@ -110,25 +110,28 @@ h2.no-background {
 </style>
 
 <script>
-import tyrepic from '@/assets/tyre.jpg';
+/* import servicepic from '@/assets/service.jpg'; */
 import { ref, computed, onMounted } from 'vue';
-import { useTyreStore } from '@/stores/useTyreStore';
+import { useServiceStore } from '@/stores/useServiceStore';
 
 export default {
     setup() {
-        const tyreStore = useTyreStore();
+        const serviceStore = useServiceStore();
 
-        const tyrePic = tyrepic;
+        /* const servicePic = servicepic; */
 
         onMounted(() => {
-            tyreStore.fetchTyreDetails();
+            serviceStore.fetchServiceDetails();
         });
 
-        const TyreList = [
-            { id: "CONT", title: "Continental" },
-            { id: "BRID", title: "Bridgestone" },
-            { id: "MICH", title: "Michelin" },
-            { id: "GODY", title: "Goodyear" },
+        const serviceList = [
+            { id: "ADJSVR", title: "Caster Adjustments" },
+            { id: "ALGSVR", title: "Alignment" },
+            { id: "BLCSVR", title: "Balancing" },
+            { id: "BRKSVR", title: "Brakes" },
+            { id: "ENGOIL", title: "Engine Oil" },
+            { id: "FXWSVR", title: "Fixing Wheel" },
+            { id: "OTHSVR", title: "Others" },
         ];
 
         const searchText = ref('');
@@ -149,24 +152,24 @@ export default {
             { title: 'Rating Descending' }, // Consider removing if no rating data
         ];
 
-        const selectedTyres = ref([]);
+        const selectedServices = ref([]);
 
-        const filteredTyres = computed(() => {
-            let result = tyreStore.tyreDetails.filter((tyre) => {
+        const filteredServices = computed(() => {
+            let result = serviceStore.serviceDetails.filter((service) => {
                 const matchesCategory =
-                    selectedTyres.value.length === 0 ||
-                    selectedTyres.value.some((selected) => selected.id === tyre.brandid);
-                const matchesSearch = tyre.description
+                    selectedServices.value.length === 0 ||
+                    selectedServices.value.some((selected) => selected.id === service.typeid);
+                const matchesSearch = service.description
                     .toLowerCase()
                     .includes(searchText.value.toLowerCase());
-                const isActive = tyre.status === "Active";
+                const isActive = service.status === "Active";
                 return matchesCategory && matchesSearch && isActive;
             });
 
             if (currentSort.value === 'priceAsc') {
-                result.sort((a, b) => a.unitprice - b.unitprice);
+                result.sort((a, b) => a.price - b.price);
             } else if (currentSort.value === 'priceDesc') {
-                result.sort((a, b) => b.unitprice - a.unitprice);
+                result.sort((a, b) => b.price - a.price);
             }
             return result;
         });
@@ -178,11 +181,11 @@ export default {
         return {
             searchText,
             filterMenu,
-            selectedTyres,
-            filteredTyres,
+            selectedServices,
+            filteredServices,
             handleSortingCheck,
-            tyrePic,
-            TyreList
+            /* tyrePic, */
+            serviceList
         };
     },
 };
