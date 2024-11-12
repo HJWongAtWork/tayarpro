@@ -11,10 +11,11 @@ export const vehicleStore = defineStore('vehicleStore', {
     }[]
   }),
   getters: {
-    getUsers: (state) => state.vehicles,
+    getVehicles: (state) => state.vehicles,
   },
   actions: {
     async fetchVehicles() {
+      this.vehicles.splice(0, this.vehicles.length);
       //dummy data
       const vehicleData1 = {
         id: 1, 
@@ -40,6 +41,9 @@ export const vehicleStore = defineStore('vehicleStore', {
         year: 2020
       };
       this.vehicles.push(vehicleData3);
+      // this.vehicles.push(vehicleData1);
+      // this.vehicles.push(vehicleData2);
+      // this.vehicles.push(vehicleData3);
     },
   },
 });
