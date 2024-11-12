@@ -39,7 +39,7 @@
       <router-link to="/yourprofile" class="link mr-4"
         ><v-icon size="30">mdi-account</v-icon></router-link
       >
-      <router-link to="" class="link ma-4"
+      <router-link to="/cart" class="link ma-4"
         ><v-icon size="30">mdi-cart-variant</v-icon></router-link
       >
     </div>
