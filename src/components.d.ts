@@ -12,7 +12,6 @@ declare module 'vue' {
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     Carousel: typeof import('./components/Carousel.vue')['default']
     CartButton: typeof import('./components/cartButton.vue')['default']
-    Checkout: typeof import('./components/Checkout.vue')['default']
     CheckoutDialog: typeof import('./components/checkoutDialog.vue')['default']
     DatePicker: typeof import('./components/DatePicker.vue')['default']
     Disclaimer: typeof import('./components/Disclaimer.vue')['default']
@@ -24,6 +23,8 @@ declare module 'vue' {
     OrderDialog: typeof import('./components/OrderDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Service: typeof import('./components/Service.vue')['default']
+    ServiceItems: typeof import('./components/ServiceItems.vue')['default']
     TextAreaInputComponent: typeof import('./components/TextAreaInputComponent.vue')['default']
     TextInputComponent: typeof import('./components/TextInputComponent.vue')['default']
   }

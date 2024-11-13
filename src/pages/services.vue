@@ -1,114 +1,192 @@
 <template>
-    <v-container>
-        <!-- Row for the "OUR SERVICE" header -->
-        <v-row justify="center">
-            <v-col cols="12" class="text-center">
-                <h2>
-                    OUR
-                    <span class="highlight-text">SERVICE</span>
-                </h2>
+    <h2 class="no-background text-center mt-2">
+        <span><strong>Services</strong></span>
+    </h2>
+
+    <v-responsive width="100%" class="mt-2">
+        <v-row>
+            <v-col cols="3">
+                <v-container>
+                    <v-row>
+                        <v-col cols="12" class="pa-0">
+                            <div class="text-center"><strong>Service Categories</strong></div>
+                            <div>
+                                <v-list class="text-left ma-5 pa-0">
+                                    <v-list-item v-for="(item, index) in serviceList" :key="index">
+                                        <div class="d-flex align-center">
+                                            <v-list-item-title class="flex-grow-1 text-body-2 mr-2">{{
+                                                item.title
+                                            }}</v-list-item-title>
+                                            <v-checkbox class="ma-0 pa-0" hide-details v-model="selectedServices"
+                                                :value="item"></v-checkbox>
+                                        </div>
+                                    </v-list-item>
+                                </v-list>
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </v-col>
+            <v-col cols="9">
+                <v-container>
+                    <v-row>
+                        <v-col cols="8">
+                            <v-text-field prepend-icon="mdi-magnify" hide-details single-line
+                                v-model="searchText"></v-text-field>
+                        </v-col>
+                        <v-col cols="4" class="text-right">
+                            <v-menu open-on-hover>
+                                <template v-slot:activator="{ props }">
+                                    <v-btn color="#ffffff" v-bind="props" height="50" width="150">Filter</v-btn>
+                                </template>
+                                <v-list>
+                                    <v-list-item v-for="(item, index) in filterMenu" :key="index"
+                                        @click="handleSortingCheck(item)">
+                                        <div class="d-flex">
+                                            <v-btn variant="text"><v-list-item-title>{{
+                                                item.title
+                                                    }}</v-list-item-title></v-btn>
+                                            <v-spacer />
+                                            <v-icon>{{ item.icon }}</v-icon>
+                                        </div>
+                                    </v-list-item>
+                                </v-list>
+                            </v-menu>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col v-for="service in filteredServices" :key="service.serviceId" cols="3">
+                            <v-card height="400">
+                                <v-img height="200" :src="servicePic" :alt="service.description"></v-img>
+                                <v-card-title class="text-h7 text-wrap">{{
+                                    service.description
+                                }}</v-card-title>
+                                <v-card-text>
+                                    <div>{{ service.cartype }}</div>
+                                    <div class="text-h6 mt-2">RM {{ service.price.toFixed(2) }}</div>
+                                </v-card-text>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+                </v-container>
             </v-col>
         </v-row>
-
-        <!-- Row for services -->
-        <v-row justify="center">
-            <!-- Tyre Replacement -->
-            <v-col cols="12" md="3" class="text-center pa-8" v-for="service in services" :key="index">
-                <div class="container text-center">
-                    <v-img src="/src/assets/images/home/lifter-car-repair-svgrepo-com.svg"
-                        class="service-icon mx-auto"></v-img>
-                    <h3 class="text-center mt-5">{{ service.title }}</h3>
-                </div>
-
-            </v-col>
-        </v-row>
-
-        <v-divider class="mb-8"></v-divider>
-
-        <v-row justify="center">
-            <v-col cols="12" class="text-center">
-                <h2>
-                    3 STEPS FOR CAR SERVICE
-                </h2>
-            </v-col>
-        </v-row>
-
-        <v-timeline>
-            <v-timeline-item v-for="(step, index) in steps" :key="index" size="large">
-                <template v-slot:icon>
-                    <v-avatar>
-                        <v-icon>{{ step.icon }}</v-icon>
-                    </v-avatar>
-                </template>
-                <template v-slot:opposite>
-                    <span>Step {{ index + 1 }}:</span>
-                </template>
-                <v-card class="elevation-2">
-                    <v-card-title class="text-h5">
-                        {{ step.title }}
-                    </v-card-title>
-                    <v-card-text>{{ step.description }}</v-card-text>
-                </v-card>
-            </v-timeline-item>
-        </v-timeline>
-
-
-    </v-container>
+    </v-responsive>
 </template>
 
-<script>
-export default {
-    data() {
-        return {
-            steps: [
-                { title: "Choose your preferred car", description: "Select a car from our collection.", icon: "directions_car" },
-                { title: "Confirm the Availability", description: "Ensure the car is available for your chosen date.", icon: "check_circle" },
-                { title: "It's time to bring the car", description: "Pick up your car and enjoy your drive!", icon: "drive_eta" },
-            ],
+<style>
+h2.no-background {
+    position: relative;
+    overflow: hidden;
 
-            services: []
-        };
-    },
+    span {
+        display: inline-block;
+        vertical-align: baseline;
+        zoom: 1;
+        display: inline;
+        vertical-align: auto;
+        position: relative;
+        padding: 0 20px;
 
-    methods: {
-        getServicesData() {
-            fetch('http://tayar.pro/api/get_services')
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    this.services = data.services;
-                    // Process the data as needed
-                })
-                .catch(error => {
-                    console.error('Error fetching services:', error);
-                });
+        &:before,
+        &:after {
+            content: "";
+            display: block;
+            width: 1000px;
+            position: absolute;
+            top: 0.73em;
+            border-top: 1px solid red;
         }
 
-    },
-    mounted() {
-        this.getServicesData();
+        &:before {
+            right: 100%;
+        }
+
+        &:after {
+            left: 100%;
+        }
     }
-};
-</script>
-
-<style scoped>
-.timeline {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.timeline-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.timeline-connector {
-    width: 2px;
-    background-color: #ccc;
-    height: 60px;
-    /* Adjust height as necessary */
 }
 </style>
+
+<script>
+/* import servicepic from '@/assets/service.jpg'; */
+import { ref, computed, onMounted } from 'vue';
+import { useServiceStore } from '@/stores/useServiceStore';
+
+export default {
+    setup() {
+        const serviceStore = useServiceStore();
+
+        /* const servicePic = servicepic; */
+
+        onMounted(() => {
+            serviceStore.fetchServiceDetails();
+        });
+
+        const serviceList = [
+            { id: "ADJSVR", title: "Caster Adjustments" },
+            { id: "ALGSVR", title: "Alignment" },
+            { id: "BLCSVR", title: "Balancing" },
+            { id: "BRKSVR", title: "Brakes" },
+            { id: "ENGOIL", title: "Engine Oil" },
+            { id: "FXWSVR", title: "Fixing Wheel" },
+            { id: "OTHSVR", title: "Others" },
+        ];
+
+        const searchText = ref('');
+        const currentSort = ref('none');
+
+        const filterMenu = [
+            {
+                title: 'Price Ascending',
+                icon: 'mdi-arrow-up-bold',
+                sort: 'priceAsc',
+            },
+            {
+                title: 'Price Descending',
+                icon: 'mdi-arrow-down-bold',
+                sort: 'priceDesc',
+            },
+            { title: 'Rating Ascending' }, // Consider removing if no rating data
+            { title: 'Rating Descending' }, // Consider removing if no rating data
+        ];
+
+        const selectedServices = ref([]);
+
+        const filteredServices = computed(() => {
+            let result = serviceStore.serviceDetails.filter((service) => {
+                const matchesCategory =
+                    selectedServices.value.length === 0 ||
+                    selectedServices.value.some((selected) => selected.id === service.typeid);
+                const matchesSearch = service.description
+                    .toLowerCase()
+                    .includes(searchText.value.toLowerCase());
+                const isActive = service.status === "Active";
+                return matchesCategory && matchesSearch && isActive;
+            });
+
+            if (currentSort.value === 'priceAsc') {
+                result.sort((a, b) => a.price - b.price);
+            } else if (currentSort.value === 'priceDesc') {
+                result.sort((a, b) => b.price - a.price);
+            }
+            return result;
+        });
+
+        const handleSortingCheck = (item) => {
+            currentSort.value = item.sort;
+        };
+
+        return {
+            searchText,
+            filterMenu,
+            selectedServices,
+            filteredServices,
+            handleSortingCheck,
+            /* tyrePic, */
+            serviceList
+        };
+    },
+};
+</script>
