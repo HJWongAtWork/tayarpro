@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div v-if="!isLoggedIn" class="login-container">
     <h2>Login</h2>
     <!-- Add error message display -->
     <div v-if="errorMessage" class="error-message">
@@ -31,13 +31,22 @@
       </button>
     </form>
   </div>
+  <div v-else>
+    <div class="login-info">
+      <h2>You are already logged in as {{ storedUsername }}</h2>
+    </div>
+    <div class="logged-out-container"></div>
+    <div class="button-group">
+      <button @click="handleLogout" class="logout-button">Logout</button>
+    </div>
+  </div>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
-// import { is } from "@babel/types";
+import { is } from "@babel/types";
 
 export default {
   setup() {
@@ -47,6 +56,34 @@ export default {
     const errorMessage = ref("");
     const router = useRouter();
     const isLoading = ref(false);
+    const storedUsername = ref("");
+
+    const checkLoginStatus = () => {
+      const loginStatus = localStorage.getItem("isLoggedIn") === "true";
+      const token = localStorage.getItem("jwt");
+      const savedUsername = localStorage.getItem("username");
+
+      if (!loginStatus || !token || !savedUsername) {
+        isLoggedIn.value = false;
+        storedUsername.value = "";
+      } else {
+        isLoggedIn.value = true;
+        storedUsername.value = savedUsername;
+      }
+    };
+
+    const handleLogout = () => {
+      localStorage.removeItem("jwt");
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("username");
+      localStorage.removeItem("checkoutRedirect");
+
+      isLoggedIn.value = false;
+      storedUsername.value = "";
+
+      // Refresh the page to clear any cached state
+      window.location.reload();
+    };
 
     const handleLogin = async () => {
       try {
@@ -88,13 +125,19 @@ export default {
       }
     };
 
+    onMounted(() => {
+      checkLoginStatus();
+    });
+
     return {
       username,
       password,
       handleLogin,
+      handleLogout,
       isLoggedIn,
       isLoading,
       errorMessage,
+      storedUsername,
     };
   },
 };
@@ -140,5 +183,25 @@ export default {
 
 .login-container button:hover {
   background-color: #ff002b;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+}
+
+.logout-button {
+  background-color: #ff002b;
+  color: white;
+}
+
+.logout-button:hover {
+  background-color: #ff002b;
+}
+
+.login-info {
+  text-align: center;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 </style>
