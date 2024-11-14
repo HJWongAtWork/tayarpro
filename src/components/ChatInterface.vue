@@ -27,7 +27,6 @@
   <script setup lang="ts">
   import { onMounted } from 'vue'
   import { useChatStore } from '@/stores/chatStore'
-  import type { Message } from '@/stores/chatStore'
   
   const chatStore = useChatStore()
   
@@ -38,7 +37,7 @@
   }
   
   onMounted(async () => {
-    await chatStore.loadChatHistory()
+    await chatStore.loadLocalChatHistory()
   })
   </script>
   
