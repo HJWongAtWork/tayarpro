@@ -18,6 +18,16 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore"; // Import Firestore
 import { getAuth } from "firebase/auth"; // Import Authentication
 
+// Additional for chat-related stores
+import { createPinia } from 'pinia'
+import { piniaPluginPersist } from './plugins/piniaPluginPersist'
+import { chatPlugin } from './plugins/chat'
+import router from './router'
+import vuetify from './plugins/vuetify'
+
+const pinia = createPinia()
+pinia.use(piniaPluginPersist)
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyC6FnHjsH8aM21IzgRA5lzGOGv2hEeWCH8",
@@ -38,6 +48,12 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 const vueApp = createApp(App);
+
+// Additional for chat-related stores
+vueApp.use(pinia)
+vueApp.use(router)
+vueApp.use(vuetify)
+vueApp.use(chatPlugin)
 
 vueApp.directive("click-to-expand", {
   mounted(el, binding) {

@@ -1,139 +1,188 @@
 <template>
-    <v-container>
-        <v-card class="border-sm main-card pa-5">
+    <div class="title-page">
+      <div class="line"></div>
+      <h2 class="no-background text-center">
+        <span>SERVICES</span>
+      </h2>
+      <div class="line"></div>
+    </div>
+  
+    <v-container class="mt-2" max-width="1200">
+      <v-row>
+        <v-col cols="3">
+          <div class="ma-2 pa-0">
+            <h3><strong>SERVICES CATEGORIES</strong></h3>
+          </div>
+          <v-divider thickness="2"></v-divider>
+          <v-list class="service-list">
+            <v-list-item
+              v-for="serviceType in ServiceTypeList"
+              :key="serviceType.typeid"
+            >
+              <v-checkbox
+                v-model="selectedServiceTypes"
+                :label="serviceType.description"
+                :value="serviceType.typeid"
+              >
+              </v-checkbox>
+            </v-list-item>
+          </v-list>
+        </v-col>
+        <v-col cols="9" class="content-column">
+          <div class="sticky-container">
             <v-row>
-                <v-col cols="12" md="6" class="d-flex justify-center align-center">
-                    <v-img cover
-                        src="https://s3-ap-southeast-2.amazonaws.com/mytyresite-images/news/Py7NnOUnpW_unnamed.jpg"
-                        contain class="grey lighten-2" style="height: 100%;">
-                        <template v-slot:placeholder>
-                            <v-row class="fill-height ma-0" align="center" justify="center">
-                                <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                            </v-row>
-                        </template>
-                    </v-img>
-                </v-col>
-
-                <v-col cols="12" md="6">
-                    <v-card flat>
-                        <v-card-title class="text-h5 font-weight-bold pa-0 mb-2">
-                            TYRE ALIGNMENT
-                        </v-card-title>
-
-                        <v-card-text class="pa-0 mb-4">
-                            <p class="body-2">
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab
-                                voluptatibus, corporis, quam nisi qui animi, ipsa in aspernatur
-                                unde quis veniam. Incidunt atque eum repudiandae hic saepe ab
-                                nostrum ea.
-                            </p>
-
-                            <v-chip color="green lighten-4" label small class="mt-2 mb-4">Service</v-chip>
-
-                            <p class="text-h4 font-weight-bold mb-4">MYR50.92 - RM201.00</p>
-
-                            <v-divider></v-divider>
-                            <p>Vehicle Type</p>
-                            <v-btn-toggle v-model="vehicleType" mandatory class="mb-4 pa-1">
-                                <v-btn variant="outlined" class="ma-2" value="passenger" text>Passenger Car</v-btn>
-                                <v-btn variant="outlined" class="ma-2" value="suv" text>SUV or 4X4</v-btn>
-                            </v-btn-toggle>
-                            <v-divider></v-divider>
-
-                            <p>Quantity</p>
-                            <v-btn-toggle v-model="rimSize" mandatory class="mb-4 pa-1">
-                                <v-btn v-for="size in rimSizes" :key="size" :value="size" variant="outlined"
-                                    class="ma-2" text>{{ size
-                                    }}</v-btn>
-                            </v-btn-toggle>
-
-                            <v-divider></v-divider>
-                            <p>Quantity</p>
-                            <div class="d-flex" style="max-width: 130px;">
-                                <v-btn icon small class="mr-2" @click="decrementQuantity">
-                                    <span class="text-body-1">−</span>
-                                </v-btn>
-                                <v-card-text class="text-center pa-0 flex-grow-1 mt-3">
-                                    <span class="text-body-1">{{ quantity }}</span>
-                                </v-card-text>
-                                <v-btn icon small class="ml-2" @click="incrementQuantity">
-                                    <span class="text-body-1">+</span>
-                                </v-btn>
-                            </div>
-
-                            <v-btn color="black" dark x-large block class="mt-4" @click="addToCart">
-                                ADD TO CART
-                            </v-btn>
-                        </v-card-text>
-                    </v-card>
-                </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  prepend-inner-icon="mdi-magnify"
+                  hide-details
+                  single-line
+                  v-model="searchText"
+                  class="search-field"
+                ></v-text-field>
+              </v-col>
             </v-row>
-        </v-card>
-
-
-
-
-
+          </div>
+          <v-row class="mt-9 items-container">
+            <ServiceItems :serviceItems="paginatedServiceList"> </ServiceItems>
+          </v-row>
+          <v-row justify="center" class="mt-4">
+            <v-pagination
+              v-model="currentPage"
+              :length="pageCount"
+              :total-visible="8"
+            ></v-pagination>
+          </v-row>
+        </v-col>
+      </v-row>
     </v-container>
-</template>
-
-<script>
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
-
-export default {
-    setup() {
-        const route = useRoute();
-        const vehicleType = ref('passenger');
-        const rimSize = ref(12);
-        const rimSizes = ['12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23 RUN FLAT'];
-        const quantity = ref(1);
-        const serviceId = ref(route.params.serviceId);
-
-        const addToCart = () => {
-            // Add to cart logic here
-        };
-
-        const incrementQuantity = () => {
-            quantity.value++;
-        };
-
-        const decrementQuantity = () => {
-            if (quantity.value > 1) {
-                quantity.value--;
-            }
-        };
-
-        return {
-            vehicleType,
-            rimSize,
-            rimSizes,
-            quantity,
-            serviceId,
-            addToCart,
-            incrementQuantity,
-            decrementQuantity,
-        };
+  </template>
+  
+  <style scoped>
+  .items-container {
+    position: relative;
+    z-index: 1;
+  }
+  .search-field {
+    width: 100%;
+  }
+  .sticky-container {
+    position: sticky !important;
+    top: 0;
+    background-color: transparent;
+    border-color: none;
+    z-index: 1000;
+    padding: 10px 0;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .content-column {
+    position: relative;
+  }
+  .service-list {
+    background-color: transparent;
+  }
+  .title-page {
+    display: flex;
+    align-items: center;
+    max-width: 1200px;
+    margin: 2rem auto;
+  }
+  
+  .title-page .line {
+    height: 3px;
+    flex: 1;
+    background-color: #000;
+  }
+  
+  .title-page h2 {
+    padding: 0 2rem;
+  }
+  </style>
+  
+  <script>
+  import { useUserStore } from "../stores/users";
+  import axios from "axios";
+  import ServiceItems from "@/components/ServiceItems.vue";
+  
+  export default {
+    components: {
+      ServiceItems,
     },
-};
-</script>
-
-<style scoped>
-@media (max-width: 600px) {
-    .main-card {
-        margin-top: 50px !important;
-    }
-}
-
-@media (min-width: 601px) and (max-width: 960px) {
-    .main-card {
-        margin-top: 75px !important;
-    }
-}
-
-@media (min-width: 961px) {
-    .main-card {
-        margin-top: 100px !important;
-    }
-}
-</style>
+    data() {
+      return {
+        ServiceList: [],
+        ServiceTypeList: [],
+        selectedServiceTypes: [],
+        searchText: "",
+        currentPage: 1,
+        itemsPerPage: 12,
+      };
+    },
+    methods: {
+      async fetchServiceTypeList() {
+        try {
+          const response = await axios.get("http://localhost:8000/servicetype");
+          this.ServiceTypeList = response.data;
+        } catch (error) {
+          console.log(error);
+        }
+      },
+      async fetchServiceList() {
+        try {
+          const response = await axios.get("http://localhost:8000/service");
+  
+          const groupedServices = response.data.reduce((acc, service) => {
+            if (!acc[service.description]) {
+              acc[service.description] = {
+                ...service,
+                minPrice: service.price,
+                maxPrice: service.price,
+              };
+            } else {
+              acc[service.description].minPrice = Math.min(
+                acc[service.description].minPrice,
+                service.price
+              );
+              acc[service.description].maxPrice = Math.max(
+                acc[service.description].maxPrice,
+                service.price
+              );
+            }
+            return acc;
+          }, {});
+          this.ServiceList = Object.values(groupedServices);
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    },
+    computed: {
+      filteredServiceList() {
+        return this.ServiceList.filter((service) => {
+          const typeMatch =
+            this.selectedServiceTypes.length === 0 ||
+            this.selectedServiceTypes.includes(service.typeid);
+          const searchMatch =
+            !this.searchText ||
+            service.description
+              .toLowerCase()
+              .includes(this.searchText.toLowerCase());
+          return typeMatch && searchMatch;
+        });
+      },
+      pageCount() {
+        return Math.ceil(this.filteredServiceList.length / this.itemsPerPage);
+      },
+      paginatedServiceList() {
+        const start = (this.currentPage - 1) * this.itemsPerPage;
+        const end = start + this.itemsPerPage;
+        return this.filteredServiceList.slice(start, end);
+      },
+    },
+    mounted() {
+      this.fetchServiceList();
+      this.fetchServiceTypeList();
+    },
+  };
+  </script>
+  

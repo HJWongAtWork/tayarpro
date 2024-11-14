@@ -1,65 +1,100 @@
 <template>
-  <h2 class="text-h3 text-center weight-bold sticky" style="padding: 10px">
-    My Cart
-  </h2>
-  <h4
-    class="text-h6 text-center"
-    style="background-color: #ffc0cb; padding: 20px"
-  >
-    You Sucessfully Added to Your Cart.Check Out Now
-  </h4>
-  <div class="cart-container">
-    <v-table>
-      <thead>
-        <tr>
-          <th></th>
-          <th class="text-center">Product</th>
-          <th class="text-justify">Product Description</th>
-          <th class="text-left">Unit Price</th>
-          <th class="text-left">Qty</th>
-          <th class="text-left">Price</th>
-          <th class="text-left">Selected Item</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="cart in carts" :key="cart.id">
-          <td>
-            <cartButton
-              @click="remove(cart)"
-              icon="mdi-close"
-              rounded
-            ></cartButton>
-          </td>
-          <td><v-img :src="cart.image_link"></v-img></td>
-          <td>{{ cart.title }}</td>
-          <td>RM {{ formatNumber(cart.price) }}</td>
-          <td class="weight-bold">
-            <cartButton
-              @click="increaseQuantity(cart)"
-              icon="mdi-plus"
-            ></cartButton>
-
-            {{ cart.quantity }}
-
-            <cartButton @click="decreaseQuantity(cart)" icon="mdi-minus">
-            </cartButton>
-          </td>
-          <td>RM {{ formatNumber(cart.price * cart.quantity) }}</td>
-          <td>
-            <v-checkbox
-              v-model="cart.selected"
-              label="Click to Select"
-            ></v-checkbox>
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
-  </div>
   <v-container>
-    <div>
+    <h2
+      class="text-h3 text-center weight-bold sticky responsive-title"
+      style="padding: 10px"
+    >
+      My Cart
+    </h2>
+    <h4
+      class="text-h6 text-center notification-banner"
+      style="background-color: #ffc0cb; padding: 20px"
+    >
+      You Sucessfully Added to Your Cart.Check Out Now
+    </h4>
+    <div class="cart-container">
+      <v-table>
+        <thead>
+          <tr>
+            <th class="hide-sm"></th>
+            <th class="text-center">Product</th>
+            <th class="text-justify hide-sm">Description</th>
+            <th class="text-left">Unit Price</th>
+            <th class="text-left">Qty</th>
+            <th class="text-left hide-sm">Total Price</th>
+            <th class="text-left">Selected Item</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="cart in carts" :key="cart.productid">
+            <td>
+              <cartButton
+                @click="remove(cart)"
+                icon="mdi-close"
+                rounded
+              ></cartButton>
+            </td>
+            <td class="text-center">
+              <v-img
+                :src="cart.image_link"
+                :lazy-src="placeholderImage"
+                :error-src="placeholderImage"
+                :alt="cart.title"
+                :width="$vuetify.display.smAndDown ? '60' : '100'"
+                :height="$vuetify.display.smAndDown ? '60' : '100'"
+                cover
+              >
+                <template v-slot:placeholder>
+                  <v-row
+                    class="fill-height ma-0"
+                    align="center"
+                    justify="center"
+                  >
+                    <v-progress-circular
+                      indeterminate
+                      color="grey-lighten-5"
+                    ></v-progress-circular>
+                  </v-row>
+                </template>
+              </v-img>
+            </td>
+            <td class="text-justify hide-sm">{{ cart.description }}</td>
+            <td class="text-left">RM {{ formatNumber(cart.price) }}</td>
+            <td class="text-left">
+              <div class="d-flex align-center quantity-controls">
+                <cartButton
+                  @click="decreaseQuantity(cart)"
+                  icon="mdi-minus"
+                  :disabled="cart.quantity <= 1"
+                  density="comfortable"
+                  size="small"
+                ></cartButton>
+                <span class="mx-2 quantity-text">{{ cart.quantity }}</span>
+                <cartButton
+                  @click="increaseQuantity(cart)"
+                  icon="mdi-plus"
+                  density="comfortable"
+                  size="small"
+                ></cartButton>
+              </div>
+            </td>
+            <td class="text-left hide-sm">
+              RM {{ formatNumber(cart.price * cart.quantity) }}
+            </td>
+            <td class="text-left">
+              <v-checkbox
+                v-model="cart.selected"
+                density="compact"
+              ></v-checkbox>
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
+    </div>
+    <v-container>
       <v-row>
-        <v-col cols="4">
-          <div>
+        <v-col cols="12" md="4">
+          <div class="voucher-section">
             <v-form
               class="code-container"
               validate-on="submit"
@@ -84,10 +119,11 @@
             </v-form>
           </div>
         </v-col>
-        <v-col cols="4"> </v-col>
-        <v-col cols="4">
-          <div>
-            <v-table>
+        <v-col cols="12" md="4"></v-col>
+
+        <v-col cols="12" md="4">
+          <div class="summary-table">
+            <v-table density="comfortable">
               <tbody>
                 <tr>
                   <td class="table-cell-small">Subtotal</td>
@@ -105,141 +141,11 @@
                 </tr>
                 <tr>
                   <td class="table-cell-big">Total</td>
-                  <td class="table-cell-big">RM {{ Total }}</td>
+                  <td class="table-cell-big">RM {{ Total.toFixed(2) }}</td>
                 </tr>
                 <tr>
                   <td colspan="12">
-                    <cartButton
-                      @click="showOrderDialog = true"
-                      min="260px"
-                      height="55px"
-                      color="#FF6875"
-                      display="flex"
-                      width="-webkit-fill-available"
-                    >
-                      Checkout
-                    </cartButton>
-
-                    <v-dialog
-                      v-model="showOrderDialog"
-                      max-width="800"
-                      persistent
-                    >
-                      <v-card class="pa-5" height="600" width="1000">
-                        <div position="relative;">
-                          <v-btn
-                            @click="showOrderDialog = false"
-                            style="position: absolute; top: 10px; right: 10px"
-                            ><v-icon color="red">mdi-close</v-icon></v-btn
-                          >
-                        </div>
-                        <br />
-                        <v-stepper
-                          v-model="step"
-                          non-linear
-                          flat
-                          :items="items"
-                        >
-                          <template v-slot:item.1>
-                            <v-row>
-                              <v-col flex>
-                                <v-form>
-                                  <v-text-field v-model="name" label="Name">
-                                  </v-text-field>
-                                  <v-text-field v-model="email" label="Email">
-                                  </v-text-field>
-                                  <v-checkbox
-                                    v-model="paymentType"
-                                    prepend-icon="mdi-credit-card"
-                                    label="Credit Card"
-                                    value="CreditCard"
-                                    color="red"
-                                  ></v-checkbox>
-                                  <v-checkbox
-                                    v-model="paymentType"
-                                    prepend-icon="mdi-touch-n-go"
-                                    label="TouchNGo"
-                                    value="TouchNGo"
-                                    color="red"
-                                    ><template v-slot:prepend>
-                                      <img
-                                        src="@/assets/tng.svg"
-                                        alt="TouchNGo"
-                                        class="small-image"
-                                      /> </template
-                                  ></v-checkbox>
-                                  <v-checkbox
-                                    v-model="paymentType"
-                                    label="Bank Transfer"
-                                    value="BankTransfer"
-                                    prepend-icon="mdi-bank"
-                                    color="red"
-                                  ></v-checkbox>
-                                </v-form>
-                              </v-col>
-                              <v-col flex>
-                                <v-form>
-                                  <v-text-field
-                                    v-model="membership"
-                                    label="membership"
-                                  >
-                                  </v-text-field>
-                                  <v-text-field
-                                    v-model="email"
-                                    label="email"
-                                    required
-                                  >
-                                  </v-text-field>
-                                </v-form>
-                              </v-col>
-                            </v-row>
-                          </template>
-                          <template v-slot:item.2>
-                            <v-row>
-                              <v-col cols="12">
-                                <v-form>
-                                  <v-text-field
-                                    v-model="cardNumber"
-                                    label="Card Number"
-                                  ></v-text-field>
-                                  <v-text-field
-                                    v-model="cardExpiry"
-                                    label="Expiry Date"
-                                  ></v-text-field>
-                                  <v-text-field
-                                    v-model="cardCVC"
-                                    label="CVC"
-                                  ></v-text-field>
-                                </v-form>
-                              </v-col> </v-row
-                          ></template>
-                          <template v-slot:item.3>
-                            <v-row>
-                              <v-col cols="12">
-                                <v-form>
-                                  <v-date-picker
-                                    v-model="scheduleDate"
-                                    label="Select Schedule Date"
-                                  ></v-date-picker>
-                                </v-form>
-                              </v-col>
-                            </v-row>
-                          </template>
-                          <template v-slot:item.4>
-                            <v-row class="d-flex justify-center">
-                              <v-alert type="success" text>
-                                Payment Successful! Your appointment is
-                                scheduled.
-                              </v-alert>
-                            </v-row>
-                          </template>
-                          <v-btn if>
-
-                          </v-btn>
-                        </v-stepper>
-                       
-                      </v-card>
-                    </v-dialog>
+                    <checkoutDialog v-bind:subtotal="Subtotal" />
                   </td>
                 </tr>
               </tbody>
@@ -247,70 +153,38 @@
           </div>
         </v-col>
       </v-row>
-    </div>
+    </v-container>
   </v-container>
 </template>
 
 <script>
-import { parse } from "vue/compiler-sfc";
+import { useRouter } from "vue-router";
+import axios from "axios";
 import cartButton from "../components/cartButton.vue";
-import OrderDialog from "@/components/OrderDialog.vue";
+import checkoutDialog from "../components/checkoutDialog.vue";
+import { isLogicalExpression } from "@babel/types";
+import placeholderImage from "@/assets/tyre.jpg";
+import { ref } from "vue";
+
+const isLoading = ref(true);
+const handleImageError = () => {
+  console.log("Image failed to load");
+  isLoading.value = false;
+};
 
 export default {
   components: {
     cartButton,
-    OrderDialog,
+    checkoutDialog,
+  },
+  setup() {
+    const router = useRouter();
+    return { router };
   },
   data() {
     return {
-      carts: [
-        {
-          title: "CONTINENTAL UC6 225-50-18",
-          price: "746",
-          quantity: 0,
-          image_link:
-            "https://limtayar.com.my/wp-content/uploads/2020/03/uc6-300x300.jpg",
-          image_path: "images/CONTINENTAL_UC6_225-50-18.jpg",
-          selected: false,
-        },
-        {
-          title: "CONTINENTAL MC6 235-35-19",
-          price: "1080",
-          quantity: 0,
-          image_link:
-            "https://limtayar.com.my/wp-content/uploads/2020/03/mc6-300x300.jpg",
-          image_path: "images/CONTINENTAL_MC6_235-35-19.jpg",
-          selected: false,
-          dialog: false,
-        },
-        {
-          title: "CONTINENTAL UC6 SUV 275-45-20",
-          price: "1195",
-          quantity: 0,
-          image_link:
-            "https://limtayar.com.my/wp-content/uploads/2020/03/uc6-300x300.jpg",
-          image_path: "images/CONTINENTAL_UC6_SUV_275-45-20.jpg",
-          selected: false,
-        },
-        {
-          title: "BRIDGESTONE EP150 175-65-14",
-          price: "230",
-          quantity: 0,
-          image_link:
-            "https://limtayar.com.my/wp-content/uploads/2024/08/Bridgestone_EP150.jpg",
-          image_path: "images/BRIDGESTONE_EP150_175-65-14.jpg",
-          selected: false,
-        },
-        {
-          title: "BRIDGESTONE EP300 205-55-16",
-          price: "387",
-          quantity: 0,
-          image_link:
-            "https://limtayar.com.my/wp-content/uploads/2024/08/Bridgestone_EP300.jpg",
-          image_path: "images/BRIDGESTONE_EP300_205-55-16.jpg",
-          selected: false,
-        },
-      ],
+      carts: [],
+      accountid: "ACC001",
       RedeemCode: "",
       ValidRedeemCode: [
         { code: "DISCPROT10", discount: 10 },
@@ -328,9 +202,113 @@ export default {
         "Success!!!",
       ],
       paymentType: null,
+      isLoading: true,
+      placeholderImage,
     };
   },
   methods: {
+    async fetchCartItems() {
+      try {
+        const response = await axios.get("http://localhost:8000/get_cart", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        });
+
+        // Transform the response data to match table structure
+        this.carts = response.data.map((item) => ({
+          productid: item.productid,
+          title: item.description, // For alt text in image
+          description: item.description, // For description column
+          price: item.unitprice,
+          quantity: item.quantity,
+          selected: false,
+          image_link: item.productid.startsWith("SVR")
+            ? "/images/service-placeholder.jpg"
+            : "/images/tyre-placeholder.jpg",
+        }));
+
+        console.log("Cart items loaded:", this.carts);
+      } catch (error) {
+        if (error.response?.status === 401) {
+          console.error("Unauthorized: Please login");
+          this.router.push("/login");
+        } else {
+          console.error("Error fetching cart items:", error);
+        }
+      }
+    },
+    async remove(cart) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:8000/remove_from_cart/${cart.productid}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+            },
+          }
+        );
+
+        if (response.data.message === "Item removed from cart") {
+          // Remove item from local array
+          const index = this.carts.indexOf(cart);
+          if (index > -1) {
+            this.carts.splice(index, 1);
+          }
+          // Optional: Refresh cart data
+          await this.fetchCartItems();
+        }
+      } catch (error) {
+        console.error("Error removing item:", error);
+        if (error.response?.status === 401) {
+          console.error("Unauthorized: Please login");
+        } else if (error.response?.status === 404) {
+          console.error("Item not found in cart");
+        }
+      }
+    },
+    async increaseQuantity(cart) {
+      try {
+        const newQuantity = cart.quantity + 1;
+        const response = await axios.put(
+          `http://localhost:8000/update_cart_quantity/${cart.productid}/${newQuantity}`,
+          null,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+            },
+          }
+        );
+
+        if (response.data.message) {
+          await this.fetchCartItems();
+        }
+      } catch (error) {
+        console.error("Error increasing quantity:", error);
+      }
+    },
+    async decreaseQuantity(cart) {
+      try {
+        if (cart.quantity > 1) {
+          const newQuantity = cart.quantity - 1;
+          const response = await axios.put(
+            `http://localhost:8000/update_cart_quantity/${cart.productid}/${newQuantity}`,
+            null,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+              },
+            }
+          );
+
+          if (response.data.message) {
+            await this.fetchCartItems();
+          }
+        }
+      } catch (error) {
+        console.error("Error decreasing quantity:", error);
+      }
+    },
     submitCode() {
       const validCode = this.ValidRedeemCode.find(
         (element) => element.code === this.RedeemCode
@@ -343,41 +321,31 @@ export default {
         alert("Invalid Code No Discount");
       }
     },
-    remove(cart) {
-      const index = this.carts.indexOf(cart);
-      if (index > -1) {
-        this.carts.splice(index, 1);
-      }
-    },
-    increaseQuantity(cart) {
-      cart.quantity += 1;
-    },
-    decreaseQuantity(cart) {
-      if (cart.quantity > 0) cart.quantity -= 1;
-    },
     formatNumber(value) {
       const number = typeof value === "string" ? parseInt(value) : value;
       return number.toLocaleString("en-US");
     },
-    completeProcess() {
-      this.showOrderDialog = false;
-    },
+  },
+  async mounted() {
+    await this.fetchCartItems();
   },
   computed: {
     Subtotal() {
       let subtotal = 0;
       this.carts.forEach((cart) => {
         if (cart.selected) {
-          subtotal += cart.price * cart.quantity;
+          const price = parseFloat(cart.price || cart.unitprice);
+          const quantity = parseInt(cart.quantity);
+          subtotal += price * quantity;
+          // subtotal = subtotal.toFixed(2);
         }
       });
-      console.log("Subtotal: " + subtotal);
+      console.log("Subtotal calculated:", subtotal);
       return subtotal;
     },
     SaleServiceTax() {
       return (this.Subtotal * 8) / 100;
     },
-
     Total() {
       if (this.Coupon != null && this.Coupon > 0) {
         return (
@@ -394,12 +362,26 @@ export default {
 </script>
 
 <style>
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.responsive-title {
+  font-size: clamp(1.5rem, 3vw, 2rem) !important;
+}
+.notification-banner {
+  background-color: #ffc0cb;
+  padding: 20px;
+  margin-bottom: 20px;
+  font-size: clamp(0.875rem, 2vw, 1.25rem);
+}
 .small-image {
   width: 25px;
   height: 25px;
 }
 .table-cell-small {
-  font-size: 16px; /* Adjust font size */
+  font-size: clamp(14px, 2vw, 16px); /* Adjust font size */
   padding: 4px 8px !important; /* Adjust padding */
   font-weight: normal; /* Make text bold */
   border-bottom: none !important;
@@ -407,17 +389,24 @@ export default {
 }
 
 .table-cell-big {
-  font-size: 24px; /* Adjust font size */
+  font-size: clamp(18px, 3vw, 24px); /* Adjust font size */
   padding: 6px 8px; /* Adjust padding */
   font-weight: bold; /* Make text bold */
 }
+
+.table-cell-small:last-child,
+.table-cell-big:last-child {
+  text-align: right;
+}
 .code-container {
   display: flex;
-  gap: 0;
+  gap: 10px;
 }
 .cart-container {
+  padding: 0 20px;
   width: 100%;
-  padding: 0 10px;
+  max-width: 1200;
+  margin: 0 auto;
 }
 .v-table {
   border-spacing: 4px 8px;
@@ -432,5 +421,54 @@ td {
   height: auto;
   padding: 10px 10px !important;
   background-color: #fff;
+}
+
+.summary-table {
+  max-width: 100%;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+}
+
+@media (max-width: 600px) {
+  .summary-table {
+    padding: 8px;
+  }
+
+  .table-cell-small {
+    padding: 6px !important;
+  }
+
+  .table-cell-big {
+    padding: 8px;
+  }
+}
+
+.quantity-controls {
+  min-width: 100px;
+  padding: 4px;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  justify-content: center;
+}
+
+.quantity-text {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Make it more compact on mobile */
+@media (max-width: 600px) {
+  .quantity-controls {
+    min-width: 80px;
+    padding: 2px;
+  }
+
+  .quantity-text {
+    min-width: 20px;
+  }
 }
 </style>
