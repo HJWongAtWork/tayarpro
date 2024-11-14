@@ -26,22 +26,16 @@ interface ChatResponse {
   message: string;
   status: number;
 }
-
 export const useChatStore = defineStore({
   id: "chatStore",
   state: (): ChatState => ({
-    messages: [],
+    messages: loadMessagesFromLocalStorage(), // Initialize with stored messages
     isLoading: false,
     error: null,
     isTyping: false,
   }),
 
-  getters: {
-    getMessages: (state): Message[] => state.messages,
-    getLoadingState: (state): boolean => state.isLoading,
-    getError: (state): string | null => state.error,
-    getTypingState: (state): boolean => state.isTyping,
-  },
+  // ... (keep your existing getters)
 
   actions: {
     async sendMessage(messageText: string): Promise<void> {
@@ -49,7 +43,7 @@ export const useChatStore = defineStore({
         this.isLoading = true;
         this.isTyping = true;
 
-        // Create and add user message
+        // Create user message
         const userMessage: Message = {
           id: crypto.randomUUID(),
           text: messageText,
@@ -60,10 +54,15 @@ export const useChatStore = defineStore({
         };
 
         this.messages.push(userMessage);
+        this.saveMessagesToLocalStorage();
 
-        // Get bot response
+        // Get context from previous messages
+        const context = this.getMessageContext();
+
+        // Send message with context to the chatbot
         const response: ChatResponse = await chatService.sendMessage(
-          messageText
+          messageText,
+          context
         );
 
         // Create and add bot message
@@ -77,6 +76,7 @@ export const useChatStore = defineStore({
         };
 
         this.messages.push(botMessage);
+        this.saveMessagesToLocalStorage();
       } catch (error) {
         this.error =
           error instanceof Error ? error.message : "An unknown error occurred";
@@ -87,22 +87,26 @@ export const useChatStore = defineStore({
       }
     },
 
-    async loadChatHistory(): Promise<void> {
+    getMessageContext(contextMessageCount: number = 10): string {
+      const relevantMessages = this.messages
+        .slice(-contextMessageCount * 2) // Get last N back-and-forth exchanges
+        .map(
+          (msg) =>
+            `${msg.sender === "user" ? "Human" : "Assistant"}: ${msg.text}`
+        )
+        .join("\n");
+
+      return relevantMessages
+        ? `Previous conversation:\n${relevantMessages}\n\n`
+        : "";
+    },
+
+    // Replace loadChatHistory with loadLocalChatHistory
+    loadLocalChatHistory(): void {
       try {
         this.isLoading = true;
-        const history = await chatService.getChatHistory();
-
-        // Ensure proper typing for loaded messages
-        this.messages = history.map(
-          (msg: any): Message => ({
-            id: msg.id,
-            text: msg.text,
-            sender: msg.sender,
-            timestamp: new Date(msg.timestamp),
-            type: msg.type || "text",
-            status: msg.status as MessageStatus,
-          })
-        );
+        const storedMessages = loadMessagesFromLocalStorage();
+        this.messages = storedMessages;
       } catch (error) {
         this.error =
           error instanceof Error
@@ -114,49 +118,59 @@ export const useChatStore = defineStore({
       }
     },
 
-    setTypingStatus(status: boolean): void {
-      this.isTyping = status;
-    },
-
-    clearError(): void {
-      this.error = null;
-    },
-
     clearMessages(): void {
       this.messages = [];
+      localStorage.removeItem("chatMessages"); // Clear from local storage too
     },
 
-    async deleteMessage(messageId: string): Promise<void> {
-      try {
-        this.messages = this.messages.filter((msg) => msg.id !== messageId);
-        await chatService.deleteMessage(messageId);
-      } catch (error) {
-        this.error =
-          error instanceof Error ? error.message : "Failed to delete message";
-        throw error;
+    deleteMessage(messageId: string): void {
+      this.messages = this.messages.filter((msg) => msg.id !== messageId);
+      this.saveMessagesToLocalStorage(); // Save after deletion
+    },
+
+    updateMessageStatus(messageId: string, status: MessageStatus): void {
+      const message = this.messages.find((msg) => msg.id === messageId);
+      if (message) {
+        message.status = status;
+        this.saveMessagesToLocalStorage(); // Save after status update
       }
     },
-
-    async updateMessageStatus(
-      messageId: string,
-      status: MessageStatus
-    ): Promise<void> {
+    limitStoredMessages(limit: number = 50): void {
+      if (this.messages.length > limit) {
+        this.messages = this.messages.slice(-limit);
+        this.saveMessagesToLocalStorage();
+      }
+    },
+    // New method to save messages to localStorage
+    saveMessagesToLocalStorage(): void {
       try {
-        const message = this.messages.find((msg) => msg.id === messageId);
-        if (message) {
-          message.status = status;
-          await chatService.updateMessageStatus(messageId, status);
-        }
+        const messagesToStore = this.messages.map((msg) => ({
+          ...msg,
+          timestamp: msg.timestamp.toISOString(), // Convert Date to string for storage
+        }));
+        localStorage.setItem("chatMessages", JSON.stringify(messagesToStore));
       } catch (error) {
-        this.error =
-          error instanceof Error
-            ? error.message
-            : "Failed to update message status";
-        throw error;
+        console.error("Failed to save messages to localStorage:", error);
       }
     },
   },
 });
+
+// Helper function to load messages from localStorage
+function loadMessagesFromLocalStorage(): Message[] {
+  try {
+    const storedMessages = localStorage.getItem("chatMessages");
+    if (!storedMessages) return [];
+
+    return JSON.parse(storedMessages).map((msg: any) => ({
+      ...msg,
+      timestamp: new Date(msg.timestamp), // Convert string back to Date
+    }));
+  } catch (error) {
+    console.error("Failed to load messages from localStorage:", error);
+    return [];
+  }
+}
 
 // Export types for use in components
 export type { Message, ChatState, ChatResponse, MessageStatus };
