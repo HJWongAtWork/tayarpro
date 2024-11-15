@@ -2,13 +2,12 @@
 import axios from "axios";
 import type { Message, ChatResponse, MessageStatus } from "@/stores/chatStore";
 
-const API_URL = import.meta.env.CHATBOT_API_URL || 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_CHATBOT_API_URL || 'https://vertex-api-service-1082564059873.us-central1.run.app';
 
 export const chatService = {
-  async sendMessage(message: string, context: string = ''): Promise<ChatResponse> {
-    const response = await axios.post(`${API_URL}/chat`, { 
-      message: `${context}\n\nHuman: ${message}`
-     });
+  async sendMessage(message: string): Promise<ChatResponse> {
+    const response = await axios.get(`${API_URL}/query?question=${message}`
+     );
     return response.data;
   },
 

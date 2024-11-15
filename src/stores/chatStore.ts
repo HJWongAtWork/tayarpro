@@ -23,7 +23,7 @@ interface ChatState {
 }
 
 interface ChatResponse {
-  message: string;
+  answer: string;
   status: number;
 }
 export const useChatStore = defineStore({
@@ -68,7 +68,7 @@ export const useChatStore = defineStore({
         // Create and add bot message
         const botMessage: Message = {
           id: crypto.randomUUID(),
-          text: response.message,
+          text: response.answer,
           sender: "bot",
           timestamp: new Date(),
           type: "text",
