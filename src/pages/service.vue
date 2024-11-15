@@ -100,7 +100,7 @@
   </style>
   
   <script>
-  import { useUserStore } from "../stores/users";
+  import { userStore } from "@/stores/userStore";
   import axios from "axios";
   import ServiceItems from "@/components/ServiceItems.vue";
   

@@ -14,7 +14,7 @@
       <router-link to="/about-us" class="link"
         ><v-tab>About Us</v-tab></router-link
       >
-      <router-link to="/tyres" class="link"><v-tab>Tyres</v-tab></router-link>
+      <router-link to="/products" class="link"><v-tab>Tyres</v-tab></router-link>
       <router-link to="/services" class="link"
         ><v-tab>Services</v-tab></router-link
       >
