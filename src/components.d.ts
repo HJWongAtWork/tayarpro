@@ -27,6 +27,7 @@ declare module 'vue' {
     OrderDialog: typeof import('./components/OrderDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Schedule: typeof import('./components/schedule.vue')['default']
     Service: typeof import('./components/Service.vue')['default']
     ServiceItems: typeof import('./components/ServiceItems.vue')['default']
     TextAreaInputComponent: typeof import('./components/TextAreaInputComponent.vue')['default']
