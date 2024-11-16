@@ -8,6 +8,7 @@ export const vehicleComposable = () => {
   const brandInput = ref("");
   const modelInput = ref("");
   const yearInput = ref(0);
+  const tyreSizeInput = ref("");
 
   const fetchVehicles = async () => {
     await vehicle_store.fetchVehicles();
@@ -26,7 +27,8 @@ export const vehicleComposable = () => {
       plateNumber: plateNumberInput.value,
       brand: brandInput.value,
       model: modelInput.value,
-      year: yearInput.value
+      year: yearInput.value,
+      tyreSize: tyreSizeInput.value
     };
     vehicles.value.push(newVehicle);
   };
@@ -38,6 +40,7 @@ export const vehicleComposable = () => {
       vehicles.value[index].brand = brandInput.value;
       vehicles.value[index].model = modelInput.value;
       vehicles.value[index].year = yearInput.value;
+      vehicles.value[index].tyreSize = tyreSizeInput.value;
     }
   };
 
@@ -55,6 +58,7 @@ export const vehicleComposable = () => {
     brandInput,
     modelInput,
     yearInput,
+    tyreSizeInput,
     fetchVehicles,
     getLatestVehicleId,
     addVehicle,

@@ -7,7 +7,8 @@ export const vehicleStore = defineStore('vehicleStore', {
       plateNumber: string,
       brand: string,
       model: string,
-      year: number
+      year: number,
+      tyreSize: string
     }[]
   }),
   getters: {
@@ -22,7 +23,8 @@ export const vehicleStore = defineStore('vehicleStore', {
         plateNumber: 'ABC123',
         brand: 'Toyota',
         model: 'Camry', 
-        year: 2022
+        year: 2022,
+        tyreSize: '275/35'
       };
       this.vehicles.push(vehicleData1);
       const vehicleData2 = {
@@ -30,7 +32,8 @@ export const vehicleStore = defineStore('vehicleStore', {
         plateNumber: 'DEF456',
         brand: 'Honda',
         model: 'Civic',
-        year: 2021
+        year: 2021,
+        tyreSize: '275/35'
       };
       this.vehicles.push(vehicleData2);
       const vehicleData3 = {
@@ -38,7 +41,8 @@ export const vehicleStore = defineStore('vehicleStore', {
         plateNumber: 'GHI789',
         brand: 'Proton',
         model: 'Exora',
-        year: 2020
+        year: 2020,
+        tyreSize: '275/35'
       };
       this.vehicles.push(vehicleData3);
       // this.vehicles.push(vehicleData1);

@@ -57,11 +57,14 @@
                   <v-list-item @click="changePasswordClicked"
                     >Change Password</v-list-item
                   >
-                  <router-link to="/appointments" style="color: black; text-decoration: none">
-                  <v-list-item @click="menu = false"
-                    >Manage Appointments</v-list-item
+                  <router-link
+                    to="/appointments"
+                    style="color: black; text-decoration: none"
                   >
-                </router-link>
+                    <v-list-item @click="menu = false"
+                      >Manage Appointments</v-list-item
+                    >
+                  </router-link>
                   <v-list-item @click="pastAppointmentsDialog = true"
                     >Past Appointments</v-list-item
                   >
@@ -92,11 +95,14 @@
                       <v-list-item @click="changePasswordClicked"
                         >Change Password</v-list-item
                       >
-                      <router-link to="/appointments" style="color: black; text-decoration: none">
-                  <v-list-item @click="menu = false"
-                    >Manage Appointments</v-list-item
-                  >
-                </router-link>
+                      <router-link
+                        to="/appointments"
+                        style="color: black; text-decoration: none"
+                      >
+                        <v-list-item @click="menu = false"
+                          >Manage Appointments</v-list-item
+                        >
+                      </router-link>
                       <v-list-item @click="pastAppointmentsDialog = true"
                         >Past Appointments</v-list-item
                       >
@@ -261,11 +267,11 @@
 
               <v-col cols="12" sm="12" md="12">
                 <!-- <div style="float: right" v-if="isEdit"> -->
-                  <v-card-actions
-                class="d-flex justify-end"
-                style="padding-top: 20px"
-                v-if="isEdit"
-              >
+                <v-card-actions
+                  class="d-flex justify-end"
+                  style="padding-top: 20px"
+                  v-if="isEdit"
+                >
                   <v-btn
                     @click="handleSaveBtn()"
                     :disabled="!isValidEdit"
@@ -287,7 +293,12 @@
             <h1>Vehicles</h1>
           </v-col>
           <v-col cols="12" sm="12" md="12">
-            <v-btn class="save-btn" @click="handleVehicleDialog(newCar, 'add', null)"> + Add Vehicle </v-btn>
+            <v-btn
+              class="save-btn"
+              @click="handleVehicleDialog(newCar, 'add', null)"
+            >
+              + Add Vehicle
+            </v-btn>
           </v-col>
           <v-col
             v-for="car in displayedVehicles"
@@ -306,14 +317,18 @@
                 class="d-flex justify-end"
                 style="padding-top: 20px"
               >
-                <v-icon 
-                class="small-icon text-green glow-on-hover" 
-                style="margin-right: 20px"
-                @click="handleVehicleDialog(car, 'edit', car.id)"
-                > 
+                <v-icon
+                  class="small-icon text-green glow-on-hover"
+                  style="margin-right: 20px"
+                  @click="handleVehicleDialog(car, 'edit', car.id)"
+                >
                   mdi-pencil
                 </v-icon>
-                <v-icon class="small-icon text-red glow-on-hover" @click="handleVehicleDialog(car, 'delete', car.id)">mdi-delete</v-icon>
+                <v-icon
+                  class="small-icon text-red glow-on-hover"
+                  @click="handleVehicleDialog(car, 'delete', car.id)"
+                  >mdi-delete</v-icon
+                >
               </v-card-actions>
             </v-card>
           </v-col>
@@ -425,95 +440,139 @@
   </v-dialog>
 
   <v-dialog v-model="pastAppointmentsDialog" max-width="2000px">
-      <v-card>
-        <v-card-title>Past Appointments</v-card-title>
-        <v-card-text>
-          <v-row>
-            <v-col v-for="appt in pastAppointments.slice(0, 3)" :key="appt.id" cols="12" sm="12" md="3">
-              <v-card>
-                <v-card-title>
-                  <p>ID: {{ appt.id }}</p>
-                </v-card-title>
-                <v-card-subtitle>
-                  <p>Date: {{ appt.dateTime.toLocaleDateString() }}</p>
-                  <p>Time: {{ appt.dateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}</p>
-                </v-card-subtitle>
-                <v-card-text>
-                  <p>Service: {{ appt.service }}</p>
-                  <p>Bay: {{ appt.bay }}</p>
-                  <p>Vehicle: {{ appt.brand }} {{ appt.model }} ({{ appt.year }})</p>
-                  <p>Status: {{ appt.status }}</p>
-                </v-card-text>
-              </v-card>
-            </v-col>
-            <v-col cols="12" sm="12" md="3" v-if="pastAppointments.length > 3">
-            <v-card outlined class="d-flex align-center justify-center" height="100%">
+    <v-card>
+      <v-card-title>Past Appointments</v-card-title>
+      <v-card-text>
+        <v-row>
+          <v-col
+            v-for="appt in pastAppointments.slice(0, 3)"
+            :key="appt.id"
+            cols="12"
+            sm="12"
+            md="3"
+          >
+            <v-card>
+              <v-card-title>
+                <p>ID: {{ appt.id }}</p>
+              </v-card-title>
+              <v-card-subtitle>
+                <p>Date: {{ appt.dateTime.toLocaleDateString() }}</p>
+                <p>
+                  Time: {{ appt.dateTime.toLocaleTimeString([], { hour:
+                  '2-digit', minute: '2-digit' }) }}
+                </p>
+              </v-card-subtitle>
+              <v-card-text>
+                <p>Service: {{ appt.service }}</p>
+                <p>Bay: {{ appt.bay }}</p>
+                <p>
+                  Vehicle: {{ appt.brand }} {{ appt.model }} ({{ appt.year }})
+                </p>
+                <p>Status: {{ appt.status }}</p>
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="12" md="3" v-if="pastAppointments.length > 3">
+            <v-card
+              outlined
+              class="d-flex align-center justify-center"
+              height="100%"
+            >
               <v-card-title class="text-center">
-                <router-link :to="{ path: '/appointments', query: { tab: 'tab-complete' } }">
+                <router-link
+                  :to="{ path: '/appointments', query: { tab: 'tab-complete' } }"
+                >
                   Show more...
                 </router-link>
               </v-card-title>
             </v-card>
           </v-col>
-          </v-row>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn @click="pastAppointmentsDialog = false">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+        </v-row>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn @click="pastAppointmentsDialog = false">Close</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 
-    <v-dialog v-model="vehicleDialog" max-width="500px">
-        <v-card>
-          <v-card-title class="text-h5">
-            <span class="headline">
-              <span v-if="vehicleDialogAction === 'add'">Add Vehicle</span>
-              <span v-if="vehicleDialogAction === 'edit'">Edit Vehicle</span>
-              <span v-if="vehicleDialogAction === 'delete'">Delete Vehicle</span>
-            </span>
-          </v-card-title>
-          <v-card-text>
-            <v-form ref="form" v-model="isValidAddVehicle">
-              <v-text-field
-                label="Plate Number"
-                v-model="plateNumberInput"
-                :rules="[rules.required]"
-                required
-                :disabled="vehicleDialogAction === 'delete'"
-              ></v-text-field>
-              <v-text-field
-                label="Brand"
-                v-model="brandInput"
-                :rules="[rules.required]"
-                required
-                :disabled="vehicleDialogAction === 'delete'"
-              ></v-text-field>
-              <v-text-field
-                label="Model"
-                v-model="modelInput"
-                :rules="[rules.required]"
-                required
-                :disabled="vehicleDialogAction === 'delete'"
-              ></v-text-field>
-              <v-text-field
-                label="Year"
-                v-model="yearInput"
-                type="number"
-                :rules="[rules.required, rules.year]"
-                required
-                :disabled="vehicleDialogAction === 'delete'"
-              ></v-text-field>
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn text @click="vehicleDialog = false">Cancel</v-btn>
-            <v-btn v-if="vehicleDialogAction === 'add'" class="save-btn" style="margin-right: 0px;" :disabled="!isValidAddVehicle" @click="handleAddVehicleBtn">Add</v-btn>
-            <v-btn v-if="vehicleDialogAction === 'edit'" class="save-btn" style="margin-right: 0px;" :disabled="!isValidAddVehicle" @click="handleEditVehicleBtn">Save</v-btn>
-            <v-btn v-if="vehicleDialogAction === 'delete'" class="save-btn" style="margin-right: 0px;" :disabled="!isValidAddVehicle" @click="handleDeleteVehicleBtn">Delete</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+  <v-dialog v-model="vehicleDialog" max-width="500px">
+    <v-card>
+      <v-card-title class="text-h5">
+        <span class="headline">
+          <span v-if="vehicleDialogAction === 'add'">Add Vehicle</span>
+          <span v-if="vehicleDialogAction === 'edit'">Edit Vehicle</span>
+          <span v-if="vehicleDialogAction === 'delete'">Delete Vehicle</span>
+        </span>
+      </v-card-title>
+      <v-card-text>
+        <v-form ref="form" v-model="isValidAddVehicle">
+          <v-text-field
+            label="Plate Number"
+            v-model="plateNumberInput"
+            :rules="[rules.required]"
+            required
+            :disabled="vehicleDialogAction === 'delete'"
+          ></v-text-field>
+          <v-text-field
+            label="Brand"
+            v-model="brandInput"
+            :rules="[rules.required]"
+            required
+            :disabled="vehicleDialogAction === 'delete'"
+          ></v-text-field>
+          <v-text-field
+            label="Model"
+            v-model="modelInput"
+            :rules="[rules.required]"
+            required
+            :disabled="vehicleDialogAction === 'delete'"
+          ></v-text-field>
+          <v-text-field
+            label="Year"
+            v-model="yearInput"
+            type="number"
+            :rules="[rules.required, rules.year]"
+            required
+            :disabled="vehicleDialogAction === 'delete'"
+          ></v-text-field>
+          <v-text-field
+            label="Tyre Size (Optional)"
+            v-model="tyreSizeInput"
+            type="string"
+            :disabled="vehicleDialogAction === 'delete'"
+          ></v-text-field>
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn text @click="vehicleDialog = false">Cancel</v-btn>
+        <v-btn
+          v-if="vehicleDialogAction === 'add'"
+          class="save-btn"
+          style="margin-right: 0px"
+          :disabled="!isValidAddVehicle"
+          @click="handleAddVehicleBtn"
+          >Add</v-btn
+        >
+        <v-btn
+          v-if="vehicleDialogAction === 'edit'"
+          class="save-btn"
+          style="margin-right: 0px"
+          :disabled="!isValidAddVehicle"
+          @click="handleEditVehicleBtn"
+          >Save</v-btn
+        >
+        <v-btn
+          v-if="vehicleDialogAction === 'delete'"
+          class="save-btn"
+          style="margin-right: 0px"
+          :disabled="!isValidAddVehicle"
+          @click="handleDeleteVehicleBtn"
+          >Delete</v-btn
+        >
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -572,7 +631,7 @@
           emailValid: v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
           numberOnly: v => /^\d+$/.test(v) || 'Must contain digits only',
           phoneLength: v => v.length >= 10 && v.length <= 15 || 'Phone number must be 10-15 digits',
-          year: value => (value >= 1900 && value <= new Date().getFullYear()) || 'Invalid year.',
+          year: value => (value >= 1900 && value <= new Date().getFullYear()) || 'Invalid year. Year must be more than 1900.',
           bay: value => value > 0 || 'Bay number must be greater than zero.',
         },
         pastAppointmentsDialog: false,
@@ -619,6 +678,7 @@
         brandInput,
         modelInput,
         yearInput,
+        tyreSizeInput,
         fetchVehicles,
         getLatestVehicleId,
         addVehicle,
@@ -690,6 +750,7 @@
         brandInput,
         modelInput,
         yearInput,
+        tyreSizeInput,
         fetchVehicles,
         getLatestVehicleId,
         addVehicle,
@@ -752,12 +813,14 @@
           this.brandInput = '';
           this.modelInput = '';
           this.yearInput = '';
+          this.tyreSizeInput = '';
         }
         else {
           this.plateNumberInput = car.plateNumber;
           this.brandInput = car.brand;
           this.modelInput = car.model;
           this.yearInput = car.year;
+          this.tyreSizeInput = car.tyreSize;
         }
       },
       handleAddVehicleBtn() {

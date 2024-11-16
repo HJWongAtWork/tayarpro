@@ -8,7 +8,7 @@
         <div id="map" class="map"></div>
       </v-col>
       <v-col cols="12" sm="12" md="6">
-        <v-card v-for="location in locations" :key="location.title" class="pa-4" style="margin: 15px;">
+        <v-card v-for="location in locations" :key="location.title" class="pa-4 custom-card" style="margin: 15px;">
           <v-card-title class="d-flex">
             <v-icon color="black" size="40" icon="mdi-map-marker"/>
             <h3>{{ location.title }}</h3>
@@ -57,7 +57,7 @@ export default {
           phone: '0198765432'
         },
         {
-          title: 'TayarPro Kuchai Business Park',
+          title: 'TayarPro Kuchai Business Park (Opening Soon)',
           address: {
             unitNO: '38',
             street: 'Jalan lagi Tak Tahu',
@@ -102,5 +102,11 @@ export default {
   padding-bottom: 100%; 
   position: relative; 
   object-fit: cover;
+}
+
+.custom-card .v-card-title {
+  white-space: normal; /* Allow text to wrap */
+  word-wrap: break-word; /* Break words if necessary */
+  overflow-wrap: break-word; /* Prevent overflow for long words */
 }
 </style>
