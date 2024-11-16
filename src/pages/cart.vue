@@ -153,6 +153,11 @@
           </div>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col>
+          <Schedule />
+        </v-col>
+      </v-row>
     </v-container>
   </v-container>
 </template>

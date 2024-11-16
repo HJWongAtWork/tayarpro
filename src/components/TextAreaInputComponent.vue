@@ -5,6 +5,7 @@
       v-model="inputValue"
       :label="labelName"
       :disabled="isDisable"
+      :rules="rules"
       @input="$emit('update:modelValue', inputValue)"
       style="
         border: 1px solid black;
@@ -17,7 +18,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -38,7 +39,11 @@ export default defineComponent({
     modelValue: {
       type: String,
       default: ""
-    }
+    },
+    rules: {
+      type: Array as PropType<((v: any) => boolean | string)[]>,
+      default: () => [],
+    },
   },
   watch: {
     modelValue(newValue) {

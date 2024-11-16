@@ -12,30 +12,30 @@
         ></v-select>
       </v-col>
 
-      <v-col cols="6">
+      <v-col cols="12" sm="12" md="6" class="d-flex justify-center">
         {{ formattedDate }}
       </v-col>
 
-      <v-col cols="3">
+      <v-col cols="12" sm="12" md="3">
         <DatePicker
           v-model="dateSelected"
           label="Date"
         />
       </v-col>
 
-      <v-col cols="1">
+      <v-col cols="4" sm="4" md="1" class="d-flex justify-center">
         <v-btn @click="previousDate()">
           &lt;
         </v-btn>
       </v-col>
         
-      <v-col cols="1">
+      <v-col cols="4" sm="4" md="1" class="d-flex justify-center">
         <v-btn @click="todayDate()">
           today
         </v-btn>
       </v-col>
 
-      <v-col cols="1">
+      <v-col cols="4" sm="4" md="1" class="d-flex justify-center">
         <v-btn @click="nextDate()">
           &gt;
         </v-btn>
@@ -43,7 +43,7 @@
 
     </v-row>
 
-    <!-- Schedule Table -->
+    <div class="table-responsive">
     <table class="schedule-table">
       <thead>
         <tr>
@@ -59,16 +59,12 @@
       </thead>
       <tbody>
         <tr v-for="(bay, bayIndex) in bays" :key="'bay-' + bayIndex">
-          <!-- Bay label on the left -->
           <td class="text-center"><strong>{{ bay }}</strong></td>
-
-          <!-- Time slots for each bay with table style -->
           <td
             v-for="(hour, hourIndex) in hours"
             :key="'bay-' + bayIndex + '-hour-' + hourIndex"
             class="slot-cell"
           >
-            <!-- Display appointment chip if an appointment exists for this time slot -->
             <v-chip
               v-if="schedule[hour][bay].year !== -1 && userType === 'admin'"
               color="primary"
@@ -78,7 +74,6 @@
             >
               id: {{ schedule[hour][bay].id }}
             </v-chip>
-
             <v-chip
               v-if="schedule[hour][bay].year !== -1 && userType === 'customer'"
               color="red lighten-2"
@@ -87,8 +82,6 @@
             >
               NA
             </v-chip>
-
-            <!-- Display empty slot chip for scheduling -->
             <v-chip
               v-else-if="schedule[hour][bay].year === -1 && (userType === 'admin' || userType === 'customer')"
               color="green lighten-2"
@@ -102,13 +95,12 @@
         </tr>
       </tbody>
     </table>
+  </div>
 
-    <!-- Appointment Form -->
     <h3 class="mt-5">Add New Appointment</h3>
     <v-form v-model="addFormValid" :disabled="userType === ''">
       <v-row>
-        <!-- Bay Selection -->
-        <v-col cols="4">
+        <v-col cols="12" sm="12" md="4">
           <v-select
             v-model="newBay"
             :items="bays2.map(bay => bay.text)"
@@ -121,9 +113,7 @@
             :rules="[rules.required]"
           ></v-select>
         </v-col>
-
-        <!-- Start Hour Selection -->
-        <v-col cols="4">
+        <v-col cols="12" sm="12" md="4">
           <v-select
             v-model="newStartHour"
             :items="filteredHours.map(hour => hour.text)"
@@ -137,9 +127,7 @@
             :disabled="newBay === ''"
           ></v-select>
         </v-col>
-
-        <!-- Service Selection -->
-        <v-col cols="4">
+        <v-col cols="12" sm="12" md="4">
           <v-select
             v-model="newService"
             :items="services"
@@ -149,8 +137,7 @@
             :rules="[rules.required]"
           ></v-select>
         </v-col>
-
-        <v-col cols="4">
+        <v-col cols="12" sm="12" md="4">
           <v-text-field
             v-model="newBrand"
             label="Enter Car Brand"
@@ -159,8 +146,7 @@
             :rules="[rules.required]"
           ></v-text-field>
         </v-col>
-
-        <v-col cols="4">
+        <v-col cols="12" sm="12" md="4">
           <v-text-field
             v-model="newModel"
             label="Enter Car Model"
@@ -169,8 +155,7 @@
             :rules="[rules.required]"
           ></v-text-field>
         </v-col>
-
-        <v-col cols="4">
+        <v-col cols="12" sm="12" md="4">
           <v-text-field
             type="number"
             v-model="newYear"
@@ -181,8 +166,6 @@
           ></v-text-field>
         </v-col>
       </v-row>
-
-      <!-- Submit Button -->
       <v-row>
         <v-col cols="12" class="d-flex justify-center">
           <v-btn
@@ -196,7 +179,6 @@
       </v-row>
     </v-form>
 
-    <!-- Appointment Details Dialog -->
     <v-dialog v-model="dialog" max-width="400">
       <v-card>
         <v-card-title class="text-h5">Appointment Details</v-card-title>
@@ -334,30 +316,11 @@
         });
 
         onMounted(() => {
-          document.title = "Schedule Test";
+          //localStorage.setItem("username", username.value);
           transformToSchedule();
           isBaysfull();
         });
 
-        // const transformToSchedule = () => {
-        //   appts.forEach(appt => {
-        //     const startHour = appt.dateTime.toLocaleTimeString([], { hour: 'numeric', hour12: true });
-        //     const endHour = new Date(appt.dateTime.getTime() + 60 * 60 * 1000).toLocaleTimeString([], { hour: 'numeric', hour12: true });
-        //     const bayKey = `Bay ${appt.bay}`;
-        //     // Assign appointment to the correct bay and time
-        //     schedule.value[startHour][bayKey] = {
-        //       id: appt.id,
-        //       service: appt.service,
-        //       bay: bayKey,
-        //       startHour,
-        //       endHour,
-        //       brand: appt.brand,
-        //       model: appt.model,
-        //       year: appt.year,
-        //       status: appt.status
-        //     };
-        //   });
-        // };
         const transformToSchedule = () => {
           initializeSchedule();
           appts.forEach(appt => {
@@ -381,25 +344,6 @@
           });
         };
 
-        // const isBaysfull = () => {
-        //   let count = 0;
-        //   bays.forEach(bay => {
-        //     count = 0;
-        //     hours.forEach(hour => {
-        //       if (schedule.value[hour][bay].id !== -1) {
-        //         count = count + 1;
-        //       }
-        //     });
-        //     if (count === 9) {
-        //       bays2.value.forEach(bay2 => {
-        //         if (bay2.value === bay) {
-        //           bay2.disabled = true;
-        //         }
-        //       });
-        //     };
-        //   });
-        //   bays2.value = bays2.value.filter(bay => bay.disabled === false);
-        // };
         const isBaysfull = () => {
           bays.forEach(bay => {
             const isFull = hours.every(hour => schedule.value[hour][bay].id !== -1);
@@ -413,19 +357,15 @@
         };
 
         function createDateTime(date, hour) {
-          // Separate hour and period (AM/PM)
           let [hourStr, period] = hour.split(" ");
           let hour24 = parseInt(hourStr, 10);
-          // Convert to 24-hour format
           if (period === "PM" && hour24 !== 12) {
             hour24 += 12;
           } else if (period === "AM" && hour24 === 12) {
             hour24 = 0;
           }
-          // Create a Date object using the combined date and hour
           let dateTimeStr = `${date}T${String(hour24).padStart(2, '0')}:00:00`;
           let dateTime = new Date(dateTimeStr);
-
           return dateTime;
         }
 
@@ -597,7 +537,12 @@
   }
 
   .v-select .v-label {
-    margin-top: 0; /* Ensure label is not moved up */
-    margin-left: 10px; /* Optionally adjust the left margin for uniformity */
+    margin-top: 0;
+    margin-left: 10px; 
+  }
+
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
   }
 </style>
