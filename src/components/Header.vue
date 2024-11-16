@@ -7,10 +7,10 @@
           height="100"
         />
       </router-link>
-    </div>
 
     <v-spacer></v-spacer>
     <v-tabs>
+      <v-tab style="display: none;"></v-tab>
       <router-link to="/about-us" class="link"
         ><v-tab>About Us</v-tab></router-link
       >
