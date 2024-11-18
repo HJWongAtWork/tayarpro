@@ -12,7 +12,7 @@ interface ServiceDetail {
 
 export const useServiceStore = defineStore('serviceStore', {
   state: () => ({
-    serviceDetails: [] as ServiceDetail[],
+    serviceDetails: [] as ServiceDetail[]
   }),
   actions: {
     async fetchServiceDetails() {
@@ -34,3 +34,4 @@ export const useServiceStore = defineStore('serviceStore', {
     },
   },
 });
+    

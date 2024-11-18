@@ -19,7 +19,7 @@
             </v-text-field>
 
             <!-- Send button -->
-            <v-btn icon="mdi-send" color="primary" :disabled="!messageText.trim() || loading" @click="sendMessage" />
+            <v-btn icon="mdi-send" color="#FF3131" :disabled="!messageText.trim() || loading" @click="sendMessage" />
         </v-form>
 
         <!-- Emoji picker (you'll need to implement or use a library) -->
