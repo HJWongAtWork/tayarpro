@@ -30,6 +30,9 @@
         {{ isLoading ? "Logging in..." : "Login" }}
       </button>
     </form>
+    <div align="center">
+      Not yet registered? <router-link to="/register">Register NOW</router-link>!
+    </div>
   </div>
   <div v-else>
     <div class="login-info">
