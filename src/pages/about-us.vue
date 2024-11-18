@@ -1,17 +1,15 @@
 <template>
   <v-main>
-
-
     <v-container class="my-12">
       <v-row class="d-flex align-stretch">
         <!-- Image Column -->
-        <v-col cols="5">
+        <v-col cols="12" sm="12" md="5">
           <v-img src="https://t3.ftcdn.net/jpg/08/01/05/86/360_F_801058688_GOSu2veqaKIlo1RG5REMlCOiN9PZobk9.jpg"
             height="100%" cover></v-img>
         </v-col>
 
         <!-- Text Column -->
-        <v-col cols="7">
+        <v-col cols="12" sm="12" md="7">
           <p
             style="font-size: 35px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; margin-bottom: 20px;">
             Our <span class="highlight">Company Overview</span>
