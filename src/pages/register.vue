@@ -46,6 +46,11 @@
                                     type="password" @paste.prevent @input="v$.confirmPassword.$touch()"
                                     :error-messages="errorMessages.confirmPassword"></v-text-field>
                             </v-col>
+                            <v-col cols="12" align="justify" class="py-0">
+                                <v-card-text class="text-subtitle-1 font-weight-medium pt-3 pb-1">Enter
+                                    Date of Birth</v-card-text>
+                                <DatePicker v-model="form.dateOfBirth" label="Date of Birth" :max="maxDate"/>
+                            </v-col>
                             <v-col cols="2" align="center" class="pl-5 pr-0 py-0">
                                 <v-checkbox v-model="form.agree" hide-details @input="v$.agree.$touch()"
                                     :error-messages="errorMessages.agree"></v-checkbox>
@@ -60,7 +65,7 @@
                                 <v-btn class="my-2" type="submit" color="#FF3131" :disabled="v$.$invalid" block>Create
                                     Account</v-btn>
                                 <v-card-text class="text-center text-body-2 pt-0">Already registered? <RouterLink
-                                        to="/signup">
+                                        to="/login">
                                         Sign In Here
                                     </RouterLink>
                                 </v-card-text>
@@ -77,6 +82,7 @@
                 <v-dialog v-model="showSuccess" width="500">
                     <v-card class="pa-10 text-center">
                         <v-card-title>Registration Success!</v-card-title>
+                        <v-card-subtitle>Please login using your email as your username.</v-card-subtitle>
                         <v-card-subtitle>You will be redirected to the main page momentarily...</v-card-subtitle>
                     </v-card>
                 </v-dialog>
@@ -97,6 +103,7 @@ import { required, email, minLength } from '@vuelidate/validators'
 import { ref, reactive, computed } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import DatePicker from '@/components/DatePicker.vue';
 
 export default {
     setup() {
@@ -107,6 +114,7 @@ export default {
             confirmEmail: '',
             newPassword: '',
             confirmPassword: '',
+            dateOfBirth: new Date(),
             agree: false
         });
 
@@ -114,6 +122,7 @@ export default {
         const showConfirm = ref(false);
         const showSuccess = ref(false);
         const showFail = ref(false);
+        const maxDate = new Date();
 
         // Custom validators
         const sameAsNewEmail = (value) => value === form.newEmail;
@@ -128,6 +137,7 @@ export default {
             confirmEmail: { required, email, sameAsNewEmail },
             newPassword: { required, minLength: minLength(10), hasCapitalLetter, hasSymbol, hasNumber },
             confirmPassword: { required, sameAsNewPassword },
+            dateOfBirth: { required },
             agree: { required, sameAsTrue }
         };
 
@@ -138,6 +148,7 @@ export default {
             confirmEmail: v$.value.confirmEmail.$errors.map(e => e.$message),
             newPassword: v$.value.newPassword.$errors.map(e => e.$message),
             confirmPassword: v$.value.confirmPassword.$errors.map(e => e.$message),
+            dateOfBirth: v$.value.dateOfBirth.$errors.map(e => e.$message),
             agree: v$.value.agree.$errors.map(e => e.$message)
         }));
 
@@ -149,22 +160,24 @@ export default {
                 try {
                     const registerForm = {
                         "email": form.newEmail,
+                        "phonenumber": "",
                         "password": form.newPassword,
                         "username": form.newEmail,
-                        "first_name": "",
-                        "last_name": "",
+                        "firstname": "",
+                        "lastname": "",
                         "gender": "",
                         "address": "",
                         "city": "",
                         "state": "",
-                        "zip_code": 0
+                        "zipcode": "",
+                        "dob": form.dateOfBirth.toISOString().split('T')[0]
                     };
                     const response = await axios.post('/api/register', registerForm);
-                    console.log('Registration successful');
+                    console.log('Registration successful. Please log in using your email as your username.');
                     showSuccess.value = true;
                     setTimeout(() => {
                         router.push('/');
-                    }, 5000);
+                    }, 2500);
                 } catch (error) {
                     console.log('Registration failed:', error);
                     showFail.value = true;
@@ -187,7 +200,8 @@ export default {
             showSuccess,
             showFail,
             handleBlur,
-            errorMessages
+            errorMessages,
+            maxDate
         };
     },
 }
