@@ -5,7 +5,7 @@
 
     <v-responsive width="100%" class="mt-2">
         <v-row>
-            <v-col cols="3">
+            <v-col cols="12" sm="12" md="3">
                 <v-container>
                     <v-row>
                         <v-col cols="12" class="pa-0">
@@ -27,14 +27,14 @@
                     </v-row>
                 </v-container>
             </v-col>
-            <v-col cols="9">
+            <v-col cols="12" sm="12" md="9">
                 <v-container>
                     <v-row>
-                        <v-col cols="8">
+                        <v-col cols="12" sm="12" md="8">
                             <v-text-field prepend-icon="mdi-magnify" hide-details single-line
                                 v-model="searchText"></v-text-field>
                         </v-col>
-                        <v-col cols="4" class="text-right">
+                        <v-col cols="12" sm="12" md="4"class="text-right">
                             <v-menu open-on-hover>
                                 <template v-slot:activator="{ props }">
                                     <v-btn color="#ffffff" v-bind="props" height="50" width="150">Filter</v-btn>
@@ -55,7 +55,7 @@
                         </v-col>
                     </v-row>
                     <v-row>
-                        <v-col v-for="service in filteredServices" :key="service.serviceId" cols="3">
+                        <v-col v-for="service in filteredServices" :key="service.serviceId" cols="12" sm="4" md="3">
                             <v-card height="400">
                                 <v-img height="200" :src="servicePic" :alt="service.description"></v-img>
                                 <v-card-title class="text-h7 text-wrap">{{
