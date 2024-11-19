@@ -33,6 +33,7 @@ declare module 'vue-router/auto-routes' {
     '/service': RouteRecordInfo<'/service', '/service', Record<never, never>, Record<never, never>>,
     '/services': RouteRecordInfo<'/services', '/services', Record<never, never>, Record<never, never>>,
     '/services-remove': RouteRecordInfo<'/services-remove', '/services-remove', Record<never, never>, Record<never, never>>,
+    '/signin': RouteRecordInfo<'/signin', '/signin', Record<never, never>, Record<never, never>>,
     '/test-page-add-vehicle': RouteRecordInfo<'/test-page-add-vehicle', '/test-page-add-vehicle', Record<never, never>, Record<never, never>>,
     '/test-schedule': RouteRecordInfo<'/test-schedule', '/test-schedule', Record<never, never>, Record<never, never>>,
     '/upload': RouteRecordInfo<'/upload', '/upload', Record<never, never>, Record<never, never>>,
