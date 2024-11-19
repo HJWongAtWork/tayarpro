@@ -140,7 +140,17 @@
                     </tr>
                     <tr>
                       <td colspan="12">
-                        <checkoutDialog v-bind:subtotal="Subtotal" />
+                        <!-- <checkoutDialog v-bind:subtotal="Subtotal" /> -->
+                    <v-btn
+                      @click="handleLogout"
+                      min="260px"
+                      height="55px"
+                      color="#FF6875"
+                      display="flex"
+                      width="-webkit-fill-available"
+                    >
+                      Checkout
+                  </v-btn>
                       </td>
                     </tr>
                   </tbody>
@@ -203,6 +213,23 @@ export default {
     };
   },
   methods: {
+    checkLoginStatus() {
+      this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    },
+    handleLogout() {
+      this.checkLoginStatus();
+      if (!this.isLoggedIn) {
+        // 3. Store the return path
+        localStorage.setItem("checkoutRedirect", "/cart");
+
+        // 4. Redirect to login page
+        this.router.push("/login");
+
+        // 5. Stop the method here
+        return;
+      }
+      this.router.push("/checkout");
+    },
     async fetchCartItems() {
       try {
         const token = localStorage.getItem("jwt");
@@ -356,6 +383,7 @@ export default {
       return;
     }
     await this.fetchCartItems();
+    this.checkLoginStatus()
   },
   computed: {
     Subtotal() {

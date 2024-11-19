@@ -155,7 +155,12 @@
             <v-card title="Make Appointment" flat>
               <v-container>
                 <v-row>
-                  <v-col cols="12" md="6">
+                  <v-col cols="12">
+                    <Schedule />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <!-- <v-col cols="12" md="6">
                     <v-date-picker
                       v-model="appointmentDate"
                       :min="minDate"
@@ -163,9 +168,9 @@
                       :rules="[required]"
                       class="mb-4"
                     ></v-date-picker>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-select
+                  </v-col> -->
+                  <!-- <v-col cols="12" md="6"> -->
+                    <!-- <v-select
                       v-model="appointmentTime"
                       :items="timeSlots"
                       label="Select Time"
@@ -182,14 +187,14 @@
                       label="Additional Notes"
                       class="mb-4"
                       rows="3"
-                    ></v-textarea>
+                    ></v-textarea> -->
 
-                    <v-checkbox
+                    <!-- <v-checkbox
                       v-model="isAppointmentConfirmed"
                       label="Confirm Appointment"
                       class="mb-4"
                     ></v-checkbox>
-                  </v-col>
+                  </v-col> -->
                 </v-row>
               </v-container>
             </v-card>

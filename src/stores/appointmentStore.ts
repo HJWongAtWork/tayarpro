@@ -31,7 +31,17 @@ export const appointmentStore = defineStore('appointmentStore', {
       model: string,
       year: number,
       status: string
-    }[]
+    }[],
+    newAppointment: {
+      id: -1,
+      dateTime: new Date(),
+      service: "",
+      bay: -1,
+      brand: "",
+      model: "",
+      year: -1,
+      status: "",
+    },
   }),
   getters: {
     getPastAppointments: (state) => state.pastAppointments,

@@ -5,10 +5,11 @@ export function useDateFormatter() {
   const formatDateToReadable = (dateValue) => {
     if (!dateValue) return '';
     const date = new Date(dateValue);
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
     const day = String(date.getDate()).padStart(2, '0');
     const month = date.toLocaleString('default', { month: 'short' });
     const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
+    return `${dayName}, ${day}-${month}-${year}`;
   };
 
   const formatDate = (dateValue) => {

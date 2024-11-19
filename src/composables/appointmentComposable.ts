@@ -5,6 +5,7 @@ export const appointmentComposable = () => {
   const { pastAppointments } = toRefs(appointment_store);
   const { nextAppointments } = toRefs(appointment_store);
   const { canceledAppointments } = toRefs(appointment_store);
+  const { newAppointment } = toRefs(appointment_store);
   // const idInput = ref(0);
   // const dateTimeInput = ref(new Date());
   // const serviceInput = ref("");
@@ -66,6 +67,7 @@ export const appointmentComposable = () => {
     canceledAppointments,
     fetchPastAppointments,
     fetchNextAppointments,
-    fetchCanceledAppointments
+    fetchCanceledAppointments,
+    newAppointment
   };
 }
