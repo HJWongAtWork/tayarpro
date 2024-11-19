@@ -6,18 +6,89 @@
     <Header />
     <v-main>
       <router-view />
-
-      <!-- Chat Widget (always visible) -->
-       <div class="chat-widget-wrapper">
-        <ChatWidget />
-       </div>
     </v-main>
+
+    <!-- Chat Widget Integration -->
+    <div class="chat-widget">
+      <!-- Chat Interface Container -->
+      <v-card v-show="showChat" :class="['chat-card', { 'chat-card-center': isCenter }]" elevation="4">
+        <ChatInterface @close="showChat = false" @toggle-position="togglePosition"
+          :isResponsiveMode="isResponsiveMode" />
+      </v-card>
+
+      <!-- Floating Chat Button -->
+      <v-btn class="chat-fab" color="#FF3131" icon elevation="4" size="large" @click="toggleChat"
+        :loading="chatStore.isLoading">
+        <v-icon>
+          {{ showChat ? 'mdi-close' : 'mdi-message' }}
+        </v-icon>
+
+        <!-- Unread Messages Badge -->
+        <v-badge v-if="unreadCount > 0 && !showChat" :content="unreadCount" color="error" floating />
+      </v-btn>
+    </div>
   </v-app>
 </template>
 
 <script lang="ts" setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useChatStore } from '@/stores/chatStore'
 import Disclaimer from '@/components/Disclaimer.vue';
-import ChatWidget from '@/components/ChatWidget.vue'
+import ChatInterface from '@/components/ChatInterface.vue'
+
+const chatStore = useChatStore()
+const showChat = ref(false)
+const isCenter = ref(false)
+const windowWidth = ref(window.innerWidth)
+const previousWidth = ref(window.innerWidth)
+
+// Add this computed property
+const isResponsiveMode = computed(() => {
+  return windowWidth.value <= 720 // matches your media query breakpoint
+})
+
+const crossesThreshold = (oldWidth: number, newWidth: number) => {
+  const threshold = 720
+  return (oldWidth <= threshold && newWidth > threshold) || 
+         (oldWidth > threshold && newWidth <= threshold)
+}
+// Add window resize handler
+const handleResize = () => {
+    windowWidth.value = window.innerWidth
+    
+    // Check if width crosses threshold
+    if (crossesThreshold(previousWidth.value, windowWidth.value)) {
+      showChat.value = false
+      isCenter.value = false
+    }
+    
+    previousWidth.value = windowWidth.value
+}
+
+
+// Add lifecycle hooks to handle resize events
+onMounted(() => {
+    window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('resize', handleResize)
+})
+
+const unreadCount = computed(() => {
+  return chatStore.messages.filter(m => m.sender === 'bot' && m.status !== 'read').length
+})
+
+const toggleChat = () => {
+  showChat.value = !showChat.value
+  if (isCenter.value) {
+    isCenter.value = false
+  }
+}
+
+const togglePosition = () => {
+  isCenter.value = !isCenter.value
+}
 </script>
 
 <style>
@@ -26,51 +97,68 @@ import ChatWidget from '@/components/ChatWidget.vue'
   overflow-x: hidden;
 }
 
-/* Add any global styles needed for the chat widget */
-
 .v-carousel {
-    overflow: hidden !important;
+  overflow: hidden !important;
 }
 
-/* Prevent scroll jumping */
 html {
-    overflow-y: scroll;
-    scroll-behavior: smooth;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 
-/* Optional: Add a scrollbar width compensation */
 body {
-    width: calc(100vw - (100vw - 100%));
+  width: calc(100vw - (100vw - 100%));
 }
 
-.chat-widget-wrapper {
+/* Chat Widget Styles */
+.chat-widget {
   position: fixed;
-  bottom: 20px; /* Adjust this value based on your footer height */
+  bottom: 40px;
   right: 20px;
-  z-index: 999;
-  /* Add margin to prevent overlap with footer */
+  z-index: 9999;
   transform: scale(0.9);
   transform-origin: bottom right;
 }
 
-
-/* Responsive adjustments */
-@media (max-width: 960px) {
-  .chat-widget-wrapper {
-    bottom: 80px; /* Larger spacing for mobile */
-    right: 10px;
-    transform: scale(0.9);
-    transform-origin: bottom right;
-  }
+.chat-fab {
+  position: relative;
 }
 
-@media (max-width: 600px) {
-  .chat-widget-wrapper {
-    bottom: 100px; /* Even larger spacing for smaller screens */
-    right: 10px;
-    /* Optional: make it slightly smaller on mobile */
-    transform: scale(0.9);
-    transform-origin: bottom right;
-  }
+.chat-card {
+  position: fixed;
+  right: 20px;
+  bottom: 60px;
+  height: 550px;
+  width: 350px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1) !important;
+  z-index: 9999;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chat-card-center {
+  right: -125%;
+  transform: translateX(-125%);
+}
+
+/* Slide animations for showing/hiding chat */
+.chat-card:not(:visible) {
+  transform: translateX(100%);
+}
+
+.chat-card-center:not(:visible) {
+  transform: translateX(-25%);
+}
+
+/* Animation for position toggle */
+.chat-card {
+  will-change: transform, right;
+  transition-property: transform, right;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>

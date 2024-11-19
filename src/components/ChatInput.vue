@@ -8,15 +8,16 @@
                 :accept="acceptedFileTypes">
 
             <!-- Message input -->
-            <v-text-field v-model="messageText" :loading="loading" :disabled="loading" hide-details
-                placeholder="Type a message..." variant="outlined" density="comfortable" class="mx-2"
-                @keydown.enter.prevent="sendMessage">
+            <v-textarea v-model="messageText" :loading="loading" :disabled="loading" hide-details
+                placeholder="Type a message..." variant="outlined" density="comfortable" class="mx-2 chat-textarea"
+                :class="{ 'textarea-focused': isFocused }" rows="1" auto-grow max-rows="4"
+                @keydown.enter.prevent="handleEnterKey" @focus="isFocused = true" @blur="isFocused = false">
                 <template v-slot:append-inner>
                     <!-- Emoji picker button -->
                     <v-btn v-if="allowEmoji" icon="mdi-emoticon-outline" variant="text" size="small" :disabled="loading"
                         @click="toggleEmojiPicker" />
                 </template>
-            </v-text-field>
+            </v-textarea>
 
             <!-- Send button -->
             <v-btn icon="mdi-send" color="#FF3131" :disabled="!messageText.trim() || loading" @click="sendMessage" />
@@ -84,6 +85,13 @@ const handleFileUpload = (event) => {
     }
 }
 
+const handleEnterKey = (e) => {
+    // Send message on Enter without Shift
+    if (!e.shiftKey) {
+        sendMessage()
+    }
+}
+
 // Toggle emoji picker
 const toggleEmojiPicker = () => {
     showEmojiPicker.value = !showEmojiPicker.value
@@ -103,10 +111,36 @@ const addEmoji = (emoji) => {
     background-color: white;
 }
 
-.v-text-field :deep(.v-field__input) {
-    min-height: 44px !important;
-    padding-top: 0;
-    padding-bottom: 0;
+.chat-textarea {
+    :deep(.v-field__input) {
+        min-height: 44px !important;
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+    }
+
+    :deep(.v-field__field) {
+        min-height: auto !important;
+    }
+
+    :deep(textarea) {
+        line-height: 1.5;
+        margin-top: 0;
+    }
+
+    &.textarea-focused {
+        :deep(.v-field.v-field--outlined) {
+            --v-field-border-width: 2px;
+            --v-field-border-opacity: 1;
+            border-color: #FF3131 !important;
+            /* Matches your send button color */
+            background-color: #fff;
+        }
+
+        :deep(.v-field__outline) {
+            --v-field-border-width: 2px;
+            border-color: #FF3131 !important;
+        }
+    }
 }
 
 .emoji-picker {

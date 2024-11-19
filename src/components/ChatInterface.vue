@@ -1,11 +1,17 @@
-<!-- components/ChatInterface.vue -->
 <template>
   <div class="chat-interface">
-    <!-- Header -->
     <v-card-title class="chat-header">
       <v-row>
         <v-col cols="6" class="d-flex align-center">
           <span>Chat Support</span>
+          <v-btn
+            icon="mdi-arrow-left-right"
+            variant="text"
+            size="small"
+            class="ml-2"
+            @click="$emit('toggle-position')"
+            :disabled="props.isResponsiveMode"
+            v-show="!props.isResponsiveMode"></v-btn>
         </v-col>
         <v-col cols="6" align="right">
           <v-btn icon size="small" @click="$emit('close')">
@@ -13,7 +19,6 @@
           </v-btn>
         </v-col>
       </v-row>
-
     </v-card-title>
 
     <!-- Messages -->
@@ -28,9 +33,16 @@
 import { onMounted } from 'vue'
 import { useChatStore } from '@/stores/chatStore'
 
+const props = defineProps({
+  isResponsiveMode: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const chatStore = useChatStore()
 
-defineEmits(['close'])
+defineEmits(['close', 'toggle-position'])
 
 const handleSendMessage = async (message: string) => {
   await chatStore.sendMessage(message)
