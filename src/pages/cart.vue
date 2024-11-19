@@ -18,18 +18,17 @@
           <tr>
             <th class="hide-sm"></th>
             <th class="text-center">Product</th>
-            <th class="text-justify hide-sm">Description</th>
-            <th class="text-left">Unit Price</th>
-            <th class="text-left">Qty</th>
-            <th class="text-left hide-sm">Total Price</th>
-            <th class="text-left">Selected Item</th>
+            <th class="text-center hide-sm">Description</th>
+            <th class="text-center">Unit Price</th>
+            <th class="text-center">Qty</th>
+            <th class="text-center hide-sm">Total Price</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="cart in carts" :key="cart.productid">
             <td>
               <cartButton
-                @click="remove(cart)"
+                @click="remove(cart.productid)"
                 icon="mdi-close"
                 rounded
               ></cartButton>
@@ -42,6 +41,7 @@
                 :alt="cart.title"
                 :width="$vuetify.display.smAndDown ? '60' : '100'"
                 :height="$vuetify.display.smAndDown ? '60' : '100'"
+                :padding="$vuetify.display.smAndDown ? '0' : '0'"
                 cover
               >
                 <template v-slot:placeholder>
@@ -50,17 +50,13 @@
                     align="center"
                     justify="center"
                   >
-                    <v-progress-circular
-                      indeterminate
-                      color="grey-lighten-5"
-                    ></v-progress-circular>
                   </v-row>
                 </template>
               </v-img>
             </td>
-            <td class="text-justify hide-sm">{{ cart.description }}</td>
-            <td class="text-left">RM {{ formatNumber(cart.price) }}</td>
-            <td class="text-left">
+            <td class="text-center hide-sm">{{ cart.description }}</td>
+            <td class="text-center">RM {{ formatNumber(cart.price) }}</td>
+            <td class="text-center">
               <div class="d-flex align-center quantity-controls">
                 <cartButton
                   @click="decreaseQuantity(cart)"
@@ -78,14 +74,8 @@
                 ></cartButton>
               </div>
             </td>
-            <td class="text-left hide-sm">
+            <td class="text-center hide-sm">
               RM {{ formatNumber(cart.price * cart.quantity) }}
-            </td>
-            <td class="text-left">
-              <v-checkbox
-                v-model="cart.selected"
-                density="compact"
-              ></v-checkbox>
             </td>
           </tr>
         </tbody>
@@ -93,7 +83,7 @@
     </div>
     <v-container>
       <v-row>
-        <v-col cols="12" md="4">
+        <!-- <v-col cols="12" md="4">
           <div class="voucher-section">
             <v-form
               class="code-container"
@@ -118,44 +108,46 @@
               >
             </v-form>
           </div>
-        </v-col>
-        <v-col cols="12" md="4"></v-col>
+        </v-col> -->
 
-        <v-col cols="12" md="4">
-          <div class="summary-table">
-            <v-table density="comfortable">
-              <tbody>
-                <tr>
-                  <td class="table-cell-small">Subtotal</td>
-                  <td class="table-cell-small">RM {{ Subtotal.toFixed(2) }}</td>
-                </tr>
-                <tr>
-                  <td class="table-cell-small">SST Fee(8%)</td>
-                  <td class="table-cell-small">
-                    RM {{ SaleServiceTax.toFixed(2) }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="table-cell-small">Coupon</td>
-                  <td class="table-cell-small">RM {{ Coupon.toFixed(2) }}</td>
-                </tr>
-                <tr>
-                  <td class="table-cell-big">Total</td>
-                  <td class="table-cell-big">RM {{ Total.toFixed(2) }}</td>
-                </tr>
-                <tr>
-                  <td colspan="12">
-                    <checkoutDialog v-bind:subtotal="Subtotal" />
-                  </td>
-                </tr>
-              </tbody>
-            </v-table>
-          </div>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <Schedule />
+        <v-col cols="12">
+          <v-container class="summary-container">
+            <v-row justify="center">
+              <v-col cols="6">
+                <v-table density="comfortable">
+                  <tbody>
+                    <tr>
+                      <td class="table-cell-small">Subtotal</td>
+                      <td class="table-cell-small">
+                        RM {{ Subtotal.toFixed(2) }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="table-cell-small">SST Fee(8%)</td>
+                      <td class="table-cell-small">
+                        RM {{ SaleServiceTax.toFixed(2) }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="table-cell-small">Coupon</td>
+                      <td class="table-cell-small">
+                        RM {{ Coupon.toFixed(2) }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="table-cell-big">Total</td>
+                      <td class="table-cell-big">RM {{ Total.toFixed(2) }}</td>
+                    </tr>
+                    <tr>
+                      <td colspan="12">
+                        <checkoutDialog v-bind:subtotal="Subtotal" />
+                      </td>
+                    </tr>
+                  </tbody>
+                </v-table>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-col>
       </v-row>
     </v-container>
@@ -197,7 +189,6 @@ export default {
       ],
       rules: [(v) => v.length >= 8 || "Minimum 8 characters"],
       Coupon: 0,
-      Total: 0,
       showOrderDialog: false,
       step: 1,
       items: [
@@ -214,39 +205,64 @@ export default {
   methods: {
     async fetchCartItems() {
       try {
-        const response = await axios.get("http://localhost:8000/get_cart", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-          },
-        });
+        const token = localStorage.getItem("jwt");
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-        // Transform the response data to match table structure
+        console.log("Cart - Current token:", token); // Debug log
+        console.log("Cart - IsLoggedIn:", isLoggedIn); // Debug log
+
+        if (!token || !isLoggedIn) {
+          console.log("No auth data, redirecting to login");
+          this.router.push("/login");
+          return;
+        }
+
+        console.log("Making cart request with token..."); // Debug log
+
+        const response = await axios.post(
+          "http://tayar.pro/get_cart",
+          "", // Empty string as data
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              accept: "application/json",
+            },
+          }
+        );
+
+        console.log("Cart response:", response.data); // Debug log
+
         this.carts = response.data.map((item) => ({
           productid: item.productid,
-          title: item.description, // For alt text in image
-          description: item.description, // For description column
+          title: item.description,
+          description: item.description,
           price: item.unitprice,
           quantity: item.quantity,
-          selected: false,
           image_link: item.productid.startsWith("SVR")
             ? "/images/service-placeholder.jpg"
             : "/images/tyre-placeholder.jpg",
         }));
-
-        console.log("Cart items loaded:", this.carts);
       } catch (error) {
+        console.error("Cart error details:", {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message,
+        });
+
         if (error.response?.status === 401) {
-          console.error("Unauthorized: Please login");
+          console.log("Unauthorized in cart, clearing auth data");
+          localStorage.removeItem("jwt");
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("username");
           this.router.push("/login");
-        } else {
-          console.error("Error fetching cart items:", error);
         }
       }
     },
-    async remove(cart) {
+    async remove(productid) {
       try {
+        console.log("Removing cart item:", productid); // Debug log
         const response = await axios.delete(
-          `http://localhost:8000/remove_from_cart/${cart.productid}`,
+          `http://tayar.pro/delete_cart_item/${productid}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -275,8 +291,8 @@ export default {
     async increaseQuantity(cart) {
       try {
         const newQuantity = cart.quantity + 1;
-        const response = await axios.put(
-          `http://localhost:8000/update_cart_quantity/${cart.productid}/${newQuantity}`,
+        const response = await axios.post(
+          `http://tayar.pro/update_cart_quantity/${cart.productid}/${newQuantity}`,
           null,
           {
             headers: {
@@ -296,8 +312,8 @@ export default {
       try {
         if (cart.quantity > 1) {
           const newQuantity = cart.quantity - 1;
-          const response = await axios.put(
-            `http://localhost:8000/update_cart_quantity/${cart.productid}/${newQuantity}`,
+          const response = await axios.post(
+            `http://tayar.pro/update_cart_quantity/${cart.productid}/${newQuantity}`,
             null,
             {
               headers: {
@@ -332,18 +348,23 @@ export default {
     },
   },
   async mounted() {
+    console.log("Cart mounted");
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      console.log("No token found in mounted");
+      this.router.push("/login");
+      return;
+    }
     await this.fetchCartItems();
   },
   computed: {
     Subtotal() {
       let subtotal = 0;
       this.carts.forEach((cart) => {
-        if (cart.selected) {
-          const price = parseFloat(cart.price || cart.unitprice);
-          const quantity = parseInt(cart.quantity);
-          subtotal += price * quantity;
-          // subtotal = subtotal.toFixed(2);
-        }
+        const price = parseFloat(cart.price || cart.unitprice);
+        const quantity = parseInt(cart.quantity);
+        subtotal += price * quantity;
+        // subtotal = subtotal.toFixed(2);
       });
       console.log("Subtotal calculated:", subtotal);
       return subtotal;
@@ -367,6 +388,11 @@ export default {
 </script>
 
 <style>
+.summary-container {
+  max-width: 100%;
+  padding: 0px;
+  margin: 0px;
+}
 .table-responsive {
   width: 100%;
   overflow-x: auto;
@@ -435,6 +461,7 @@ td {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 16px;
+  text-align: center;
 }
 
 @media (max-width: 600px) {
@@ -448,6 +475,7 @@ td {
 
   .table-cell-big {
     padding: 8px;
+    text-align: center;
   }
 }
 
