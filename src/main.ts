@@ -21,7 +21,6 @@ import { getAuth } from "firebase/auth"; // Import Authentication
 // Additional for chat-related stores
 import { createPinia } from 'pinia'
 import { piniaPluginPersist } from './plugins/piniaPluginPersist'
-import { chatPlugin } from './plugins/chat'
 import router from './router'
 import vuetify from './plugins/vuetify'
 
@@ -53,7 +52,6 @@ const vueApp = createApp(App);
 vueApp.use(pinia)
 vueApp.use(router)
 vueApp.use(vuetify)
-vueApp.use(chatPlugin)
 
 vueApp.directive("click-to-expand", {
   mounted(el, binding) {
