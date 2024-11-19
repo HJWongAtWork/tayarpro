@@ -272,7 +272,7 @@ import { ref, onMounted } from "vue";
 import DatePicker from "@/components/DatePicker.vue";
 import TextInput from "@/components/TextInputComponent.vue";
 import { useUserComposable } from "@/composables/userComposable";
-import { useUserStore } from "@/stores/users";
+import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
 
 export default {
@@ -302,7 +302,8 @@ export default {
     const menu = ref(false);
     const isLargeScreen = ref(window.innerWidth >= 960);
     const file = ref(null);
-    const maxDate = ref(new Date().toISOString().split("T")[0]);
+    /* const maxDate = ref(new Date().toISOString().split("T")[0]); */
+    const maxDate = ref(new Date());
     const isEdit = ref(false);
     const inputs = ref({
       email: { hasChanged: false },
