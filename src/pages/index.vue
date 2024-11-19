@@ -143,7 +143,7 @@
       </v-col>
     </v-row>
     <v-row align="center" justify="center" class="px-8">
-      <v-col align="center" v-for="(item, i) in tayarProStrengths" cols="12" sm="6" md="3" class="ma-0 px-0">
+      <v-col align="center" v-for="(item, i) in tayarProStrengths" :key="i" cols="12" sm="6" md="3" class="ma-0 px-0">
         <v-card align="center" class="border-0 mx-3" elevation="0" max-width="350" min-width="200" height="400">
           <v-img :src="item.src" height="200" class="ma-3"></v-img>
           <v-divider class="mx-2 my-3 border-sm border-opacity-50"></v-divider>

@@ -2,7 +2,7 @@ import { useUserStore } from "@/stores/userStore";
 import { ref, computed } from "vue";
 
 // Define an interface for the user data structure
-interface UserData {
+/* interface UserData {
   accountid: number;
   firstname: string;
   lastname: string;
@@ -18,7 +18,7 @@ interface UserData {
   isadmin: boolean;
   gender: string;
   dob: string;
-}
+} */
 
 export function useUserComposable(
   isAdmin = false,

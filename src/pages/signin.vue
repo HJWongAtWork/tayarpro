@@ -69,7 +69,7 @@
             </v-btn>
           </template>
 
-          <template v-slot:default="{ isActive }">
+          <template><!-- v-slot:default="{ isActive }"> -->
             <v-card>
               <v-card-title class="text-h5 grey lighten-2">
                 Forgot Password
@@ -147,13 +147,13 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from "vue";
 import { useUserStore } from "@/stores/userStore";
-import axios from "axios";
-import { useRouter } from "vue-router";
+/* import axios from "axios"; */
+/* import { useRouter } from "vue-router"; */
 
 export default defineComponent({
   setup() {
     const userStore = useUserStore();
-    const router = useRouter();
+    /* const router = useRouter(); */
     const form = ref(null);
     const valid = ref(true);
     const username = ref("");
