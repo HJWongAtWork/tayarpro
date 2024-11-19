@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="ma-0 pa-0">
+  <v-container fluid class="ma-auto pa-5" max-width="1000">
     <v-row max-width="600">
       <v-col cols="12" class="ma-0 px-0">
         <Carousel :images="homeImages" />
@@ -59,21 +59,21 @@
       </v-col>
       <v-col cols="3" class="ma-0 px-0 d-none d-sm-flex">
         <v-spacer />
-        <RouterLink to="/tyres"><v-btn color="#ff3131">More Tyres ></v-btn></RouterLink>
+        <RouterLink to="/products"><v-btn color="#ff3131">More Tyres ></v-btn></RouterLink>
       </v-col>
     </v-row>
-    <v-row align="center" class="px-8">
+    <v-row align="center" class="px-0">
       <v-col cols="12">
-        <v-slide-group show-arrows>
-          <v-slide-item v-for="(item, i) in tyreDetailList" :key="i">
-            <v-card height="400" width="250" class="mx-2" variant="outlined">
-              <v-img height="200" :src="item.image" :alt="item.title"></v-img>
+        <v-slide-group show-arrows :selected-class="''">
+          <v-slide-item v-for="(tyre, i) in tyreStore.randomDetails" :key="i">
+            <v-card height="400" width="200" class="ma-3">
+              <v-img height="200" :src="tyre_image" :alt="tyre.description"></v-img>
               <v-card-title class="text-h7 text-wrap">{{
-                item.title
+                tyre.description
                 }}</v-card-title>
               <v-card-text>
-                <div>{{ item.description }}</div>
-                <div class="text-h6 mt-2">RM {{ item.price.toFixed(2) }}</div>
+                <div>{{ tyre.cartype }}</div>
+                <div class="text-h6 mt-2">RM {{ tyre.unitprice.toFixed(2) }}</div>
               </v-card-text>
             </v-card>
           </v-slide-item>
@@ -82,7 +82,7 @@
     </v-row>
     <v-row class="d-flex d-sm-none">
       <v-col cols="12" align="center">
-        <RouterLink to="/tyres"><v-btn color="#ff3131">More Tyres ></v-btn></RouterLink>
+        <RouterLink to="/products"><v-btn color="#ff3131">More Tyres ></v-btn></RouterLink>
       </v-col>
     </v-row>
     <v-divider class="mx-5 my-7 border-md border-opacity-50 rounded-sm"></v-divider>
@@ -99,30 +99,38 @@
       </v-col>
     </v-row>
     <v-row align="center" justify="center" class="px-8">
-      <v-col v-for="(cardData, index) in cardDataList" :key="index" cols="12" md="4" align="center">
-        <v-card class="mx-auto" color="surface-variant" :image="cardData.imageSrc" height="350"
-          :elevation="cardData.elevation" max-width="450" align="center" justify="center"
-          v-click-to-expand="{ cardData: cardData }">
-          <div class="imageContainer">
-            <Transition name="fade">
-              <div key="1" v-if="cardData.showAdditionalText">
-                <div class="imageOpacity">
-                  <v-row>
-                    <v-col>
-                      <div class="imageContainerTitle">{{ cardData.title }}</div>
-                      <div class="mx-5">{{ cardData.additionalText }}</div>
-                    </v-col>
-                  </v-row>
-                </div>
+    <v-col v-for="(cardData, index) in cardDataList" :key="index" cols="12" md="4" align="center">
+      <v-card 
+        class="mx-auto card-hover" 
+        color="surface-variant" 
+        :image="cardData.imageSrc" 
+        height="350"
+        :elevation="cardData.elevation" 
+        max-width="450" 
+        align="center" 
+        justify="center"
+        @click="toggleAdditionalText(index)"
+      >
+        <div class="imageContainer">
+          <Transition name="fade">
+            <div key="1" v-if="cardData.showAdditionalText">
+              <div class="imageOpacity">
+                <v-row>
+                  <v-col>
+                    <div class="imageContainerTitle">{{ cardData.title }}</div>
+                    <div class="mx-5 additional-text">{{ cardData.additionalText }}</div>
+                  </v-col>
+                </v-row>
               </div>
-              <div key="2" v-else class="mx-3">
-                <div class="imageContainerTitle">{{ cardData.title }}</div>
-              </div>
-            </Transition>
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
+            </div>
+            <div key="2" v-else class="mx-3">
+              <div class="imageContainerTitle">{{ cardData.title }}</div>
+            </div>
+          </Transition>
+        </div>
+      </v-card>
+    </v-col>
+  </v-row>
     <v-row class="d-flex d-sm-none">
       <v-col cols="12" align="center">
         <RouterLink to="/services"><v-btn color="#ff3131">More Services ></v-btn></RouterLink>
@@ -135,8 +143,8 @@
       </v-col>
     </v-row>
     <v-row align="center" justify="center" class="px-8">
-      <v-col align="center" v-for="(item, i) in tayarProStrengths" cols="12" sm="6" md="3" class="ma-0 px-0">
-        <v-card align="center" class="border-0 mx-3" elevation="0" max-width="350" min-width="200" height="450">
+      <v-col align="center" v-for="(item, i) in tayarProStrengths" :key="i" cols="12" sm="6" md="3" class="ma-0 px-0">
+        <v-card align="center" class="border-0 mx-3" elevation="0" max-width="350" min-width="200" height="400">
           <v-img :src="item.src" height="200" class="ma-3"></v-img>
           <v-divider class="mx-2 my-3 border-sm border-opacity-50"></v-divider>
           <v-card-title class="mx-3">{{ item.title }}</v-card-title>
@@ -164,7 +172,7 @@
     <v-divider class="mx-5 my-7 border-md border-opacity-50 rounded-sm"></v-divider>
     <v-row>
       <v-col>
-        <v-img src="@/assets/original_logo_dark.png"></v-img>
+        <v-img :src="logoImage"></v-img>
       </v-col>
     </v-row>
   </v-container>
@@ -191,149 +199,162 @@
   text-shadow: 1px 1px 2px black;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .imageOpacity {
   display: flex;
   height: 350px;
-  width: auto;
+  width: 100%;
   color: rgb(225, 225, 225);
   justify-content: center;
   align-items: center;
-  background-color: #FF3131;
-  opacity: 0.8;
+  background-color: rgba(255, 49, 49, 0.9);
+  transition: all 0.3s ease;
 }
 
 .imageContainerTitle {
   color: white;
   font-size: 30px;
   font-weight: 450;
+  margin-bottom: 16px;
+}
+
+.additional-text {
+  font-size: 16px;
+  line-height: 1.5;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.card-hover {
+  transition: transform 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  cursor: pointer;
+}
+
+/* Prevent scroll jumping */
+.v-carousel__controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: none;
+  pointer-events: none;
 }
 </style>
 
-<script>
-import Carousel from '@/components/Carousel.vue';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import Carousel from '@/components/Carousel.vue'
 import tyre_image from '@/assets/tyre.jpg'
+import { useTyreStore } from '@/stores/useTyreStore'
+import homeBanner01 from '@/assets/images/home/home-banner-01.png'
+import homeBanner02 from '@/assets/images/home/home-banner-02.png'
+import tyreInstall from '@/assets/images/home/tyre-install-01.jpg'
+import tyreTuning from '@/assets/images/home/tyre-tuning-01.jpg'
+import tyreConsult from '@/assets/images/home/tyre-consult-01.jpg'
+import certificateIcon from '@/assets/images/home/certificate-svgrepo-com.svg'
+import warrantyIcon from '@/assets/images/home/warranty-security-ecommerce-svgrepo-com.svg'
+import lifterIcon from '@/assets/images/home/lifter-car-repair-svgrepo-com.svg'
+import robotIcon from '@/assets/images/home/robot-futurist-svgrepo-com.svg'
+import logoImage from '@/assets/original_logo_dark.png'
 
-export default {
-  components: {
-    Carousel
-  },
-  data() {
-    return {
-      homeImages: [
-        { src: 'http://tayar.pro:5200/static/images/tayarpro/home-banner-01.webp', alt: 'Elegant TayarPro banner with general description and opening times.' },
-        { src: 'http://tayar.pro:5200/static/images/tayarpro/home-banner-02.webp', alt: 'TayarPro banner promoting services and showing addresses.' }
-      ],
-      cardDataList: [
-        {
-          imageSrc: "http://tayar.pro:5200/static/images/tayarpro/services-tyre-install-01.jpg",
-          title: "Tyre Installation",
-          elevation: 2,
-          showAdditionalText: false,
-          additionalText: "Tyre installation services involve professionally fitting new tires onto a vehicle's wheels. This includes removing old tires, cleaning wheels, mounting new tires, balancing them, and checking torque. These services are crucial for vehicle safety, performance, and tire longevity.",
-        },
-        {
-          imageSrc: "http://tayar.pro:5200/static/images/tayarpro/services-tyre-tuning-01.jpg",
-          title: "Tyre Tuning",
-          elevation: 2,
-          showAdditionalText: false,
-          additionalText: "Tyre tuning services involve optimizing a vehicle's tires for performance and efficiency. This can include adjusting tire pressure, alignment, and rotation. By ensuring that tires are properly tuned, drivers can improve fuel economy, enhance handling, and extend tire life.",
-        },
-        {
-          imageSrc: "http://tayar.pro:5200/static/images/tayarpro/services-tyre-consult-01.jpg",
-          title: "Tyre Consulting",
-          elevation: 2,
-          showAdditionalText: false,
-          additionalText: "Tyre consultation services offer expert advice on tire selection, maintenance, and performance. Experienced professionals can help customers choose the right tires for their specific needs, provide guidance on tire care and maintenance practices, and offer recommendations for improving tire performance and fuel efficiency.",
-        }
-      ],
-      tyreDetailList: [
-        {
-          id: "Con",
-          itemId: "Con1",
-          title: "Continental Eco",
-          description: "Sport",
-          price: 999.99,
-          image: tyre_image,
-        },
-        {
-          id: "Han",
-          itemId: "Han1",
-          title: "Hankook",
-          description: "Sport",
-          price: 999.99,
-          image: tyre_image,
-        },
-        {
-          id: "Mic",
-          itemId: "Mic1",
-          title: "Michelin Pilot Sport 4",
-          description: "Sport",
-          price: 1099.99,
-          image: tyre_image,
-        },
-        {
-          id: "Pir",
-          itemId: "Pir3",
-          title: "Pirelli Cinturato P7 All Season Plus Seal Inside",
-          description: "Sport",
-          price: 2399.99,
-          image: tyre_image,
-        },
-        {
-          id: "God",
-          itemId: "God3",
-          title: "Goodyear Eagle F1 Asymmetric 3 ROF K1",
-          description: "Sport",
-          price: 2499.99,
-          image: tyre_image,
-        },
-        {
-          id: "Dun",
-          itemId: "Dun3",
-          title: "Dunlop Direzza DZ102 K1",
-          description: "Sport",
-          price: 2599.99,
-          image: tyre_image,
-        },
-        {
-          id: "Con",
-          itemId: "Con4",
-          title: "Continental ContiSportContact 5P K1",
-          description: "Sport",
-          price: 2699.99,
-          image: tyre_image,
-        }],
-      /* https://www.svgrepo.com/ */
-      tayarProStrengths: [
-        {
-          src: "http://tayar.pro:5200/static/images/tayarpro/why-us-certificate-svgrepo-com.svg",
-          title: "Certified",
-          desc: "Tires are guaranteed to meet or exceed industry standards.",
-          cert: ''
-        },
-        {
-          src: "http://tayar.pro:5200/static/images/tayarpro/why-us-warranty-security-ecommerce-svgrepo-com.svg",
-          title: "5-Year Warranty",
-          desc: "Enjoy peace of mind with a comprehensive warranty.",
-          cert: ''
-        },
-        {
-          src: "http://tayar.pro:5200/static/images/tayarpro/why-us-lifter-car-repair-svgrepo-com.svg",
-          title: "Quality Service",
-          desc: "Receive expert care and attention from our skilled technicians.",
-          cert: 'ISO 9001:2015 (Pending)'
-        },
-        {
-          src: "http://tayar.pro:5200/static/images/tayarpro/why-us-robot-futurist-svgrepo-com.svg",
-          title: "AI Assistant",
-          desc: "Benefit from cutting-edge and secure technology to streamline your tire servicing experience.",
-          cert: 'ISO 27001:2013 (Pending)'
-        }
-      ]
-    }
-  }
+// Types
+interface HomeImage {
+  src: string
+  alt: string
 }
 
+interface CardData {
+  imageSrc: string
+  title: string
+  elevation: number
+  showAdditionalText: boolean
+  additionalText: string
+}
+
+interface TayarProStrength {
+  src: string
+  title: string
+  desc: string
+  cert: string
+}
+
+// Store
+const tyreStore = useTyreStore()
+
+// Data
+const homeImages = ref<HomeImage[]>([
+  { 
+    src: homeBanner01, 
+    alt: 'Elegant TayarPro banner with general description and opening times.' 
+  },
+  { 
+    src: homeBanner02, 
+    alt: 'TayarPro banner promoting services and showing addresses.' 
+  }
+])
+
+const cardDataList = ref<CardData[]>([
+  {
+    imageSrc: tyreInstall,
+    title: "Tyre Installation",
+    elevation: 2,
+    showAdditionalText: false,
+    additionalText: "Tyre installation services involve professionally fitting new tires onto a vehicle's wheels. This includes removing old tires, cleaning wheels, mounting new tires, balancing them, and checking torque. These services are crucial for vehicle safety, performance, and tire longevity.",
+  },
+  {
+    imageSrc: tyreTuning,
+    title: "Tyre Tuning",
+    elevation: 2,
+    showAdditionalText: false,
+    additionalText: "Tyre tuning services involve optimizing a vehicle's tires for performance and efficiency. This can include adjusting tire pressure, alignment, and rotation. By ensuring that tires are properly tuned, drivers can improve fuel economy, enhance handling, and extend tire life.",
+  },
+  {
+    imageSrc: tyreConsult,
+    title: "Tyre Consulting",
+    elevation: 2,
+    showAdditionalText: false,
+    additionalText: "Tyre consultation services offer expert advice on tire selection, maintenance, and performance. Experienced professionals can help customers choose the right tires for their specific needs, provide guidance on tire care and maintenance practices, and offer recommendations for improving tire performance and fuel efficiency.",
+  }
+])
+
+const tayarProStrengths = ref<TayarProStrength[]>([
+  {
+    src: certificateIcon,
+    title: "Certified",
+    desc: "Tires are guaranteed to meet or exceed industry standards.",
+    cert: ''
+  },
+  {
+    src: warrantyIcon,
+    title: "5-Year Warranty",
+    desc: "Enjoy peace of mind with a comprehensive warranty.",
+    cert: ''
+  },
+  {
+    src: lifterIcon,
+    title: "Quality Service",
+    desc: "Receive expert care and attention from our skilled technicians.",
+    cert: 'ISO 9001:2015 (Pending)'
+  },
+  {
+    src: robotIcon,
+    title: "AI Assistant",
+    desc: "Benefit from cutting-edge and secure technology to streamline your tire servicing experience.",
+    cert: 'ISO 27001:2013 (Pending)'
+  }
+])
+
+const toggleAdditionalText = (index: number) => {
+  cardDataList.value[index].showAdditionalText = !cardDataList.value[index].showAdditionalText;
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  tyreStore.generateRandomTyreDetails(7)
+})
 </script>

@@ -1,76 +1,116 @@
-import { userStore } from "@/stores/userStore";
+import { useUserStore } from "@/stores/userStore";
+import { ref, computed } from "vue";
 
-export const userComposable = () => {
-  const user_store = userStore();
-  const { users } = toRefs(user_store);
-  const idInput = ref(0);
-  const emailInput = ref("");
-  const phoneInput = ref("");
-  const firstNameInput = ref("");
-  const lastNameInput = ref("");
-  const genderInput = ref("");
-  const dateOfBirthInput = ref(new Date());
-  //const dateOfBirthInput = ref("");
-  const addressInput = ref("");
-  const postalcodeInput = ref("");
-  const cityInput = ref("");
-  const stateInput = ref("");
-  const countryInput = ref("");
-  const passwordInput = ref("");
-
-  const fetchUser = async () => {
-    await user_store.fetchUser();
+// Define an interface for the user data structure
+/* interface UserData {
+  accountid: number;
+  firstname: string;
+  lastname: string;
+  phonenumber: string;
+  email: string;
+  fulladdress: {
+    address: string;
+    city: string;
+    state: string;
+    zipcode: string;
   };
+  fullname: string;
+  isadmin: boolean;
+  gender: string;
+  dob: string;
+} */
 
-  const editUserData = () => {
-    users.value[0].email = emailInput.value;
-    users.value[0].phone = phoneInput.value;
-    users.value[0].firstName = firstNameInput.value;
-    users.value[0].lastName = lastNameInput.value;
-    users.value[0].gender = genderInput.value;
-    users.value[0].dateOfBirth = dateOfBirthInput.value;
-    users.value[0].address = addressInput.value;
-    users.value[0].postalcode = postalcodeInput.value;
-    users.value[0].city = cityInput.value;
-    users.value[0].state = stateInput.value;
-    users.value[0].country = countryInput.value;
-    users.value[0].password = passwordInput.value;
-    console.log(users.value[0]);
-  };
+export function useUserComposable(
+  isAdmin = false,
+  editUserId: number | null = null
+) {
+  const userStore = useUserStore();
 
-  const setInputToUserData = () => {
-    idInput.value = users.value[0].id;
-    emailInput.value = users.value[0].email;
-    phoneInput.value = users.value[0].phone;
-    firstNameInput.value = users.value[0].firstName;
-    lastNameInput.value = users.value[0].lastName;
-    genderInput.value = users.value[0].gender;
-    dateOfBirthInput.value = users.value[0].dateOfBirth;
-    addressInput.value = users.value[0].address;
-    postalcodeInput.value = users.value[0].postalcode;
-    cityInput.value = users.value[0].city;
-    stateInput.value = users.value[0].state;
-    countryInput.value = users.value[0].country;
-    passwordInput.value = users.value[0].password;
-  };
+  const email = ref(userStore.currentUser.email || "");
+  const phonenumber = ref(userStore.currentUser.phonenumber || "");
+  const firstname = ref(userStore.currentUser.firstname || "");
+  const lastname = ref(userStore.currentUser.lastname || "");
+  const gender = ref(userStore.currentUser.gender || "");
+  const dob = ref(userStore.currentUser.dob || "");
+  const address = ref(userStore.currentUser.fulladdress.address || "");
+  const city = ref(userStore.currentUser.fulladdress.city || "");
+  const state = ref(userStore.currentUser.fulladdress.state || "");
+  const zipcode = ref(userStore.currentUser.fulladdress.zipcode || "");
+
+  const fullname = computed(() => `${firstname.value} ${lastname.value}`);
+
+  function loadUserData() {
+    if (isAdmin && editUserId) {
+      // In a real application, you would fetch the user data for the given editUserId
+      // For now, we'll just use the current user's data as a placeholder
+      setFormData(userStore.currentUser);
+    } else {
+      setFormData(userStore.currentUser);
+    }
+  }
+
+  function setFormData(userData: typeof userStore.currentUser) {
+    email.value = userData.email || "";
+    phonenumber.value = userData.phonenumber || "";
+    firstname.value = userData.firstname || "";
+    lastname.value = userData.lastname || "";
+    gender.value = userData.gender || "";
+    dob.value = userData.dob || "";
+    address.value = userData.fulladdress.address || "";
+    city.value = userData.fulladdress.city || "";
+    state.value = userData.fulladdress.state || "";
+    zipcode.value = userData.fulladdress.zipcode || "";
+  }
+
+  function updateUserStore() {
+    const updatedUserData = {
+      accountid:
+        isAdmin && editUserId
+          ? editUserId
+          : (userStore.currentUser.accountid as number),
+      firstname: firstname.value,
+      lastname: lastname.value,
+      phonenumber: phonenumber.value,
+      email: email.value,
+      address: address.value,
+      city: city.value,
+      state: state.value,
+      zipcode: zipcode.value,
+      fullname: fullname.value,
+      isadmin: userStore.currentUser.isadmin as boolean,
+      gender: gender.value,
+      dob: dob.value,
+    };
+
+    if (isAdmin && editUserId) {
+      // In a real application, you would update the user data for the given editUserId
+      // For now, we'll just log the updated data
+      console.log("Admin updating user:", updatedUserData);
+    } else {
+      userStore.setUser(updatedUserData);
+    }
+  }
+
+  function resetToStoreValues() {
+    loadUserData();
+  }
+
+  // Load user data when the composable is created
+  loadUserData();
 
   return {
-    users,
-    fetchUser,
-    editUserData,
-    setInputToUserData,
-    idInput,
-    emailInput,
-    phoneInput,
-    firstNameInput,
-    lastNameInput,
-    genderInput,
-    dateOfBirthInput,
-    addressInput,
-    postalcodeInput,
-    cityInput,
-    stateInput,
-    countryInput,
-    passwordInput
+    email,
+    phonenumber,
+    firstname,
+    lastname,
+    gender,
+    dob,
+    address,
+    city,
+    state,
+    zipcode,
+    fullname,
+    updateUserStore,
+    resetToStoreValues,
   };
 }

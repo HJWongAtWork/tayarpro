@@ -173,13 +173,13 @@
 <script>
 import axios from "axios";
 import TyreItems from "../components/TyreItems.vue";
-// import EngineOilItems from "@/components/EngineOilItems.vue";
+/* import EngineOilItems from "@/components/EngineOilItems.vue"; */
 import { ref, onMounted, onUnmounted } from "vue";
 
 export default {
   components: {
     TyreItems,
-    // EngineOilItems,
+    /* EngineOilItems, */
   },
   setup() {
     const searchWrapper = ref(null);
@@ -258,7 +258,7 @@ export default {
 
   methods: {
     // for engine oil only
-    toggleAllEngineOilItems() {
+    /*toggleAllEngineOilItems() {
       if (this.isEngineOilChecked) {
         this.selectedEngineOilBrands = this.EngineOilBrandList.map(
           (brand) => brand.value
@@ -266,7 +266,7 @@ export default {
       } else {
         this.selectedEngineOilBrands = [];
       }
-    },
+    },*/
     // for tyre
     toggleAllTyreItems() {
       if (this.isTyreChecked) {
@@ -311,7 +311,7 @@ export default {
         const ProductsResponse = await axios.get(
           "http://tayar.pro/get_all_tyres"
         );
-        const BrandsResponse = await axios.get("http://localhost:8000/brands");
+        const BrandsResponse = await axios.get("http://tayar.pro/brands");
         this.ProductsList = ProductsResponse.data;
         this.BrandsList = BrandsResponse.data;
       } catch (error) {
