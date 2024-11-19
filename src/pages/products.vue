@@ -18,11 +18,13 @@
         <v-list class="product-list">
           <v-list-group
             v-for="product in ProductsList"
+            class="pa-0"
+            hide-details
             :key="product.productid"
             :value="false"
           >
             <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props">
+              <v-list-item v-bind="props" style="padding: 0px !important">
                 <v-checkbox
                   v-model="selectedProducts"
                   :label="product.description"
@@ -34,11 +36,13 @@
             <v-list-item
               v-for="brand in getBrandsForProducts(product.productid)"
               :key="brand.brandid"
+              style="padding: 0px !important"
             >
               <v-checkbox
                 v-model="selectedBrands"
                 :label="brand.description"
                 :value="brand.brandid"
+                hide-details
               ></v-checkbox>
             </v-list-item>
           </v-list-group>
@@ -49,7 +53,11 @@
         </div>
         <v-divider thickness="2"></v-divider>
         <v-list class="filter-list">
-          <v-list-item v-for="(item, index) in filterMenu" :key="index">
+          <v-list-item
+            v-for="(item, index) in filterMenu"
+            :key="index"
+            style="padding: 0px !important"
+          >
             <div class="d-flex align-center">
               <v-checkbox
                 v-model="selectedFilter[item.sort]"
@@ -94,11 +102,11 @@
         </v-row>
         <v-row class="mt-9">
           <!-- <Service
-                v-if="showService"
-                :serviceItems="filteredServiceItems"
-                @flip-card="flipServiceCard"
-              >
-              </Service> -->
+              v-if="showService"
+              :serviceItems="filteredServiceItems"
+              @flip-card="flipServiceCard"
+            >
+            </Service> -->
         </v-row>
       </v-col>
     </v-row>
@@ -311,7 +319,7 @@ export default {
         const ProductsResponse = await axios.get(
           "http://localhost:8000/products"
         );
-        const BrandsResponse = await axios.get("http://localhost:8000/brands");
+        const BrandsResponse = await axios.get("http://tayar.pro/brands");
         this.ProductsList = ProductsResponse.data;
         this.BrandsList = BrandsResponse.data;
       } catch (error) {
@@ -341,7 +349,7 @@ export default {
     },
     async fetchTyreList() {
       try {
-        const response = await axios.get("http://localhost:8000/get_all_tyres");
+        const response = await axios.get("http://tayar.pro/get_all_tyres");
         this.tyreList = response.data.map((tyre) => ({
           ...tyre,
           flipped: false,
@@ -350,7 +358,7 @@ export default {
         console.error("Error fetching tyre brands:", error);
       }
     },
-
+    //http://tayar.pro/get_all_tyres
     // async fetchEngineOilList() {
     //   try {
     //     const response = await axios.get("http://localhost:8000/engineoil");
