@@ -181,13 +181,11 @@
 <script>
 import axios from "axios";
 import TyreItems from "../components/TyreItems.vue";
-import EngineOilItems from "@/components/EngineOilItems.vue";
 import { ref, onMounted, onUnmounted } from "vue";
 
 export default {
   components: {
     TyreItems,
-    EngineOilItems,
   },
   setup() {
     const searchWrapper = ref(null);
@@ -229,8 +227,6 @@ export default {
   },
   mounted() {
     this.fetchTyreList();
-    // this.fetchEngineOilList();
-    // this.fetchServiceList();
     this.fetchAllProduct();
   },
   data() {
@@ -265,16 +261,6 @@ export default {
   },
 
   methods: {
-    // for engine oil only
-    toggleAllEngineOilItems() {
-      if (this.isEngineOilChecked) {
-        this.selectedEngineOilBrands = this.EngineOilBrandList.map(
-          (brand) => brand.value
-        );
-      } else {
-        this.selectedEngineOilBrands = [];
-      }
-    },
     // for tyre
     toggleAllTyreItems() {
       if (this.isTyreChecked) {
@@ -356,42 +342,6 @@ export default {
         console.error("Error fetching tyre brands:", error);
       }
     },
-    //http://tayar.pro/get_all_tyres
-    // async fetchEngineOilList() {
-    //   try {
-    //     const response = await axios.get("http://localhost:8000/engineoil");
-    //     this.engineOilList = reactive(
-    //       response.data.map((engineoil) => ({
-    //         ...engineoil,
-    //         flipped: false,
-    //       }))
-    //     );
-    //   } catch (error) {
-    //     console.error("Error fetching engine oil brand:", error);
-    //   }
-    // },
-    // async fetchServiceList() {
-    //   try {
-    //     const response = await axios.get("http://localhost:8000/service");
-    //     this.serviceList = reactive(
-    //       response.data.map((service) => ({
-    //         ...service,
-    //         flipped: false,
-    //       }))
-    //     );
-    //   } catch (error) {
-    //     console.error("Error fetching car brake type:", error);
-    //   }
-    // },
-
-    // flipEngineOilCard(engineoil) {
-    //   const index = this.engineOilList.findIndex(
-    //     (item) => item.itemid === engineoil.itemid
-    //   );
-    //   if (index !== -1) {
-    //     this.engineOilList[index].flipped = !this.engineOilList[index].flipped;
-    //   }
-    // },
     flipTyreCard(tyre) {
       const index = this.tyreList.findIndex(
         (item) => item.itemid === tyre.itemid
@@ -400,14 +350,6 @@ export default {
         this.tyreList[index].flipped = !this.tyreList[index].flipped;
       }
     },
-    // flipServiceCard(service) {
-    //   const index = this.serviceList.findIndex(
-    //     (item) => item.serviceid === service.serviceid
-    //   );
-    //   if (index !== -1) {
-    //     this.serviceList[index].flipped = !this.serviceList[index].flipped;
-    //   }
-    // },
   },
   computed: {
     paginatedTyreItems() {
@@ -441,37 +383,6 @@ export default {
 
       return filtered;
     },
-
-    // filteredEngineOilItems() {
-    //   return this.engineOilList.filter(
-    //     (engineOil) =>
-    //       (this.isEngineOilChecked ? engineOil.productid === "ENGOIL" : true) &&
-    //       (this.selectedEngineOilBrands.length === 0 ||
-    //         this.selectedEngineOilBrands.includes(engineOil.brandid)) &&
-    //       (!this.searchText ||
-    //         engineOil.description
-    //           .toLowerCase()
-    //           .includes(this.searchText.toLowerCase()) ||
-    //         engineOil.description
-    //           .toLowerCase()
-    //           .includes(this.searchText.toLowerCase()))
-    //   );
-    // },
-    // filteredServiceItems() {
-    //   return this.serviceList.filter(
-    //     (service) =>
-    //       (this.isServiceChecked ? service.productid === "SERVICES" : true) &&
-    //       (this.selectedService.length === 0 ||
-    //         this.selectedService.includes(service.typeid)) &&
-    //       (!this.searchText ||
-    //         service.description
-    //           .toLowerCase()
-    //           .includes(this.searchText.toLowerCase()) ||
-    //         service.description
-    //           .toLowerCase()
-    //           .includes(this.searchText.toLowerCase()))
-    //   );
-    // },
   },
 };
 </script>
