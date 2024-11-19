@@ -18,11 +18,13 @@
         <v-list class="product-list">
           <v-list-group
             v-for="product in ProductsList"
+            class="pa-0"
+            hide-details
             :key="product.productid"
             :value="false"
           >
             <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props">
+              <v-list-item v-bind="props" style="padding: 0px !important">
                 <v-checkbox
                   v-model="selectedProducts"
                   :label="product.description"
@@ -34,11 +36,13 @@
             <v-list-item
               v-for="brand in getBrandsForProducts(product.productid)"
               :key="brand.brandid"
+              style="padding: 0px !important"
             >
               <v-checkbox
                 v-model="selectedBrands"
                 :label="brand.description"
                 :value="brand.brandid"
+                hide-details
               ></v-checkbox>
             </v-list-item>
           </v-list-group>
@@ -49,7 +53,11 @@
         </div>
         <v-divider thickness="2"></v-divider>
         <v-list class="filter-list">
-          <v-list-item v-for="(item, index) in filterMenu" :key="index">
+          <v-list-item
+            v-for="(item, index) in filterMenu"
+            :key="index"
+            style="padding: 0px !important"
+          >
             <div class="d-flex align-center">
               <v-checkbox
                 v-model="selectedFilter[item.sort]"
@@ -94,11 +102,11 @@
         </v-row>
         <v-row class="mt-9">
           <!-- <Service
-                v-if="showService"
-                :serviceItems="filteredServiceItems"
-                @flip-card="flipServiceCard"
-              >
-              </Service> -->
+              v-if="showService"
+              :serviceItems="filteredServiceItems"
+              @flip-card="flipServiceCard"
+            >
+            </Service> -->
         </v-row>
       </v-col>
     </v-row>
@@ -173,13 +181,13 @@
 <script>
 import axios from "axios";
 import TyreItems from "../components/TyreItems.vue";
-/* import EngineOilItems from "@/components/EngineOilItems.vue"; */
+import EngineOilItems from "@/components/EngineOilItems.vue";
 import { ref, onMounted, onUnmounted } from "vue";
 
 export default {
   components: {
     TyreItems,
-    /* EngineOilItems, */
+    EngineOilItems,
   },
   setup() {
     const searchWrapper = ref(null);
@@ -258,7 +266,7 @@ export default {
 
   methods: {
     // for engine oil only
-    /*toggleAllEngineOilItems() {
+    toggleAllEngineOilItems() {
       if (this.isEngineOilChecked) {
         this.selectedEngineOilBrands = this.EngineOilBrandList.map(
           (brand) => brand.value
@@ -266,7 +274,7 @@ export default {
       } else {
         this.selectedEngineOilBrands = [];
       }
-    },*/
+    },
     // for tyre
     toggleAllTyreItems() {
       if (this.isTyreChecked) {
@@ -308,9 +316,7 @@ export default {
 
     async fetchAllProduct() {
       try {
-        const ProductsResponse = await axios.get(
-          "http://tayar.pro/get_all_tyres"
-        );
+        const ProductsResponse = await axios.get("http://tayar.pro/products");
         const BrandsResponse = await axios.get("http://tayar.pro/brands");
         this.ProductsList = ProductsResponse.data;
         this.BrandsList = BrandsResponse.data;
@@ -318,7 +324,6 @@ export default {
         console.error("Error fetching products:", error);
       }
     },
-    
 
     getBrandsForProducts(productId) {
       return this.BrandsList.filter((brand) => brand.productid === productId);
@@ -351,7 +356,7 @@ export default {
         console.error("Error fetching tyre brands:", error);
       }
     },
-
+    //http://tayar.pro/get_all_tyres
     // async fetchEngineOilList() {
     //   try {
     //     const response = await axios.get("http://localhost:8000/engineoil");
