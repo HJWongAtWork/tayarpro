@@ -31,7 +31,8 @@
       </button>
     </form>
     <div align="center">
-      Not yet registered? <router-link to="/register">Register NOW</router-link>!
+      Not yet registered?
+      <router-link to="/register">Register NOW</router-link>!
     </div>
   </div>
   <div v-else>
@@ -79,7 +80,7 @@ export default {
       localStorage.removeItem("jwt");
       localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("username");
-      localStorage.removeItem("checkoutRedirect");
+      localStorage.removeItem("RedirectPath");
 
       isLoggedIn.value = false;
       storedUsername.value = "";
@@ -97,32 +98,26 @@ export default {
         formData.append("username", username.value);
         formData.append("password", password.value);
 
-        console.log("Username:", username.value);
-        console.log("Password:", password.value);
-        const response = await axios.post(
-          "http://localhost:8000/login",
-          formData
-        );
+        console.log("Attempting login..."); // Debug log
 
-        // Store login state
-        localStorage.setItem("jwt", response.data.access_token);
-        localStorage.setItem("isLoggedIn", "true"); // Add this line
-        localStorage.setItem("username", username.value); // Optional
+        const response = await axios.post("http://tayar.pro/login", formData);
 
-        // Check for redirect after login
-        const redirectPath = localStorage.getItem("checkoutRedirect");
-        if (redirectPath) {
-          // Clear the redirect path
-          localStorage.removeItem("checkoutRedirect");
-          // Redirect back to cart
-          router.push(redirectPath);
-        } else {
-          // No redirect path, go to default page
-          router.push("/"); // Changed to  "/"
+        console.log("Login response:", response.data); // Debug log
+
+        if (response.data.access_token) {
+          localStorage.setItem("jwt", response.data.access_token);
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("username", username.value);
+
+          console.log("Token stored:", localStorage.getItem("jwt")); // Debug log
+          console.log("IsLoggedIn:", localStorage.getItem("isLoggedIn")); // Debug log
+
+          router.push("/");
         }
       } catch (error) {
-        console.error("Login failed:", error);
+        console.error("Login error:", error);
         errorMessage.value = "Login failed. Please try again.";
+        showError.value = true;
       } finally {
         isLoading.value = false;
       }

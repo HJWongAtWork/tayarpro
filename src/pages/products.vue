@@ -173,13 +173,13 @@
 <script>
 import axios from "axios";
 import TyreItems from "../components/TyreItems.vue";
-import EngineOilItems from "@/components/EngineOilItems.vue";
+// import EngineOilItems from "@/components/EngineOilItems.vue";
 import { ref, onMounted, onUnmounted } from "vue";
 
 export default {
   components: {
     TyreItems,
-    EngineOilItems,
+    // EngineOilItems,
   },
   setup() {
     const searchWrapper = ref(null);
@@ -309,7 +309,7 @@ export default {
     async fetchAllProduct() {
       try {
         const ProductsResponse = await axios.get(
-          "http://localhost:8000/products"
+          "http://tayar.pro/get_all_tyres"
         );
         const BrandsResponse = await axios.get("http://localhost:8000/brands");
         this.ProductsList = ProductsResponse.data;
@@ -318,6 +318,7 @@ export default {
         console.error("Error fetching products:", error);
       }
     },
+    
 
     getBrandsForProducts(productId) {
       return this.BrandsList.filter((brand) => brand.productid === productId);
@@ -341,7 +342,7 @@ export default {
     },
     async fetchTyreList() {
       try {
-        const response = await axios.get("http://localhost:8000/get_all_tyres");
+        const response = await axios.get("http://tayar.pro/get_all_tyres");
         this.tyreList = response.data.map((tyre) => ({
           ...tyre,
           flipped: false,

@@ -33,5 +33,6 @@ declare module 'vue' {
     TextAreaInputComponent: typeof import('./components/TextAreaInputComponent.vue')['default']
     TextInputComponent: typeof import('./components/TextInputComponent.vue')['default']
     ToastNotification: typeof import('./components/ToastNotification.vue')['default']
+    TyreItems: typeof import('./components/TyreItems.vue')['default']
   }
 }
