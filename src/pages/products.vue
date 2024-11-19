@@ -318,6 +318,7 @@ export default {
         console.error("Error fetching products:", error);
       }
     },
+    
 
     getBrandsForProducts(productId) {
       return this.BrandsList.filter((brand) => brand.productid === productId);
