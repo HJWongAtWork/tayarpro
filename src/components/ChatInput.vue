@@ -10,11 +10,8 @@
             <!-- Message input -->
             <v-textarea v-model="messageText" :loading="loading" :disabled="loading" hide-details
                 placeholder="Type a message..." variant="outlined" density="comfortable" class="mx-2 chat-textarea"
-                rows="1"
-                auto-grow
-                max-rows="4"
-                @keydown.enter.prevent="handleEnterKey"
-                >
+                :class="{ 'textarea-focused': isFocused }" rows="1" auto-grow max-rows="4"
+                @keydown.enter.prevent="handleEnterKey" @focus="isFocused = true" @blur="isFocused = false">
                 <template v-slot:append-inner>
                     <!-- Emoji picker button -->
                     <v-btn v-if="allowEmoji" icon="mdi-emoticon-outline" variant="text" size="small" :disabled="loading"
@@ -128,6 +125,21 @@ const addEmoji = (emoji) => {
     :deep(textarea) {
         line-height: 1.5;
         margin-top: 0;
+    }
+
+    &.textarea-focused {
+        :deep(.v-field.v-field--outlined) {
+            --v-field-border-width: 2px;
+            --v-field-border-opacity: 1;
+            border-color: #FF3131 !important;
+            /* Matches your send button color */
+            background-color: #fff;
+        }
+
+        :deep(.v-field__outline) {
+            --v-field-border-width: 2px;
+            border-color: #FF3131 !important;
+        }
     }
 }
 
