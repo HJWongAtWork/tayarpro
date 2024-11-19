@@ -316,9 +316,7 @@ export default {
 
     async fetchAllProduct() {
       try {
-        const ProductsResponse = await axios.get(
-          "http://localhost:8000/products"
-        );
+        const ProductsResponse = await axios.get("http://tayar.pro/products");
         const BrandsResponse = await axios.get("http://tayar.pro/brands");
         this.ProductsList = ProductsResponse.data;
         this.BrandsList = BrandsResponse.data;
