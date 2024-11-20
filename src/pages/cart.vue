@@ -124,9 +124,7 @@
                     </tr>
                     <tr>
                       <td class="table-cell-small">SST Fee(8%)</td>
-                      <td class="table-cell-small">
-                        RM {{ SaleServiceTax.toFixed(2) }}
-                      </td>
+                      <td class="table-cell-small">RM {{ SST.toFixed(2) }}</td>
                     </tr>
                     <tr>
                       <td class="table-cell-small">Coupon</td>
@@ -141,16 +139,16 @@
                     <tr>
                       <td colspan="12">
                         <!-- <checkoutDialog v-bind:subtotal="Subtotal" /> -->
-                    <v-btn
-                      @click="handleLogout"
-                      min="260px"
-                      height="55px"
-                      color="#FF6875"
-                      display="flex"
-                      width="-webkit-fill-available"
-                    >
-                      Checkout
-                  </v-btn>
+                        <v-btn
+                          @click="handleLogout"
+                          min="260px"
+                          height="55px"
+                          color="#FF6875"
+                          display="flex"
+                          width="-webkit-fill-available"
+                        >
+                          Checkout
+                        </v-btn>
                       </td>
                     </tr>
                   </tbody>
@@ -172,7 +170,7 @@ import checkoutDialog from "../components/checkoutDialog.vue";
 import { isLogicalExpression } from "@babel/types";
 import placeholderImage from "@/assets/tyre.jpg";
 import { ref } from "vue";
-
+import { useCheckoutStore } from "@/stores/checkout";
 const isLoading = ref(true);
 const handleImageError = () => {
   console.log("Image failed to load");
@@ -186,6 +184,7 @@ export default {
   },
   setup() {
     const router = useRouter();
+    const checkoutStore = useCheckoutStore();
     return { router };
   },
   data() {
@@ -266,8 +265,8 @@ export default {
           price: item.unitprice,
           quantity: item.quantity,
           image_link: item.productid.startsWith("SVR")
-            ? "/images/service-placeholder.jpg"
-            : "/images/tyre-placeholder.jpg",
+            ? new URL("@/assets/tyre-install-01.jpg", import.meta.url).href
+            : new URL("@/assets/tyre.jpg", import.meta.url).href,
         }));
       } catch (error) {
         console.error("Cart error details:", {
@@ -383,7 +382,7 @@ export default {
       return;
     }
     await this.fetchCartItems();
-    this.checkLoginStatus()
+    this.checkLoginStatus();
   },
   computed: {
     Subtotal() {
@@ -397,18 +396,18 @@ export default {
       console.log("Subtotal calculated:", subtotal);
       return subtotal;
     },
-    SaleServiceTax() {
+    SST() {
       return (this.Subtotal * 8) / 100;
     },
     Total() {
       if (this.Coupon != null && this.Coupon > 0) {
         return (
           parseFloat(this.Subtotal) +
-          parseFloat(this.SaleServiceTax) -
+          parseFloat(this.SST) -
           parseFloat(this.Coupon)
         );
       } else {
-        return parseFloat(this.Subtotal) + parseFloat(this.SaleServiceTax);
+        return parseFloat(this.Subtotal) + parseFloat(this.SST);
       }
     },
   },

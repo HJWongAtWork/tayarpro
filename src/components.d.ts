@@ -15,7 +15,6 @@ declare module 'vue' {
     ChatInput: typeof import('./components/ChatInput.vue')['default']
     ChatInterface: typeof import('./components/ChatInterface.vue')['default']
     ChatMessages: typeof import('./components/ChatMessages.vue')['default']
-    ChatWidget: typeof import('./components/ChatWidget.vue')['default']
     CheckoutDialog: typeof import('./components/checkoutDialog.vue')['default']
     DatePicker: typeof import('./components/DatePicker.vue')['default']
     Disclaimer: typeof import('./components/Disclaimer.vue')['default']
