@@ -1,4 +1,5 @@
 <template>
+  <v-container class="fill-height align-center justify-center d-flex">
   <div v-if="!isLoggedIn" class="login-container">
     <h2>Login</h2>
     <!-- Add error message display -->
@@ -44,6 +45,7 @@
       <button @click="handleLogout" class="logout-button">Logout</button>
     </div>
   </div>
+</v-container>
 </template>
 
 <script>

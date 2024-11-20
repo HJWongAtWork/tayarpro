@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="fill-height justify-center align-center d-flex">
     <v-stepper v-model="step">
       <v-stepper-header>
         <v-stepper-item value="1">Select Payment Method</v-stepper-item>
