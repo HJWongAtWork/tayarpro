@@ -64,18 +64,16 @@
     </v-row>
     <v-row align="center" class="px-0">
       <v-col cols="12">
-        <v-slide-group show-arrows :selected-class="''">
-          <v-slide-item v-for="(tyre, i) in tyreStore.randomDetails" :key="i">
-            <v-card height="400" width="200" class="ma-3">
-              <v-img height="200" :src="tyre_image" :alt="tyre.description"></v-img>
-              <v-card-title class="text-h7 text-wrap">{{
-                tyre.description
-                }}</v-card-title>
-              <v-card-text>
-                <div>{{ tyre.cartype }}</div>
-                <div class="text-h6 mt-2">RM {{ tyre.unitprice.toFixed(2) }}</div>
-              </v-card-text>
-            </v-card>
+        <v-slide-group ref="slideGroup" show-arrows :selected-class="''" class="slide-group" :touch="{
+          start: true,
+          end: true,
+          left: true,
+          right: true
+        }" :mobile-breakpoint="0" @touchmove.prevent="preventParentScroll">
+          <v-slide-item v-for="tyre in tyreItems" :key="tyre.itemid">
+            <div class="my-2">
+              <TyreItem :tyre="tyre" @flip-card="flipTyreCard" />
+            </div>
           </v-slide-item>
         </v-slide-group>
       </v-col>
@@ -99,38 +97,30 @@
       </v-col>
     </v-row>
     <v-row align="center" justify="center" class="px-8">
-    <v-col v-for="(cardData, index) in cardDataList" :key="index" cols="12" md="4" align="center">
-      <v-card 
-        class="mx-auto card-hover" 
-        color="surface-variant" 
-        :image="cardData.imageSrc" 
-        height="350"
-        :elevation="cardData.elevation" 
-        max-width="450" 
-        align="center" 
-        justify="center"
-        @click="toggleAdditionalText(index)"
-      >
-        <div class="imageContainer">
-          <Transition name="fade">
-            <div key="1" v-if="cardData.showAdditionalText">
-              <div class="imageOpacity">
-                <v-row>
-                  <v-col>
-                    <div class="imageContainerTitle">{{ cardData.title }}</div>
-                    <div class="mx-5 additional-text">{{ cardData.additionalText }}</div>
-                  </v-col>
-                </v-row>
+      <v-col v-for="(cardData, index) in cardDataList" :key="index" cols="12" md="4" align="center">
+        <v-card class="mx-auto card-hover" color="surface-variant" :image="cardData.imageSrc" height="350"
+          :elevation="cardData.elevation" max-width="450" align="center" justify="center"
+          @click="toggleAdditionalText(index)">
+          <div class="imageContainer">
+            <Transition name="fade">
+              <div key="1" v-if="cardData.showAdditionalText">
+                <div class="imageOpacity">
+                  <v-row>
+                    <v-col>
+                      <div class="imageContainerTitle">{{ cardData.title }}</div>
+                      <div class="mx-5 additional-text">{{ cardData.additionalText }}</div>
+                    </v-col>
+                  </v-row>
+                </div>
               </div>
-            </div>
-            <div key="2" v-else class="mx-3">
-              <div class="imageContainerTitle">{{ cardData.title }}</div>
-            </div>
-          </Transition>
-        </div>
-      </v-card>
-    </v-col>
-  </v-row>
+              <div key="2" v-else class="mx-3">
+                <div class="imageContainerTitle">{{ cardData.title }}</div>
+              </div>
+            </Transition>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
     <v-row class="d-flex d-sm-none">
       <v-col cols="12" align="center">
         <RouterLink to="/services"><v-btn color="#ff3131">More Services ></v-btn></RouterLink>
@@ -179,19 +169,69 @@
 </template>
 
 <style scoped>
+/* Consolidated slide group styles */
+:deep(.v-slide-group__prev),
+:deep(.v-slide-group__next) {
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+:deep(.v-slide-group__container) {
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
+  overflow-x: auto !important;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-overflow-scrolling: touch;
+  transition: cursor 0.2s ease;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+:deep(.v-slide-group__content) {
+  gap: 16px;
+  display: flex;
+  flex-wrap: nowrap;
+  transition: transform 0.2s ease-in-out;
+  touch-action: pan-x pan-y;
+}
+
+:deep(.v-slide-item) {
+  flex: 0 0 auto;
+  width: 300px;
+  user-select: none;
+  scroll-snap-align: start;
+  pointer-events: none;
+
+  &>* {
+    pointer-events: auto;
+  }
+}
+
+/* Transition effects */
 .fade-enter-active {
   transition: opacity 0.5s ease;
 }
 
-.fade-leave-active {
-  opacity: 0;
-}
-
+.fade-leave-active,
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
 }
 
+/* Image container styles */
 .imageContainer {
   display: flex;
   height: 350px;
@@ -203,12 +243,8 @@
 }
 
 .imageOpacity {
-  display: flex;
-  height: 350px;
+  @extend .imageContainer;
   width: 100%;
-  color: rgb(225, 225, 225);
-  justify-content: center;
-  align-items: center;
   background-color: rgba(255, 49, 49, 0.9);
   transition: all 0.3s ease;
 }
@@ -226,16 +262,17 @@
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+/* Card hover effect */
 .card-hover {
   transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    cursor: pointer;
+  }
 }
 
-.card-hover:hover {
-  transform: translateY(-5px);
-  cursor: pointer;
-}
-
-/* Prevent scroll jumping */
+/* Carousel control */
 .v-carousel__controls {
   position: absolute;
   bottom: 0;
@@ -247,10 +284,9 @@
 </style>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive, nextTick } from 'vue'
 import Carousel from '@/components/Carousel.vue'
-import tyre_image from '@/assets/tyre.jpg'
-import { useTyreStore } from '@/stores/useTyreStore'
+import TyreItem from '@/components/TyreItem.vue'
 import homeBanner01 from '@/assets/images/home/home-banner-01.png'
 import homeBanner02 from '@/assets/images/home/home-banner-02.png'
 import tyreInstall from '@/assets/images/home/tyre-install-01.jpg'
@@ -261,6 +297,7 @@ import warrantyIcon from '@/assets/images/home/warranty-security-ecommerce-svgre
 import lifterIcon from '@/assets/images/home/lifter-car-repair-svgrepo-com.svg'
 import robotIcon from '@/assets/images/home/robot-futurist-svgrepo-com.svg'
 import logoImage from '@/assets/original_logo_dark.png'
+import axios from 'axios'
 
 // Types
 interface HomeImage {
@@ -283,18 +320,42 @@ interface TayarProStrength {
   cert: string
 }
 
-// Store
-const tyreStore = useTyreStore()
+interface Tyre {
+  itemid: number
+  tyreid: number
+  description: string
+  unitprice: number
+  cartype: string
+  tyresize: string
+  speedindex: string
+  loadindex: string
+  flipped: boolean
+  productid?: number
+  brandid?: number
+}
 
-// Data
+// Constants
+const SCROLL_CONFIG = {
+  sensitivity: 0.8,
+  smoothing: 0.15,
+  maxSpeed: 10,
+  threshold: 3,
+  arrowScrollAmount: 1500,
+}
+
+// Refs
+const slideGroup = ref<any>(null)
+const slideGroupRef = ref<HTMLElement | null>(null)
+
+const tyreItems = ref<Tyre[]>([])
 const homeImages = ref<HomeImage[]>([
-  { 
-    src: homeBanner01, 
-    alt: 'Elegant TayarPro banner with general description and opening times.' 
+  {
+    src: homeBanner01,
+    alt: 'Elegant TayarPro banner with general description and opening times.'
   },
-  { 
-    src: homeBanner02, 
-    alt: 'TayarPro banner promoting services and showing addresses.' 
+  {
+    src: homeBanner02,
+    alt: 'TayarPro banner promoting services and showing addresses.'
   }
 ])
 
@@ -349,12 +410,177 @@ const tayarProStrengths = ref<TayarProStrength[]>([
   }
 ])
 
+// State
+const dragState = reactive({
+  isDragging: false,
+  startX: 0,
+  scrollLeft: 0,
+  lastX: 0,
+})
+// Animation Frame ID for scroll handling
+let animationFrameId: number | null = null;
+
+// Scroll and Slide Control Functions
+const customizeArrowScroll = () => {
+  if (!slideGroup.value) return;
+
+  const container = slideGroup.value.$el.querySelector('.v-slide-group__container');
+  const prevButton = slideGroup.value.$el.querySelector('.v-slide-group__prev');
+  const nextButton = slideGroup.value.$el.querySelector('.v-slide-group__next');
+
+  if (prevButton && nextButton && container) {
+    const clone1 = prevButton.cloneNode(true);
+    const clone2 = nextButton.cloneNode(true);
+    prevButton.parentNode?.replaceChild(clone1, prevButton);
+    nextButton.parentNode?.replaceChild(clone2, nextButton);
+
+    clone1.addEventListener('click', () => {
+      container.scrollTo({
+        left: container.scrollLeft - SCROLL_CONFIG.arrowScrollAmount,
+        behavior: 'smooth'
+      });
+    });
+
+    clone2.addEventListener('click', () => {
+      container.scrollTo({
+        left: container.scrollLeft + SCROLL_CONFIG.arrowScrollAmount,
+        behavior: 'smooth'
+      });
+    });
+  }
+};
+
+// Mouse Event Handlers
+const handleMouseDown = (e: MouseEvent) => {
+  if (!slideGroupRef.value) return;
+
+  dragState.isDragging = true;
+  dragState.startX = e.pageX;
+  dragState.lastX = e.pageX;
+  dragState.scrollLeft = slideGroupRef.value.scrollLeft;
+
+  slideGroupRef.value.style.cursor = 'grabbing';
+  slideGroupRef.value.style.userSelect = 'none';
+
+  if (animationFrameId !== null) {
+    cancelAnimationFrame(animationFrameId);
+  }
+};
+
+const handleMouseMove = (e: MouseEvent) => {
+  if (!dragState.isDragging || !slideGroupRef.value) return;
+
+  e.preventDefault();
+  const currentX = e.pageX;
+  const movementX = currentX - dragState.lastX;
+  dragState.lastX = currentX;
+
+  if (Math.abs(movementX) > SCROLL_CONFIG.threshold) {
+    const scrollDelta = -movementX * SCROLL_CONFIG.sensitivity;
+    const limitedDelta = Math.min(
+      Math.max(scrollDelta, -SCROLL_CONFIG.maxSpeed),
+      SCROLL_CONFIG.maxSpeed
+    );
+
+    const smoothScroll = () => {
+      if (!slideGroupRef.value || !dragState.isDragging) return;
+
+      const currentScroll = slideGroupRef.value.scrollLeft;
+      const targetScroll = currentScroll + limitedDelta;
+      const newScroll = currentScroll + (targetScroll - currentScroll) * SCROLL_CONFIG.smoothing;
+
+      slideGroupRef.value.scrollLeft = newScroll;
+
+      if (dragState.isDragging) {
+        animationFrameId = requestAnimationFrame(smoothScroll);
+      }
+    };
+
+    if (animationFrameId !== null) {
+      cancelAnimationFrame(animationFrameId);
+    }
+    animationFrameId = requestAnimationFrame(smoothScroll);
+  }
+};
+
+const handleMouseUp = () => {
+  dragState.isDragging = false;
+  if (slideGroupRef.value) {
+    slideGroupRef.value.style.cursor = 'grab';
+    slideGroupRef.value.style.removeProperty('user-select');
+  }
+
+  if (animationFrameId !== null) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+};
+
+const handleMouseLeave = () => {
+  if (dragState.isDragging) {
+    handleMouseUp();
+  }
+};
+
+// Tyre-related Functions
+const flipTyreCard = (tyre: Tyre) => {
+  const index = tyreItems.value.findIndex(
+    (item: Tyre) => item.itemid === tyre.itemid
+  );
+  if (index !== -1) {
+    tyreItems.value[index].flipped = !tyreItems.value[index].flipped;
+  }
+};
+
+const fetchRandomTyres = async () => {
+  try {
+    const response = await axios.get('/api/get_all_tyres');
+    const allTyres = response.data;
+    const randomTyres = allTyres
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 7)
+      .map((tyre: Tyre) => ({
+        ...tyre,
+        flipped: false
+      }));
+    tyreItems.value = randomTyres;
+  } catch (error) {
+    console.error('Error fetching tyre data:', error);
+  }
+};
+
+// Utility Functions
+const preventParentScroll = (event: TouchEvent) => {
+  event.stopPropagation();
+};
+
 const toggleAdditionalText = (index: number) => {
   cardDataList.value[index].showAdditionalText = !cardDataList.value[index].showAdditionalText;
-}
+};
 
-// Lifecycle hooks
-onMounted(() => {
-  tyreStore.generateRandomTyreDetails(7)
-})
+// Lifecycle Hooks
+onMounted(async () => {
+  await fetchRandomTyres();
+  await nextTick();
+
+  slideGroupRef.value = document.querySelector('.v-slide-group__container');
+
+  if (slideGroupRef.value) {
+    slideGroupRef.value.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    slideGroupRef.value.addEventListener('mouseleave', handleMouseLeave);
+    slideGroupRef.value.addEventListener('dragstart', (e) => e.preventDefault());
+  }
+
+  customizeArrowScroll();
+});
+
+onUnmounted(() => {
+  if (slideGroupRef.value) {
+    slideGroupRef.value.removeEventListener('mousedown', handleMouseDown);
+    window.removeEventListener('mousemove', handleMouseMove);
+    window.removeEventListener('mouseup', handleMouseUp);
+  }
+});
 </script>
