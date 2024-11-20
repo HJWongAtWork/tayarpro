@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container max-width="1200">
     <h2
       class="text-h3 text-center weight-bold sticky responsive-title"
       style="padding: 10px"

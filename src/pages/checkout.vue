@@ -1,13 +1,11 @@
 <template>
-  <v-container class="fill-height justify-center align-center d-flex">
+  <v-container class="justify-center d-flex" max-width="1200">
     <v-stepper v-model="step">
       <v-stepper-header>
         <v-stepper-item value="1">Select Payment Method</v-stepper-item>
         <v-divider></v-divider>
         <v-stepper-item value="2"> Set Appointment</v-stepper-item>
         <v-divider></v-divider>
-        <!-- <v-stepper-item value="2">Confirm Amount</v-stepper-item>
-          <v-divider></v-divider> -->
         <v-stepper-item value="3">Confirmation</v-stepper-item>
       </v-stepper-header>
 

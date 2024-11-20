@@ -1,5 +1,5 @@
 <template>
-  <v-main>
+  <v-container max-width="1200">
     <v-container class="my-12">
       <v-row class="d-flex align-stretch">
         <!-- Image Column -->
@@ -58,7 +58,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-main>
+  </v-container>
 </template>
 
 <script>

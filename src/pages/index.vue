@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="ma-auto pa-5" max-width="1000">
+  <v-container fluid class="ma-auto pa-5" max-width="1200">
     <v-row max-width="600">
       <v-col cols="12" class="ma-0 px-0">
         <Carousel :images="homeImages" />

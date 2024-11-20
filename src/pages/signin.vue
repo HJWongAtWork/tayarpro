@@ -2,6 +2,7 @@
   <v-container
     class="border-lg justify-center align-center"
     width="500"
+    max-width="1200"
     height="auto"
     style="
       position: absolute;
