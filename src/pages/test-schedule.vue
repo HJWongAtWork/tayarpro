@@ -1,5 +1,10 @@
 <template>
   <v-container>
+    <h1>Test loader</h1>
+    <Loader 
+      height="300px" width="300px"
+    />
+    <Loader />
     <h1>Test Schedule and Toast-Notification</h1>
     <v-btn @click="showSuccessToast">Show Success Toast</v-btn>
     <v-btn @click="showErrorToast">Show Error Toast</v-btn>
