@@ -185,7 +185,7 @@ export default {
   setup() {
     const router = useRouter();
     const checkoutStore = useCheckoutStore();
-    return { router };
+    return { router, checkoutStore };
   },
   data() {
     return {
@@ -227,6 +227,13 @@ export default {
         // 5. Stop the method here
         return;
       }
+      this.checkoutStore.setCheckoutData({
+        Subtotal: this.Subtotal,
+        SST: this.SST,
+        Total: this.Total,
+      });
+      
+
       this.router.push("/checkout");
     },
     async fetchCartItems() {
