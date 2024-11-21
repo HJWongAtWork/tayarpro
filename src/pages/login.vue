@@ -1,208 +1,133 @@
 <template>
-  <v-container class="fill-height align-center justify-center d-flex" max-width="1200">
-  <div v-if="!isLoggedIn" class="login-container">
-    <h2>Login</h2>
-    <!-- Add error message display -->
-    <div v-if="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
-    <form @submit.prevent="handleLogin">
-      <div>
-        <label for="username">Username:</label>
-        <input
-          type="text"
-          v-model="username"
-          id="username"
-          required
-          :disabled="isLoading"
-        />
-      </div>
-      <div>
-        <label for="password">Password:</label>
-        <input
-          type="password"
-          v-model="password"
-          id="password"
-          required
-          :disabled="isLoading"
-        />
-      </div>
-      <button type="submit" :disabled="isLoading">
-        {{ isLoading ? "Logging in..." : "Login" }}
-      </button>
-    </form>
-    <div align="center">
-      Not yet registered?
-      <router-link to="/register">Register NOW</router-link>!
-    </div>
-  </div>
-  <div v-else>
-    <div class="login-info">
-      <h2>You are already logged in as {{ storedUsername }}</h2>
-    </div>
-    <div class="logged-out-container"></div>
-    <div class="button-group">
-      <button @click="handleLogout" class="logout-button">Logout</button>
-    </div>
-  </div>
-</v-container>
+  <v-container class="fill-height">
+    <v-row justify="center" align="center">
+      <v-col cols="12" sm="8" md="6" lg="4">
+        <v-card class="elevation-12" v-if="!isLoggedIn">
+          <v-card-title class="text-center font-weight-black text-h4 py-4">
+            Login
+          </v-card-title>
+
+          <v-card-text>
+            <v-alert v-if="errorMessage" type="error" variant="tonal" closable>
+              {{ errorMessage }}
+            </v-alert>
+
+            <v-form @submit.prevent="handleLogin">
+              <v-text-field v-model="username" label="Username" prepend-inner-icon="mdi-account" variant="outlined"
+                required :disabled="isLoading" class="mb-2"></v-text-field>
+
+              <v-text-field v-model="password" label="Password" prepend-inner-icon="mdi-lock"
+                :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" variant="outlined" required
+                :disabled="isLoading" :type="showPassword ? 'text' : 'password'"
+                @click:append-inner="showPassword = !showPassword"></v-text-field>
+
+              <v-btn type="submit" color="#FF3131" size="large" block :loading="isLoading" class="mt-4">
+                {{ isLoading ? "Logging in..." : "Login" }}
+              </v-btn>
+            </v-form>
+          </v-card-text>
+
+          <v-card-text class="text-center">
+            Not yet registered?
+            <v-btn variant="text" color="#FF3131" to="/register" class="px-1">
+              Register NOW
+            </v-btn>!
+          </v-card-text>
+        </v-card>
+
+        <v-card v-else class="elevation-12">
+          <v-card-text class="text-center pa-6">
+            <v-icon icon="mdi-account-check" color="success" size="x-large" class="mb-4"></v-icon>
+            <h2 class="text-h5 mb-4">
+              You are logged in as {{ storedUsername }}
+            </h2>
+            <v-btn color="#FF3131" @click="handleLogout" prepend-icon="mdi-logout">
+              Logout
+            </v-btn>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script>
-import { ref, onMounted } from "vue";
-import axios from "axios";
-import { useRouter } from "vue-router";
-import { is } from "@babel/types";
+<script setup>
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
 
-export default {
-  setup() {
-    const username = ref("");
-    const password = ref("");
-    const isLoggedIn = ref(false);
-    const errorMessage = ref("");
-    const router = useRouter();
-    const isLoading = ref(false);
-    const storedUsername = ref("");
-    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+const username = ref('')
+const password = ref('')
+const isLoggedIn = ref(false)
+const errorMessage = ref('')
+const router = useRouter()
+const isLoading = ref(false)
+const storedUsername = ref('')
+const showPassword = ref(false)
+const baseUrl = import.meta.env.VITE_API_BASE_URL
 
-    const checkLoginStatus = () => {
-      const loginStatus = localStorage.getItem("isLoggedIn") === "true";
-      const token = localStorage.getItem("jwt");
-      const savedUsername = localStorage.getItem("username");
+const checkLoginStatus = () => {
+  const loginStatus = localStorage.getItem('isLoggedIn')
+  const token = localStorage.getItem('jwt')
+  const savedUsername = localStorage.getItem('username')
 
-      if (!loginStatus || !token || !savedUsername) {
-        isLoggedIn.value = false;
-        storedUsername.value = "";
-      } else {
-        isLoggedIn.value = true;
-        storedUsername.value = savedUsername;
-      }
-    };
+  if (!loginStatus || !token || !savedUsername) {
+    isLoggedIn.value = false;
+    storedUsername.value = '';
+  }
+  else {
+    isLoggedIn.value = true;
+    storedUsername.value = savedUsername;
+  }
+}
 
-    const handleLogout = () => {
-      localStorage.removeItem("jwt");
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("username");
-      localStorage.removeItem("RedirectPath");
+const handleLogout = () => {
+  localStorage.removeItem('jwt')
+  localStorage.removeItem('isLoggedIn')
+  localStorage.removeItem('username')
+  localStorage.removeItem('RedirectPath')
 
-      isLoggedIn.value = false;
-      storedUsername.value = "";
+  isLoggedIn.value = false
+  storedUsername.value = ''
 
-      // Refresh the page to clear any cached state
-      window.location.reload();
-    };
+  // Refresh the page to clear any cached state
+  window.location.reload()
+}
 
-    const handleLogin = async () => {
-      try {
-        isLoading.value = true;
-        errorMessage.value = "";
+const handleLogin = async () => {
+  try {
+    isLoading.value = true
+    errorMessage.value = ''
 
-        const formData = new FormData();
-        formData.append("username", username.value);
-        formData.append("password", password.value);
+    const formData = new FormData()
+    formData.append('username', username.value)
+    formData.append('password', password.value)
 
-        console.log("Attempting login..."); // Debug log
+    console.log('Attempting login...') // Debug log
 
-        const response = await axios.post(`${baseUrl}/login`, formData);
+    const response = await axios.post(`${baseUrl}/login`, formData)
 
-        console.log("Login response:", response.data); // Debug log
+    console.log('Login response:', response.data) // Debug log
 
-        if (response.data.access_token) {
-          localStorage.setItem("jwt", response.data.access_token);
-          localStorage.setItem("isLoggedIn", "true");
-          localStorage.setItem("username", username.value);
+    if (response.data.access_token) {
+      localStorage.setItem('jwt', response.data.access_token)
+      localStorage.setItem('isLoggedIn', 'true')
+      localStorage.setItem('username', username.value)
 
-          console.log("Token stored:", localStorage.getItem("jwt")); // Debug log
-          console.log("IsLoggedIn:", localStorage.getItem("isLoggedIn")); // Debug log
+      console.log('Token stored:', localStorage.getItem('jwt')) // Debug log
+      console.log('IsLoggedIn:', localStorage.getItem('isLoggedIn')) // Debug log
 
-          router.push("/");
-        }
-      } catch (error) {
-        console.error("Login error:", error);
-        errorMessage.value = "Login failed. Please try again.";
-        showError.value = true;
-      } finally {
-        isLoading.value = false;
-      }
-    };
+      router.push('/')
+    }
+  } catch (error) {
+    console.error('Login error:', error)
+    errorMessage.value = 'Login failed. Please try again.'
+  } finally {
+    isLoading.value = false
+  }
+}
 
-    onMounted(() => {
-      checkLoginStatus();
-    });
-
-    return {
-      username,
-      password,
-      handleLogin,
-      handleLogout,
-      isLoggedIn,
-      isLoading,
-      errorMessage,
-      storedUsername,
-    };
-  },
-};
+onMounted(() => {
+  checkLoginStatus()
+})
 </script>
-
-<style scoped>
-.login-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.login-container h2 {
-  text-align: center;
-}
-
-.login-container div {
-  margin-bottom: 15px;
-}
-
-.login-container label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.login-container input {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-.login-container button {
-  width: 100%;
-  padding: 10px;
-  background-color: #ff002b;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.login-container button:hover {
-  background-color: #ff002b;
-}
-
-.button-group {
-  display: flex;
-  justify-content: center;
-}
-
-.logout-button {
-  background-color: #ff002b;
-  color: white;
-}
-
-.logout-button:hover {
-  background-color: #ff002b;
-}
-
-.login-info {
-  text-align: center;
-  background-color: #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-</style>

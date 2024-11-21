@@ -98,6 +98,10 @@ router.beforeEach(async (to, from, next) => {
     to.meta.layoutComponent = DefaultLayout; // Fallback to DefaultLayout if no layout is specified
   }
 
+  if(from.path !== '/cart' && to.path === '/checkout') {
+    next('/cart');
+  }
+
   // Middleware (for clients)
   if(to.path === '/cart'
     || to.path === '/checkout'
