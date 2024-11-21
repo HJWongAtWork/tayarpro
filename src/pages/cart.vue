@@ -185,7 +185,8 @@ export default {
   setup() {
     const router = useRouter();
     const checkoutStore = useCheckoutStore();
-    return { router, checkoutStore };
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    return { router, checkoutStore, baseUrl };
   },
   data() {
     return {
@@ -253,7 +254,7 @@ export default {
         console.log("Making cart request with token..."); // Debug log
 
         const response = await axios.post(
-          "/api/get_cart",
+          `${this.baseUrl}/get_cart`,
           "", // Empty string as data
           {
             headers: {
@@ -295,7 +296,7 @@ export default {
       try {
         console.log("Removing cart item:", productid); // Debug log
         const response = await axios.delete(
-          `/api/delete_cart_item/${productid}`,
+          `${this.baseUrl}/delete_cart_item/${productid}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -325,7 +326,7 @@ export default {
       try {
         const newQuantity = cart.quantity + 1;
         const response = await axios.post(
-          `/api/update_cart_quantity/${cart.productid}/${newQuantity}`,
+          `${this.baseUrl}/update_cart_quantity/${cart.productid}/${newQuantity}`,
           null,
           {
             headers: {
@@ -346,7 +347,7 @@ export default {
         if (cart.quantity > 1) {
           const newQuantity = cart.quantity - 1;
           const response = await axios.post(
-            `/api/update_cart_quantity/${cart.productid}/${newQuantity}`,
+            `${this.baseUrl}/update_cart_quantity/${cart.productid}/${newQuantity}`,
             null,
             {
               headers: {

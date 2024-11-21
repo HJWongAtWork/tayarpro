@@ -23,7 +23,7 @@ export default createVuetify({
     },
   },
   components: {
-    VTimePicker,
+    VTimePicker
   },
   display: {
     mobileBreakpoint: "sm",

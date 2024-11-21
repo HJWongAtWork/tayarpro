@@ -59,6 +59,7 @@ const emit = defineEmits(['send-message', 'file-upload'])
 const messageText = ref('')
 const fileInput = ref(null)
 const showEmojiPicker = ref(false)
+const isFocused = ref(false)
 
 // Send text message
 const sendMessage = () => {

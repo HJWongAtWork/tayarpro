@@ -87,6 +87,8 @@ const router = createRouter({
 
 // Global navigation guard to apply layouts dynamically
 router.beforeEach(async (to, from, next) => {
+  
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
   const layout = to.meta.layoutComponent; // Look for layoutComponent directly
 
   // Dynamically set the layout component in the route's metadata
@@ -103,7 +105,7 @@ router.beforeEach(async (to, from, next) => {
     || to.path === '/your-profile'
     || to.path === '/signin'
   ) {
-    const loginTest = await login_test("/api/get_cart")
+    const loginTest = await login_test(`${baseUrl}/get_cart`)
     if (!loginTest) {
       next('/login');
     }
@@ -111,7 +113,7 @@ router.beforeEach(async (to, from, next) => {
 
   // Middleware (for admin)
   if(to.path === '/admin-dashboard') {
-    const loginTest = await login_test("/api/all_users")
+    const loginTest = await login_test(`${baseUrl}/all_users`)
     if (!loginTest) {
       next('/login');
     }

@@ -273,6 +273,7 @@ export default {
       const isFormCorrect = await v$.value.$validate();
       if (isFormCorrect) {
         console.log("Form submitted successfully");
+        const baseUrl = import.meta.env.VITE_API_BASE_URL;
         try {
           const registerForm = {
             email: form.newEmail,
@@ -290,7 +291,7 @@ export default {
           };
           console.log(registerForm);
           const response = await axios.post(
-            "/api/register-v2",
+            `${baseUrl}/register-v2`,
             registerForm
           );
           console.log(
