@@ -1,43 +1,24 @@
 import { useUserStore } from "@/stores/userStore";
 import { ref, computed } from "vue";
 
-// Define an interface for the user data structure
-/* interface UserData {
-  accountid: number;
-  firstname: string;
-  lastname: string;
-  phonenumber: string;
-  email: string;
-  fulladdress: {
-    address: string;
-    city: string;
-    state: string;
-    zipcode: string;
-  };
-  fullname: string;
-  isadmin: boolean;
-  gender: string;
-  dob: string;
-} */
-
 export function useUserComposable(
   isAdmin = false,
   editUserId: number | null = null
 ) {
   const userStore = useUserStore();
-
+  const accountid = ref(userStore.currentUser.accountid || "");
   const email = ref(userStore.currentUser.email || "");
   const phonenumber = ref(userStore.currentUser.phonenumber || "");
   const firstname = ref(userStore.currentUser.firstname || "");
   const lastname = ref(userStore.currentUser.lastname || "");
-  const gender = ref(userStore.currentUser.gender || "");
-  const dob = ref(userStore.currentUser.dob || "");
-  const address = ref(userStore.currentUser.fulladdress.address || "");
-  const city = ref(userStore.currentUser.fulladdress.city || "");
-  const state = ref(userStore.currentUser.fulladdress.state || "");
-  const zipcode = ref(userStore.currentUser.fulladdress.zipcode || "");
+  // const gender = ref(userStore.currentUser.gender || "");
+  // const dob = ref(userStore.currentUser.dob || "");
+  // const address = ref(userStore.currentUser.fulladdress.address || "");
+  // const city = ref(userStore.currentUser.fulladdress.city || "");
+  // const state = ref(userStore.currentUser.fulladdress.state || "");
+  // const zipcode = ref(userStore.currentUser.fulladdress.zipcode || "");
 
-  const fullname = computed(() => `${firstname.value} ${lastname.value}`);
+  // const fullname = computed(() => `${firstname.value} ${lastname.value}`);
 
   function loadUserData() {
     if (isAdmin && editUserId) {
@@ -54,32 +35,29 @@ export function useUserComposable(
     phonenumber.value = userData.phonenumber || "";
     firstname.value = userData.firstname || "";
     lastname.value = userData.lastname || "";
-    gender.value = userData.gender || "";
-    dob.value = userData.dob || "";
-    address.value = userData.fulladdress.address || "";
-    city.value = userData.fulladdress.city || "";
-    state.value = userData.fulladdress.state || "";
-    zipcode.value = userData.fulladdress.zipcode || "";
+    // gender.value = userData.gender || "";
+    // dob.value = userData.dob || "";
+    // address.value = userData.fulladdress.address || "";
+    // city.value = userData.fulladdress.city || "";
+    // state.value = userData.fulladdress.state || "";
+    // zipcode.value = userData.fulladdress.zipcode || "";
   }
 
   function updateUserStore() {
     const updatedUserData = {
-      accountid:
-        isAdmin && editUserId
-          ? editUserId
-          : (userStore.currentUser.accountid as number),
+      accountid: userStore.currentUser.accountid,
       firstname: firstname.value,
       lastname: lastname.value,
       phonenumber: phonenumber.value,
       email: email.value,
-      address: address.value,
-      city: city.value,
-      state: state.value,
-      zipcode: zipcode.value,
-      fullname: fullname.value,
+      // address: address.value,
+      // city: city.value,
+      // state: state.value,
+      // zipcode: zipcode.value,
+      // fullname: fullname.value,
       isadmin: userStore.currentUser.isadmin as boolean,
-      gender: gender.value,
-      dob: dob.value,
+      // gender: gender.value,
+      // dob: dob.value,
     };
 
     if (isAdmin && editUserId) {
@@ -99,17 +77,18 @@ export function useUserComposable(
   loadUserData();
 
   return {
+    accountid,
     email,
     phonenumber,
     firstname,
     lastname,
-    gender,
-    dob,
-    address,
-    city,
-    state,
-    zipcode,
-    fullname,
+    // gender,
+    // dob,
+    // address,
+    // city,
+    // state,
+    // zipcode,
+    // fullname,
     updateUserStore,
     resetToStoreValues,
   };
