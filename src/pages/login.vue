@@ -1,213 +1,254 @@
 <template>
   <v-container
-    class="fill-height align-center justify-center d-flex"
-    max-width="1200"
+
+    class="border-lg justify-center align-center"
+    width="500"
+    height="auto"
+    style="
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    "
   >
-    <div v-if="!isLoggedIn" class="login-container">
-      <h2>Login</h2>
-      <!-- Add error message display -->
-      <div v-if="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
-      <form @submit.prevent="handleLogin">
-        <div>
-          <label for="username">Username:</label>
-          <input
-            type="text"
-            v-model="username"
-            id="username"
-            required
-            :disabled="isLoading"
-          />
-        </div>
-        <div>
-          <label for="password">Password:</label>
-          <input
-            type="password"
-            v-model="password"
-            id="password"
-            required
-            :disabled="isLoading"
-          />
-        </div>
-        <button type="submit" :disabled="isLoading">
-          {{ isLoading ? "Logging in..." : "Login" }}
-        </button>
-      </form>
-      <div align="center">
-        Not yet registered?
-        <router-link to="/register">Register NOW</router-link>!
-      </div>
+    <div class="text-h5 mb-3 text-center" width="auto">
+      <strong>Log In</strong>
     </div>
-    <div v-else>
-      <div class="login-info">
-        <h2>You are already logged in as {{ storedUsername }}</h2>
-      </div>
-      <div class="logged-out-container"></div>
-      <div class="button-group">
-        <button @click="handleLogout" class="logout-button">Logout</button>
-      </div>
-    </div>
+    <v-form
+      class="ma-auto"
+      ref="form"
+      v-model="valid"
+      :class="{ headShake: shakeForm }"
+      @submit.prevent="handleLogin"
+    >
+      <v-card-title class="mt-5" align="center">
+        <v-text-field
+          width="400"
+          label="Username"
+          prepend-inner-icon="mdi-email"
+          type="text"
+          :rules="[rules.required]"
+          required
+          v-model="username"
+          :disabled="isLoading"
+        ></v-text-field>
+        <v-text-field
+          autocomplete
+          width="400"
+          v-model="password"
+          label="Password"
+          prepend-inner-icon="mdi-lock"
+          :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-closed'"
+          :type="showPassword ? 'text' : 'password'"
+          :rules="[rules.required]"
+          required
+          @click:append-inner="showPassword = !showPassword"
+          :disabled="isLoading"
+        ></v-text-field>
+      </v-card-title>
+      <v-card-actions class="justify-center">
+        <v-btn
+          width="400"
+          color="white"
+          style="background-color: red"
+          type="submit"
+          :disabled="!isValidLogin || isLoading"
+          >{{ isLoading ? "Logging in..." : "Log In" }}</v-btn
+        >
+      </v-card-actions>
+      <v-card-text>
+        <v-alert v-if="errorMessage" type="error">{{ errorMessage }}</v-alert>
+      </v-card-text>
+      <v-card-text class="text-right mr-3">
+        <v-dialog width="500">
+          <template v-slot:activator="{ props: activatorProps }">
+            <v-btn
+              color="primary"
+              dark
+              v-bind="activatorProps"
+              style="text-transform: none"
+            >
+              Forgot Password
+            </v-btn>
+          </template>
+
+          <template v-slot="{ isActive }">
+            <v-card>
+              <v-card-title class="text-h5 grey lighten-2">
+                Forgot Password
+              </v-card-title>
+
+              <v-card-text class="pb-0">
+                <v-text-field
+                  label="Email"
+                  prepend-inner-icon="mdi-email"
+                  type="email"
+                  :rules="[rules.required, rules.email]"
+                  required
+                  v-model="forgotEmail"
+                ></v-text-field>
+              </v-card-text>
+              <v-card-text>
+                <v-alert v-if="passwordMessage" dense>
+                  {{ passwordMessage }}
+                </v-alert>
+              </v-card-text>
+              <v-divider></v-divider>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="primary"
+                  :disabled="!isValidForgotEmail"
+                  @click="fetchPassword"
+                >
+                  Send
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </template>
+        </v-dialog>
+      </v-card-text>
+      <v-card-text class="text-center"
+        >Don't have an account?
+        <router-link to="/register" style="color: blue" class="ml-2"
+          >Sign Up</router-link
+        ></v-card-text
+      >
+    </v-form>
+
   </v-container>
 </template>
 
+<style scoped>
+@keyframes headShake {
+  0% {
+    transform: translateX(0);
+  }
+  6.5% {
+    transform: translateX(-6px) rotateY(-9deg);
+  }
+  18.5% {
+    transform: translateX(5px) rotateY(7deg);
+  }
+  31.5% {
+    transform: translateX(-3px) rotateY(-5deg);
+  }
+  43.5% {
+    transform: translateX(2px) rotateY(3deg);
+  }
+  50% {
+    transform: translateX(0);
+  }
+}
+
+.headShake {
+  animation-name: headShake;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+}
+</style>
+
 <script>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
-import { is } from "@babel/types";
-import { doc } from "firebase/firestore";
+
+import { useUserStore } from "@/stores/userStore";
+
 
 export default {
   setup() {
+    const form = ref(null);
+    const valid = ref(true);
     const username = ref("");
     const password = ref("");
-    const isLoggedIn = ref(false);
+    const showPassword = ref(false);
+    const forgotEmail = ref("");
     const errorMessage = ref("");
-    const router = useRouter();
+    const shakeForm = ref(false);
+    const passwordMessage = ref("");
     const isLoading = ref(false);
-    const storedUsername = ref("");
-    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const router = useRouter();
+    const userStore = useUserStore();
 
-    const checkLoginStatus = () => {
-      const loginStatus = localStorage.getItem("isLoggedIn") === "true";
-      const token = localStorage.getItem("jwt");
-      const savedUsername = localStorage.getItem("username");
+    const isValidForgotEmail = computed(() => {
+      return !!forgotEmail.value && rules.email(forgotEmail.value) === true;
+    });
 
-      if (!loginStatus || !token || !savedUsername) {
-        isLoggedIn.value = false;
-        storedUsername.value = "";
-      } else {
-        isLoggedIn.value = true;
-        storedUsername.value = savedUsername;
-      }
+    const isValidLogin = computed(() => {
+      return !!username.value && !!password.value;
+    });
+
+    const rules = {
+      required: (value) => !!value || "Required.",
+      email: (value) => {
+        const pattern =
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return pattern.test(value) || "Invalid email.";
+      },
     };
 
-    const handleLogout = () => {
-      localStorage.removeItem("jwt");
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("username");
-      localStorage.removeItem("RedirectPath");
-
-      isLoggedIn.value = false;
-      storedUsername.value = "";
-
-      // Refresh the page to clear any cached state
-      window.location.reload();
-    };
+    const fetchPassword = async () => {};
 
     const handleLogin = async () => {
-      try {
-        isLoading.value = true;
-        errorMessage.value = "";
+      if (form.value && form.value.validate()) {
+        const baseUrl = import.meta.env.VITE_API_BASE_URL;
+        try {
+          isLoading.value = true;
+          errorMessage.value = "";
 
-        const formData = new FormData();
-        formData.append("username", username.value);
-        formData.append("password", password.value);
+          const formData = new FormData();
+          formData.append("username", username.value);
+          formData.append("password", password.value);
 
-        console.log("Attempting login..."); // Debug log
+          const response = await axios.post(
+            `${baseUrl}/login`,
+            formData
+          );
 
-        const response = await axios.post(`${baseUrl}/login`, formData);
+          if (response.data.access_token) {
+            localStorage.setItem("jwt", response.data.access_token);
+            localStorage.setItem("username", username.value);
 
-        console.log("Login response:", response.data); // Debug log
-
-        if (response.data.access_token) {
-          localStorage.setItem("jwt", response.data.access_token);
-          localStorage.setItem("isLoggedIn", "true");
-          localStorage.setItem("username", username.value);
-
-          console.log("Token stored:", localStorage.getItem("jwt")); // Debug log
-          console.log("IsLoggedIn:", localStorage.getItem("isLoggedIn")); // Debug log
-
-          router.push("/");
+            userStore.setUser(response.data.user_info);
+            router.push("/");
+          }
+        } catch (error) {
+          console.error("Login error:", error);
+          errorMessage.value = "Login failed. Please try again.";
+          shakeForm.value = true;
+          setTimeout(() => {
+            shakeForm.value = false;
+          }, 1000);
+        } finally {
+          isLoading.value = false;
         }
-      } catch (error) {
-        console.error("Login error:", error);
-        errorMessage.value = "Login failed. Please try again.";
-        showError.value = true;
-      } finally {
-        isLoading.value = false;
       }
     };
 
     onMounted(() => {
-      checkLoginStatus();
-      document.title = "Login";
+
+      // Check login status if needed
+
     });
 
     return {
+      form,
+      valid,
       username,
       password,
-      handleLogin,
-      handleLogout,
-      isLoggedIn,
-      isLoading,
+      showPassword,
+      forgotEmail,
       errorMessage,
-      storedUsername,
+      shakeForm,
+      passwordMessage,
+      isLoading,
+      isValidForgotEmail,
+      isValidLogin,
+      rules,
+      fetchPassword,
+      handleLogin,
     };
   },
 };
 </script>
-
-<style scoped>
-.login-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.login-container h2 {
-  text-align: center;
-}
-
-.login-container div {
-  margin-bottom: 15px;
-}
-
-.login-container label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.login-container input {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-.login-container button {
-  width: 100%;
-  padding: 10px;
-  background-color: #ff002b;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.login-container button:hover {
-  background-color: #ff002b;
-}
-
-.button-group {
-  display: flex;
-  justify-content: center;
-}
-
-.logout-button {
-  background-color: #ff002b;
-  color: white;
-}
-
-.logout-button:hover {
-  background-color: #ff002b;
-}
-
-.login-info {
-  text-align: center;
-  background-color: #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-</style>

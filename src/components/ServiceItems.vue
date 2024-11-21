@@ -114,7 +114,7 @@ export default {
     goToServiceDetails(service) {
       localStorage.setItem("servicedescription", service.description);
       this.$router.push({
-        name: "SpecificService",
+        name: "services-description",
         params: { description: service.description },
       });
     },

@@ -202,19 +202,12 @@ export default {
       this.page = 1;
     },
   },
-  computed: {
-    paginatedTyreList() {
-      const start = (this.page - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.tyreItems.slice(start, end);
-    },
-  },
   emits: ["flip-card"],
   methods: {
     goToTyreDetails(tyre) {
       localStorage.setItem("currentTyreItemId", tyre.itemid);
       this.$router.push({
-        name: "SpecificTyre",
+        name: "products-description",
         params: { description: tyre.description }, // Only pass description in the URL
       });
     },
