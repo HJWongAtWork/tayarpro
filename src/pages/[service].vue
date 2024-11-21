@@ -107,7 +107,7 @@ export default defineComponent({
         console.log(service);
 
         const newCartItem = {
-          accountid: userStore.accountid,
+          accountid: userStore.currentUser.accountid,
           productid: service.serviceid,
           // Add other necessary fields here
         };
