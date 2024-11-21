@@ -213,7 +213,6 @@ import { appointmentComposable } from "@/composables/appointmentComposable";
 import { useDateFormatter } from "@/composables/useDateFormatter";
 import axios from "axios";
 import { useCheckoutStore } from "@/stores/checkout";
-import type { CheckoutData } from "@/stores/checkout";
 export default {
   setup() {
     const router = useRouter();
