@@ -1,7 +1,7 @@
 <template>
     this page should be turned to a component. and use it in the services page. 
     when user click a service, this component will show
-    <v-container>
+    <v-container max-width="1200">
         <!-- Row for the "OUR SERVICE" header -->
         <v-row justify="center">
             <v-col cols="12" class="text-center">

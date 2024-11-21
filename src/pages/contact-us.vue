@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container class="fill-height">
+    <v-container max-width="1200">
       <v-row>
         <v-col cols="12">
           <h1 class="text-h3 font-weight-bold mb-4">Contact Us</h1>

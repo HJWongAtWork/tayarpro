@@ -1,5 +1,5 @@
 <template>
-    <v-container fill-height align="center">
+    <v-container align="center" max-width="1200">
         <v-row>
             <v-col cols="12">
                 <v-card min-width="350" max-width="800" class="ma-auto" color="#FFE2E5">

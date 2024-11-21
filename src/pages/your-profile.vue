@@ -1,5 +1,5 @@
 <template>
-  <v-container class="fill-height">
+  <v-container max-width="1200">
     <v-row>
       <v-col cols="12" sm="12" md="12">
         <h1>Your Profile</h1>

@@ -1,4 +1,5 @@
 <template>
+    <v-container max-width="1200">
     <h2 class="no-background text-center mt-2">
         <span><strong>Services</strong></span>
     </h2>
@@ -72,6 +73,7 @@
             </v-col>
         </v-row>
     </v-responsive>
+</v-container>
 </template>
 
 <style>

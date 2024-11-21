@@ -1,5 +1,5 @@
 <template>
-  <v-container class="fill-height align-center justify-center d-flex">
+  <v-container class="fill-height align-center justify-center d-flex" max-width="1200">
   <div v-if="!isLoggedIn" class="login-container">
     <h2>Login</h2>
     <!-- Add error message display -->
