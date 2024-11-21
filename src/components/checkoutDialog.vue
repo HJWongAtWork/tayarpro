@@ -223,6 +223,7 @@
 import { useRouter } from "vue-router";
 import { required } from "@vuelidate/validators";
 import cartButton from "../components/cartButton.vue";
+import axios from "axios";
 
 export default {
   setup() {
@@ -350,13 +351,69 @@ export default {
     handleInput(value) {
       console.log("Input changed: ", value);
     },
-    placeOrder() {
-      // Call API to place order
-      console.log("Order placed successfully!");
-      this.displayError("Order placed successfully!"); // Show success message
-      setTimeout(() => {
-        this.handleClose(); // Close dialog after success
-      }, 1500);
+    async placeOrder() {
+      try {
+        this.isLoading = true;
+        const token = localStorage.getItem("jwt");
+
+        if (!token) {
+          this.displayError("Please login to place order");
+          return;
+        }
+
+        // Prepare checkout data
+        const checkoutData = {
+          payment_method: this.paymentType,
+          appointment_date: this.appointmentDate,
+          appointment_time: this.appointmentTime,
+          notes: this.appointmentNotes || "",
+          card_number: this.cardNumber,
+          card_expiry: this.cardExpiry,
+          card_cvc: this.cardCVC,
+          bank_account_number: this.bankAccountNumber,
+          bank_name: this.bankName,
+          bank_branch: this.bankBranch,
+          e_wallet_account_number: this.eWalletAccountNumber,
+          e_wallet_password: this.eWalletPassword,
+          car_id: this.car_id,
+        };
+
+        console.log("Sending checkout data:", checkoutData);
+
+        // Send to checkout endpoint
+        const response = await axios.post(
+          "http://tayar.pro/checkout",
+          checkoutData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        console.log("Checkout response:", response.data);
+
+        if (response.data) {
+          // Show success message
+          this.displayError("Order placed successfully!");
+
+          // Close dialog and refresh cart
+          setTimeout(() => {
+            this.handleClose();
+            this.$emit("order-completed");
+            this.router.push("/"); // Redirect to home or order confirmation
+          }, 1500);
+        }
+      } catch (error) {
+        console.error("Checkout error:", error);
+        this.displayError(
+          error.response?.data?.message ||
+            "Failed to place order. Please try again."
+        );
+      } finally {
+        this.isLoading = false;
+      }
     },
     validateCurrentStep() {
       switch (this.step) {
