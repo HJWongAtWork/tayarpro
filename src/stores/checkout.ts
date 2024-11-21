@@ -20,3 +20,5 @@ export const useCheckoutStore = defineStore("checkout", {
     },
   },
 });
+
+export type { CheckoutData };
