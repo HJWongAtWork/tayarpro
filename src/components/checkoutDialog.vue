@@ -382,7 +382,7 @@ export default {
 
         // Send to checkout endpoint
         const response = await axios.post(
-          "http://tayar.pro/checkout",
+          "/api/checkout",
           checkoutData,
           {
             headers: {

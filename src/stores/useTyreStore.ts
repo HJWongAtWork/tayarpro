@@ -19,7 +19,7 @@ export const useTyreStore = defineStore("tyreStore", {
     async fetchTyreDetails() {
       try {
         const response = await axios.get<any[]>(
-          "http://tayar.pro/get_all_tyres"
+          "/api/get_all_tyres"
         );
         const mappedData = response.data.map((tyre) => ({
           brandid: tyre.brandid,
@@ -38,7 +38,7 @@ export const useTyreStore = defineStore("tyreStore", {
     async generateRandomTyreDetails(count: number) {
       try {
         const response = await axios.get<any[]>(
-          "http://tayar.pro/get_all_tyres"
+          "/api/get_all_tyres"
         );
         const mappedData = response.data.map((tyre) => ({
           brandid: tyre.brandid,

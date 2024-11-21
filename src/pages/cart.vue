@@ -253,7 +253,7 @@ export default {
         console.log("Making cart request with token..."); // Debug log
 
         const response = await axios.post(
-          "http://tayar.pro/get_cart",
+          "/api/get_cart",
           "", // Empty string as data
           {
             headers: {
@@ -295,7 +295,7 @@ export default {
       try {
         console.log("Removing cart item:", productid); // Debug log
         const response = await axios.delete(
-          `http://tayar.pro/delete_cart_item/${productid}`,
+          `/api/delete_cart_item/${productid}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -325,7 +325,7 @@ export default {
       try {
         const newQuantity = cart.quantity + 1;
         const response = await axios.post(
-          `http://tayar.pro/update_cart_quantity/${cart.productid}/${newQuantity}`,
+          `/api/update_cart_quantity/${cart.productid}/${newQuantity}`,
           null,
           {
             headers: {
@@ -346,7 +346,7 @@ export default {
         if (cart.quantity > 1) {
           const newQuantity = cart.quantity - 1;
           const response = await axios.post(
-            `http://tayar.pro/update_cart_quantity/${cart.productid}/${newQuantity}`,
+            `/api/update_cart_quantity/${cart.productid}/${newQuantity}`,
             null,
             {
               headers: {

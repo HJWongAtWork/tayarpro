@@ -102,7 +102,7 @@ export default {
 
         console.log("Attempting login..."); // Debug log
 
-        const response = await axios.post("http://tayar.pro/login", formData);
+        const response = await axios.post("/api/login", formData);
 
         console.log("Login response:", response.data); // Debug log
 

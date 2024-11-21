@@ -17,7 +17,7 @@ export const useServiceStore = defineStore('serviceStore', {
   actions: {
     async fetchServiceDetails() {
       try {
-        const response = await axios.get<any[]>('http://127.0.0.1:8000/get_all_services');
+        const response = await axios.get<any[]>('/api/get_all_services');
         const mappedData = response.data.map((service) => ({
           typeid: service.typeid,
           serviceid: service.serviceid,

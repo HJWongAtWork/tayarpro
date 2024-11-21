@@ -304,8 +304,8 @@ export default {
 
     async fetchAllProduct() {
       try {
-        const ProductsResponse = await axios.get("http://tayar.pro/products");
-        const BrandsResponse = await axios.get("http://tayar.pro/brands");
+        const ProductsResponse = await axios.get("/api/products");
+        const BrandsResponse = await axios.get("/api/brands");
         this.ProductsList = ProductsResponse.data;
         this.BrandsList = BrandsResponse.data;
       } catch (error) {
@@ -335,7 +335,7 @@ export default {
     },
     async fetchTyreList() {
       try {
-        const response = await axios.get("http://tayar.pro/get_all_tyres");
+        const response = await axios.get("/api/get_all_tyres");
         this.tyreList = response.data.map((tyre) => ({
           ...tyre,
           flipped: false,

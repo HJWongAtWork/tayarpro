@@ -290,7 +290,7 @@ export default {
           };
           console.log(registerForm);
           const response = await axios.post(
-            "http://tayar.pro/register-v2",
+            "/api/register-v2",
             registerForm
           );
           console.log(
