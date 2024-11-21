@@ -35,5 +35,6 @@ declare module 'vue' {
     ToastNotification: typeof import('./components/ToastNotification.vue')['default']
     TyreItem: typeof import('./components/TyreItem.vue')['default']
     TyreItems: typeof import('./components/TyreItems.vue')['default']
+    VehicleInProfile: typeof import('./components/vehicle-in-profile.vue')['default']
   }
 }

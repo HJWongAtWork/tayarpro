@@ -2,46 +2,39 @@
   <div v-if="isLargeScreen">
     <v-app-bar class="px-3" color="red" height="80" width="100">
       <router-link to="/" @click.native="tab = 0" class="link">
-        <img
-          src="@/assets/logo_tayarpro_partial-removebg-preview.png"
-          height="75"
-        />
+        <img src="@/assets/logo_tayarpro_partial-removebg-preview.png" height="75" />
       </router-link>
 
-    <v-spacer></v-spacer>
-    <v-tabs v-model="tab">
-      <v-tab style="display: none;"></v-tab>
-      <router-link to="/about-us" class="link"
-        ><v-tab>About Us</v-tab></router-link
-      >
-      <router-link to="/products" class="link"><v-tab>Tyres</v-tab></router-link>
-      <router-link to="/services" class="link"
-        ><v-tab>Services</v-tab></router-link
-      >
-      <router-link to="/location" class="link"
-        ><v-tab><v-icon>mdi mdi-map-marker</v-icon>Location</v-tab></router-link
-      >
-      <router-link to="/contact-us" class="link"
-        ><v-tab
-          ><v-icon>mdi mdi-phone-incoming</v-icon>Contact Us</v-tab
-        ></router-link
-      >
-    </v-tabs>
-    <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
+      <v-tabs v-model="tab">
+        <v-tab style="display: none;"></v-tab>
+        <router-link to="/about-us" class="link"><v-tab>About Us</v-tab></router-link>
+        <router-link to="/products" class="link"><v-tab>Tyres</v-tab></router-link>
+        <router-link to="/services" class="link"><v-tab>Services</v-tab></router-link>
+        <router-link to="/location" class="link"><v-tab><v-icon>mdi
+              mdi-map-marker</v-icon>Location</v-tab></router-link>
+        <router-link to="/contact-us" class="link"><v-tab><v-icon>mdi mdi-phone-incoming</v-icon>Contact
+            Us</v-tab></router-link>
+      </v-tabs>
+      <v-spacer></v-spacer>
 
       <div class="d-flex align-center">
-        <router-link to="/your-profile" @click.native="tab = 0" class="link mr-4">
+        <router-link v-if="isLoggedIn" to="/your-profile" @click.native="tab = 0" class="link mr-4">
           <v-icon size="30">mdi-account</v-icon>
         </router-link>
         <router-link to="/cart" @click.native="tab = 0" class="link ma-4">
           <v-icon size="30">mdi-cart-variant</v-icon>
         </router-link>
-        <router-link v-if="isLoggedIn === 'false'" to="/login" @click.native="tab = 0" class="link ma-4">
+        <div v-if="!isLoggedIn">
+          <router-link to="/login" @click.native="tab = 0" class="link ma-4">
           <v-icon size="30">mdi-login</v-icon>
         </router-link>
-        <router-link v-else to="/login" @click.native="tab = 0" class="link ma-4">
-          <v-icon size="30">mdi-logout</v-icon>
-        </router-link>
+        </div>
+        <div v-else>
+          <router-link to="/login" @click.native="tab = 0" class="link ma-4">
+            <v-icon size="30">mdi-logout</v-icon>
+          </router-link>
+        </div>
       </div>
     </v-app-bar>
   </div>
@@ -103,7 +96,7 @@
             </v-list-item-title>
           </v-list-item>
         </router-link>
-        <router-link to="/your-profile" @click.native="tab = 0" class="link">
+        <router-link v-if="isLoggedIn" to="/your-profile" @click.native="tab = 0" class="link">
           <v-list-item>
             <v-list-item-title>
               <v-icon>mdi-account</v-icon> Your Profile
@@ -111,7 +104,7 @@
           </v-list-item>
         </router-link>
 
-        <router-link v-if="isLoggedIn === 'false'" to="/login" @click.native="tab = 0" class="link">
+        <router-link v-if="!isLoggedIn" to="/login" @click.native="tab = 0" class="link">
           <v-list-item>
             <v-list-item-title>
               <v-icon>mdi-login</v-icon> Login
@@ -135,39 +128,35 @@
 <script>
 import { is } from '@babel/types';
 
-  export default {
-    data() {
-      return {
-        isLargeScreen: window.innerWidth >= 1000,
-        drawer: false,
-        tab: 0,
-        isLoggedIn: "",
-      };
-    },
-    mounted() {
-      this.tab = 0;
-      window.addEventListener("resize", this.updateScreenSize);
+export default {
+  data() {
+    return {
+      isLargeScreen: window.innerWidth >= 1000,
+      drawer: false,
+      tab: 0,
+      isLoggedIn: localStorage.getItem("isLoggedIn"),
+    };
+  },
+  mounted() {
+    this.tab = 0;
+    window.addEventListener("resize", this.updateScreenSize);
 
-      //for testing only
-      //later need to be removed
-      localStorage.setItem("isLoggedIn", "true");
-
-      this.isLoggedIn = localStorage.getItem("isLoggedIn");
+    this.isLoggedIn = localStorage.getItem("isLoggedIn");
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.updateScreenSize);
+  },
+  methods: {
+    updateScreenSize() {
+      this.isLargeScreen = window.innerWidth >= 1000;
     },
-    beforeDestroy() {
-      window.removeEventListener("resize", this.updateScreenSize);
-    },
-    methods: {
-      updateScreenSize() {
-        this.isLargeScreen = window.innerWidth >= 1000;
-      },
-    },
-  };
+  },
+};
 </script>
 
 <style>
-  .link {
-    color: white;
-    text-decoration: none;
-  }
+.link {
+  color: white;
+  text-decoration: none;
+}
 </style>

@@ -382,7 +382,7 @@ const cardDataList = ref<CardData[]>([
     title: "Tyre Consulting",
     elevation: 2,
     showAdditionalText: false,
-    additionalText: "Tyre consultation services offer expert advice on tire selection, maintenance, and performance. Experienced professionals can help customers choose the right tires for their specific needs, provide guidance on tire care and maintenance practices, and offer recommendations for improving tire performance and fuel efficiency.",
+    additionalText: "Tyre consultation services offer expert advice on tire selection, maintenance, and performance. Customers are helped with choosing the right tires, provided guidance on tire care and maintenance practices, and are offered recommendations for improving tire performance.",
   }
 ])
 
