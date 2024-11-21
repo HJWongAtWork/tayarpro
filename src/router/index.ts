@@ -12,26 +12,23 @@ import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import NoHeaderLayout from "@/layouts/NoHeaderLayout.vue";
 import AdminLayout from "@/layouts/AdminLayout.vue";
 
+import { setupLayouts } from "virtual:generated-layouts";
+
 // Login tester
 const login_test = async (link: string) => {
   try {
-    const response = await axios.post(link,
-      "",
-        {
-          headers:
-          {
-            "Content-Type": "application/json",
-            accept: "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("jwt")}`
-        }
-      } 
-    )
+    const response = await axios.post(link, "", {
+      headers: {
+        "Content-Type": "application/json",
+        accept: "application/json",
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+    });
     return response.status === 200;
-  }
-  catch (error) {
+  } catch (error) {
     return false;
   }
-}
+};
 
 // Define custom routes
 const customRoutes: RouteRecordRaw[] = [
@@ -45,19 +42,19 @@ const customRoutes: RouteRecordRaw[] = [
     path: "/register",
     name: "Register",
     component: () => import("@/pages/register.vue"), // Lazy load register page
-    meta: { layoutComponent: NoHeaderLayout }, 
+    meta: { layoutComponent: NoHeaderLayout },
   },
   {
     path: "/checkout",
     name: "Checkout",
     component: () => import("@/pages/checkout.vue"), // Lazy load register page
-    meta: { layoutComponent: NoHeaderLayout }, 
+    meta: { layoutComponent: NoHeaderLayout },
   },
   {
     path: "/signin",
     name: "Signin",
     component: () => import("@/pages/signin.vue"), // Lazy load register page
-    meta: { layoutComponent: NoHeaderLayout }, 
+    meta: { layoutComponent: NoHeaderLayout },
   },
   {
     path: "/admin-dashboard",
@@ -74,20 +71,30 @@ const defaultLayoutRoutes: RouteRecordRaw[] = autoRoutes.map((route) => ({
 }));
 
 // Combine all routes
-const routes: RouteRecordRaw[] = [
-  ...defaultLayoutRoutes,
-  ...customRoutes,
-];
+const routes: RouteRecordRaw[] = [...defaultLayoutRoutes, ...customRoutes];
 
 // Create the router
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
+  routes: setupLayouts([
+    ...routes,
+    {
+      path: "/products/:description",
+      name: "products-description",
+      component: () => import("../pages/[description].vue"),
+      props: true,
+    },
+    {
+      path: "/services/:description",
+      name: "services-description",
+      component: () => import("../pages/[service].vue"),
+      props: true,
+    },
+  ]),
 });
 
 // Global navigation guard to apply layouts dynamically
 router.beforeEach(async (to, from, next) => {
-  
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
   const layout = to.meta.layoutComponent; // Look for layoutComponent directly
 
@@ -103,30 +110,36 @@ router.beforeEach(async (to, from, next) => {
   }
 
   // Middleware (for clients)
-  if(to.path === '/cart'
-    || to.path === '/checkout'
-    || to.path === '/appointments'
-    || to.path === '/your-profile'
-    || to.path === '/signin'
+  if (
+    to.path === "/cart" ||
+    to.path === "/checkout" ||
+    to.path === "/appointments" ||
+    to.path === "/your-profile" ||
+    to.path === "/signin"
   ) {
-    const loginTest = await login_test(`${baseUrl}/get_cart`)
+    const loginTest = await login_test(`${baseUrl}/get_cart`);
     if (!loginTest) {
-      next('/login');
+      next("/login");
     }
   }
 
   // Middleware (for admin)
-  if(to.path === '/admin-dashboard') {
-    const loginTest = await login_test(`${baseUrl}/all_users`)
+  if (to.path === "/admin-dashboard") {
+    const loginTest = await login_test(`${baseUrl}/all_users`);
     if (!loginTest) {
-      next('/login');
+      next("/login");
     }
   }
 
-  if(to.path === '/login' || to.path === '/register' || to.path === '/checkout' || to.path === '/signin') {
+  if (
+    to.path === "/login" ||
+    to.path === "/register" ||
+    to.path === "/checkout" ||
+    to.path === "/signin"
+  ) {
     to.meta.layoutComponent = NoHeaderLayout;
   }
-  if(to.path === '/admin-dashboard') {
+  if (to.path === "/admin-dashboard") {
     to.meta.layoutComponent = AdminLayout;
   }
 
