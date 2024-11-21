@@ -17,9 +17,10 @@ export const useTyreStore = defineStore("tyreStore", {
   }),
   actions: {
     async fetchTyreDetails() {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
         const response = await axios.get<any[]>(
-          "/api/get_all_tyres"
+          `${baseUrl}/get_all_tyres`
         );
         const mappedData = response.data.map((tyre) => ({
           brandid: tyre.brandid,
@@ -36,9 +37,10 @@ export const useTyreStore = defineStore("tyreStore", {
       }
     },
     async generateRandomTyreDetails(count: number) {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
         const response = await axios.get<any[]>(
-          "/api/get_all_tyres"
+          `${baseUrl}/get_all_tyres`
         );
         const mappedData = response.data.map((tyre) => ({
           brandid: tyre.brandid,

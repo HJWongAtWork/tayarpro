@@ -70,11 +70,11 @@
           left: true,
           right: true
         }" :mobile-breakpoint="0" @touchmove.prevent="preventParentScroll">
-          <v-slide-item v-for="tyre in tyreItems" :key="tyre.itemid">
+          <v-slide-group-item v-for="tyre in tyreItems" :key="tyre.itemid">
             <div class="my-2">
               <TyreItem :tyre="tyre" @flip-card="flipTyreCard" />
             </div>
-          </v-slide-item>
+          </v-slide-group-item>
         </v-slide-group>
       </v-col>
     </v-row>
@@ -297,6 +297,7 @@ import warrantyIcon from '@/assets/images/home/warranty-security-ecommerce-svgre
 import lifterIcon from '@/assets/images/home/lifter-car-repair-svgrepo-com.svg'
 import robotIcon from '@/assets/images/home/robot-futurist-svgrepo-com.svg'
 import logoImage from '@/assets/original_logo_dark.png'
+import { VSlideGroup, VSlideGroupItem } from 'vuetify/components'
 import axios from 'axios'
 
 // Types
@@ -342,6 +343,8 @@ const SCROLL_CONFIG = {
   threshold: 3,
   arrowScrollAmount: 1500,
 }
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL
 
 // Refs
 const slideGroup = ref<any>(null)
@@ -534,7 +537,7 @@ const flipTyreCard = (tyre: Tyre) => {
 
 const fetchRandomTyres = async () => {
   try {
-    const response = await axios.get('/api/get_all_tyres');
+    const response = await axios.get(`${baseUrl}/get_all_tyres`);
     const allTyres = response.data;
     const randomTyres = allTyres
       .sort(() => 0.5 - Math.random())

@@ -16,8 +16,9 @@ export const useServiceStore = defineStore('serviceStore', {
   }),
   actions: {
     async fetchServiceDetails() {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
-        const response = await axios.get<any[]>('/api/get_all_services');
+        const response = await axios.get<any[]>(`${baseUrl}/get_all_services`);
         const mappedData = response.data.map((service) => ({
           typeid: service.typeid,
           serviceid: service.serviceid,

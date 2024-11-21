@@ -219,6 +219,7 @@ export default {
     const { newAppointment } = appointmentComposable();
     const { formatDateToReadable } = useDateFormatter();
     const checkoutStore = useCheckoutStore();
+    const baseUrl = import.meta.env.VITE_API_BASE_URL
     return {
       router,
       newAppointment,
@@ -382,7 +383,7 @@ export default {
       console.log(checkoutData);
 
       const response = await axios.post(
-        "/api/checkout",
+        `${this.baseUrl}/checkout`,
         checkoutData,
         {
           method: "POST",

@@ -63,6 +63,7 @@ export default {
     const router = useRouter();
     const isLoading = ref(false);
     const storedUsername = ref("");
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
     const checkLoginStatus = () => {
       const loginStatus = localStorage.getItem("isLoggedIn") === "true";
@@ -102,7 +103,7 @@ export default {
 
         console.log("Attempting login..."); // Debug log
 
-        const response = await axios.post("/api/login", formData);
+        const response = await axios.post(`${baseUrl}/login`, formData);
 
         console.log("Login response:", response.data); // Debug log
 

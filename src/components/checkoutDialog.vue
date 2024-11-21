@@ -228,7 +228,8 @@ import axios from "axios";
 export default {
   setup() {
     const router = useRouter();
-    return { router };
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    return { router, baseUrl };
   },
 
   validation: {
@@ -382,7 +383,7 @@ export default {
 
         // Send to checkout endpoint
         const response = await axios.post(
-          "/api/checkout",
+          `${this.baseUrl}/checkout`,
           checkoutData,
           {
             headers: {

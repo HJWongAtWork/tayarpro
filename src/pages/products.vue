@@ -303,9 +303,10 @@ export default {
     },
 
     async fetchAllProduct() {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
-        const ProductsResponse = await axios.get("/api/products");
-        const BrandsResponse = await axios.get("/api/brands");
+        const ProductsResponse = await axios.get(`${baseUrl}/products`);
+        const BrandsResponse = await axios.get(`${baseUrl}/brands`);
         this.ProductsList = ProductsResponse.data;
         this.BrandsList = BrandsResponse.data;
       } catch (error) {
@@ -334,8 +335,9 @@ export default {
       }
     },
     async fetchTyreList() {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
-        const response = await axios.get("/api/get_all_tyres");
+        const response = await axios.get(`${baseUrl}/get_all_tyres`);
         this.tyreList = response.data.map((tyre) => ({
           ...tyre,
           flipped: false,

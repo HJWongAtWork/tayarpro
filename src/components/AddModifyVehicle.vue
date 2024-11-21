@@ -29,6 +29,7 @@
   
   export default {
     setup() {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       const dialog = ref(false);
       const carModel = ref('');
       const makeYear = ref('');
@@ -65,7 +66,7 @@
         }
   
         try {
-          /* const response = await axios.post('/api/cars', {
+          /* const response = await axios.post(`${baseUrl}/cars`, {
             carModel: carModel.value,
             makeYear: makeYear.value,
             licensePlate: licensePlate.value,
