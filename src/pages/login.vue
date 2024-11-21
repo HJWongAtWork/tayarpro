@@ -1,5 +1,6 @@
 <template>
   <v-container
+
     class="border-lg justify-center align-center"
     width="500"
     height="auto"
@@ -114,6 +115,7 @@
         ></v-card-text
       >
     </v-form>
+
   </v-container>
 </template>
 
@@ -150,7 +152,9 @@
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+
 import { useUserStore } from "@/stores/userStore";
+
 
 export default {
   setup() {
@@ -223,7 +227,9 @@ export default {
     };
 
     onMounted(() => {
+
       // Check login status if needed
+
     });
 
     return {

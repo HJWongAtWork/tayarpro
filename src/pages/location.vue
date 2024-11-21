@@ -12,6 +12,7 @@
         <v-card class="elevation-3 map-container"> <!-- Added map-container class -->
           <v-card-text class="pa-0 h-100"> <!-- Added h-100 -->
             <div id="map" class="map"></div>
+
           </v-card-text>
         </v-card>
       </v-col>
@@ -74,6 +75,7 @@
   </v-container>
 </template>
 
+
 <script setup>
 import { onMounted, ref } from 'vue'
 import L from 'leaflet'
@@ -129,6 +131,7 @@ onMounted(() => {
     }).openPopup()
   })
 })
+
 </script>
 
 <style scoped>
@@ -139,6 +142,7 @@ onMounted(() => {
 }
 
 .map {
+
   height: 100%;
   width: 100%;
   min-height: 400px;
