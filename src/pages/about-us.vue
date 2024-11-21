@@ -15,11 +15,7 @@
             Our <span class="highlight">Company Overview</span>
           </p>
           <p style="font-size: 20px;">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae, consequatur vitae quas laborum,
-            nesciunt ducimus doloribus rerum velit facilis totam ab dolore nulla. Praesentium assumenda ipsa quia quam
-            exercitationem delectus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum dolorem dignissimos
-            repellendus doloribus dolores qui ex quia voluptatum ducimus voluptates provident molestiae ab corporis
-            deleniti, omnis possimus. Iusto, quaerat nam.
+            Welcome to TayarPro, your trusted partner for all things tyres! At TayarPro, we pride ourselves on delivering exceptional service, quality products, and expert advice to ensure your vehicle runs smoothly and safely. With a wide selection of tyres from top brands and a team of skilled professionals, we are dedicated to meeting all your tyre needs, from purchasing new tyres to routine maintenance and emergency repairs. Our commitment to customer satisfaction drives everything we do, making TayarPro the go-to destination for drivers who value safety, reliability, and top-notch service. Whether you're hitting the road for a long journey or navigating daily commutes, trust TayarPro to keep you rolling confidently.
           </p>
         </v-col>
       </v-row>
