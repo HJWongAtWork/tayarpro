@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia';
-import axios from 'axios';
+import { defineStore } from "pinia";
+import axios from "axios";
 
 export interface TyreDetail {
   brandid: string;
@@ -10,39 +10,43 @@ export interface TyreDetail {
   status: string;
 }
 
-export const useTyreStore = defineStore('tyreStore', {
+export const useTyreStore = defineStore("tyreStore", {
   state: () => ({
     tyreDetails: [] as TyreDetail[],
-    randomDetails: [] as TyreDetail[]
+    randomDetails: [] as TyreDetail[],
   }),
   actions: {
     async fetchTyreDetails() {
       try {
-        const response = await axios.get<any[]>('http://127.0.0.1:8000/get_all_tyres');
+        const response = await axios.get<any[]>(
+          "http://tayar.pro/get_all_tyres"
+        );
         const mappedData = response.data.map((tyre) => ({
           brandid: tyre.brandid,
           itemid: tyre.itemid,
           cartype: tyre.cartype,
           description: tyre.description,
           unitprice: tyre.unitprice,
-          status: tyre.status
+          status: tyre.status,
         }));
         this.tyreDetails = mappedData;
       } catch (error) {
-        console.error('Error fetching tyre details:', error);
+        console.error("Error fetching tyre details:", error);
         // Handle error appropriately
       }
     },
     async generateRandomTyreDetails(count: number) {
       try {
-        const response = await axios.get<any[]>('http://127.0.0.1:8000/get_all_tyres');
+        const response = await axios.get<any[]>(
+          "http://tayar.pro/get_all_tyres"
+        );
         const mappedData = response.data.map((tyre) => ({
           brandid: tyre.brandid,
           itemid: tyre.itemid,
           cartype: tyre.cartype,
           description: tyre.description,
           unitprice: tyre.unitprice,
-          status: tyre.status
+          status: tyre.status,
         }));
 
         const randomTyres = [];
@@ -53,9 +57,9 @@ export const useTyreStore = defineStore('tyreStore', {
 
         this.randomDetails = randomTyres;
       } catch (error) {
-        console.error('Error fetching random tyre details:', error);
+        console.error("Error fetching random tyre details:", error);
         // Handle error appropriately
       }
-    }
+    },
   },
 });
