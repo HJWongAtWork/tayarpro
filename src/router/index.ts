@@ -13,9 +13,9 @@ import NoHeaderLayout from "@/layouts/NoHeaderLayout.vue";
 import AdminLayout from "@/layouts/AdminLayout.vue";
 
 // Login tester
-const login_test = async () => {
+const login_test = async (link: string) => {
   try {
-    const response = await axios.post("/api/get_cart",
+    const response = await axios.post(link,
       "",
         {
           headers:
@@ -96,15 +96,22 @@ router.beforeEach(async (to, from, next) => {
     to.meta.layoutComponent = DefaultLayout; // Fallback to DefaultLayout if no layout is specified
   }
 
-  // Middleware
+  // Middleware (for clients)
   if(to.path === '/cart'
     || to.path === '/checkout'
     || to.path === '/appointments'
     || to.path === '/your-profile'
-    || to.path === '/admin-dashboard'
     || to.path === '/signin'
   ) {
-    const loginTest = await login_test()
+    const loginTest = await login_test("/api/get_cart")
+    if (!loginTest) {
+      next('/login');
+    }
+  }
+
+  // Middleware (for admin)
+  if(to.path === '/admin-dashboard') {
+    const loginTest = await login_test("/api/all_users")
     if (!loginTest) {
       next('/login');
     }
