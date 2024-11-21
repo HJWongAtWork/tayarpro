@@ -1,14 +1,17 @@
 import { vehicleStore } from "@/stores/vehicleStore";
+import axios from "axios";
 
 export const vehicleComposable = () => {
   const vehicle_store = vehicleStore();
   const { vehicles } = toRefs(vehicle_store);
+  const { cars } = toRefs(vehicle_store);
   const idInput = ref(0);
   const plateNumberInput = ref("");
   const brandInput = ref("");
   const modelInput = ref("");
   const yearInput = ref(0);
   const tyreSizeInput = ref("");
+  const typeInput = ref("");
 
   const fetchVehicles = async () => {
     await vehicle_store.fetchVehicles();
@@ -21,44 +24,115 @@ export const vehicleComposable = () => {
     return 0;
   }
 
-  const addVehicle = () => {
-    const newVehicle = {
-      id: getLatestVehicleId() + 1,
-      plateNumber: plateNumberInput.value,
-      brand: brandInput.value,
-      model: modelInput.value,
-      year: yearInput.value,
-      tyreSize: tyreSizeInput.value
+  const addVehicle = async () => {
+      const newVehicle = {
+      plate_number: plateNumberInput.value,
+      car_brand: brandInput.value,
+      car_model: modelInput.value,
+      car_type: typeInput.value,
+      car_year: Number(yearInput.value),
+      tyre_size: tyreSizeInput.value
     };
-    vehicles.value.push(newVehicle);
+  
+    const token = localStorage.getItem("jwt");
+    console.log("New Vehicle:", newVehicle);
+    console.log("JWT Token:", token);
+  
+    try {
+      const response = await axios.post(
+        "/api/add_new_car",
+        newVehicle,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      console.log("Response from server:", response.data);
+      fetchVehicles(); // Reload vehicles after successful addition
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        // Axios-specific error
+        console.error("Axios error:", error.message); 
+        console.error("Response data:", error.response?.data); // Log the server's response if available
+        console.error("Status code:", error.response?.status); // Log HTTP status code
+      } else {
+        // Non-Axios error
+        console.error("Unknown error occurred:", error);
+      }
+    }
+    
+  };
+  
+
+  const editVehicle = async (id: number) => {
+    const token = localStorage.getItem("jwt");
+    const carData = {
+    car_id: id,
+      car_brand: brandInput.value,
+      car_model: modelInput.value,
+      car_type: typeInput.value,
+      car_year: Number(yearInput.value),
+      tyre_size: tyreSizeInput.value
   };
 
-  const editVehicle = (id: number) => {
-    const index = vehicles.value.findIndex(vehicle => vehicle.id === id);
-    if (index !== -1) {
-      vehicles.value[index].plateNumber = plateNumberInput.value;
-      vehicles.value[index].brand = brandInput.value;
-      vehicles.value[index].model = modelInput.value;
-      vehicles.value[index].year = yearInput.value;
-      vehicles.value[index].tyreSize = tyreSizeInput.value;
-    }
+  try {
+    const response = await axios.put(
+      '/api/update_car',
+      carData, // Data to be sent with the request
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`, // Pass token in header
+          'Accept': 'application/json', // Accept JSON response
+          'Content-Type': 'application/json', // Content type is JSON
+        },
+      }
+    );
+
+    console.log("Response:", response.data); // Log the response from the server
+  } catch (error) {
+    console.error("Error updating car:", error); // Handle error
+  }
+    fetchVehicles();
   };
 
-  const deleteVehicle = (id: number) => {
-    const index = vehicles.value.findIndex(vehicle => vehicle.id === id);
-    if (index !== -1) {
-      vehicles.value.splice(index, 1);
-    }
+  const deleteVehicle = async (id: number) => {
+    const token = localStorage.getItem("jwt");
+  try {
+    const response = await axios.post(
+      '/api/change_car_status',
+      {
+        car_id: id, // Data to be sent with the request
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`, // Pass token in header
+          'Accept': 'application/json', // Accept JSON response
+          'Content-Type': 'application/json', // Content type is JSON
+        },
+      }
+    );
+
+    console.log("Response:", response.data); // Log the response from the server
+  } catch (error) {
+    console.error("Error changing car status:", error); // Handle error
+  }
+    fetchVehicles();
   };  
 
   return {
     vehicles,
+    cars,
     idInput,
     plateNumberInput,
     brandInput,
     modelInput,
     yearInput,
     tyreSizeInput,
+    typeInput,
     fetchVehicles,
     getLatestVehicleId,
     addVehicle,

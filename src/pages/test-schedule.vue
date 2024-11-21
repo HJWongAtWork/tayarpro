@@ -1,5 +1,9 @@
 <template>
   <v-container>
+    <h1>Test vehicle in profile</h1>
+    <VehicleInProfile />
+    <h1>Test cars</h1>
+    {{ cars }}
     <h1>Test loader</h1>
     <Loader 
       height="300px" width="300px"
@@ -20,9 +24,21 @@
 </template>
 
 <script>
-import ToastNotification from "@/components/ToastNotification.vue";
+import ToastNotification from "@/components/ToastNotification.vue"; 
+import { vehicleComposable } from '@/composables/vehicleComposable';
 
 export default {
+  setup() {
+    const {
+        cars,
+        fetchVehicles,
+      } = vehicleComposable();
+
+    return {
+      cars,
+      fetchVehicles,
+    };
+  },
   components: {
     ToastNotification,
   },
