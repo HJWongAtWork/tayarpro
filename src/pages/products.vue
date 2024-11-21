@@ -2,7 +2,7 @@
   <div class="title-page">
     <div class="line"></div>
     <h2 class="no-background text-center">
-      <span>TYRES</span>
+      <span><strong>TYRES</strong></span>
     </h2>
     <div class="line"></div>
   </div>
@@ -227,9 +227,11 @@ export default {
       this.sortTyreItems();
     },
   },
+
   mounted() {
     this.fetchTyreList();
     this.fetchAllProduct();
+    document.title = "Tyres";
   },
   data() {
     return {

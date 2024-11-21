@@ -1,51 +1,54 @@
 <template>
-  <v-container class="fill-height align-center justify-center d-flex" max-width="1200">
-  <div v-if="!isLoggedIn" class="login-container">
-    <h2>Login</h2>
-    <!-- Add error message display -->
-    <div v-if="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
-    <form @submit.prevent="handleLogin">
-      <div>
-        <label for="username">Username:</label>
-        <input
-          type="text"
-          v-model="username"
-          id="username"
-          required
-          :disabled="isLoading"
-        />
+  <v-container
+    class="fill-height align-center justify-center d-flex"
+    max-width="1200"
+  >
+    <div v-if="!isLoggedIn" class="login-container">
+      <h2>Login</h2>
+      <!-- Add error message display -->
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
       </div>
-      <div>
-        <label for="password">Password:</label>
-        <input
-          type="password"
-          v-model="password"
-          id="password"
-          required
-          :disabled="isLoading"
-        />
+      <form @submit.prevent="handleLogin">
+        <div>
+          <label for="username">Username:</label>
+          <input
+            type="text"
+            v-model="username"
+            id="username"
+            required
+            :disabled="isLoading"
+          />
+        </div>
+        <div>
+          <label for="password">Password:</label>
+          <input
+            type="password"
+            v-model="password"
+            id="password"
+            required
+            :disabled="isLoading"
+          />
+        </div>
+        <button type="submit" :disabled="isLoading">
+          {{ isLoading ? "Logging in..." : "Login" }}
+        </button>
+      </form>
+      <div align="center">
+        Not yet registered?
+        <router-link to="/register">Register NOW</router-link>!
       </div>
-      <button type="submit" :disabled="isLoading">
-        {{ isLoading ? "Logging in..." : "Login" }}
-      </button>
-    </form>
-    <div align="center">
-      Not yet registered?
-      <router-link to="/register">Register NOW</router-link>!
     </div>
-  </div>
-  <div v-else>
-    <div class="login-info">
-      <h2>You are already logged in as {{ storedUsername }}</h2>
+    <div v-else>
+      <div class="login-info">
+        <h2>You are already logged in as {{ storedUsername }}</h2>
+      </div>
+      <div class="logged-out-container"></div>
+      <div class="button-group">
+        <button @click="handleLogout" class="logout-button">Logout</button>
+      </div>
     </div>
-    <div class="logged-out-container"></div>
-    <div class="button-group">
-      <button @click="handleLogout" class="logout-button">Logout</button>
-    </div>
-  </div>
-</v-container>
+  </v-container>
 </template>
 
 <script>
@@ -53,6 +56,7 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { is } from "@babel/types";
+import { doc } from "firebase/firestore";
 
 export default {
   setup() {
@@ -128,6 +132,7 @@ export default {
 
     onMounted(() => {
       checkLoginStatus();
+      document.title = "Login";
     });
 
     return {
