@@ -5,11 +5,33 @@ import {
 } from "vue-router/auto";
 // import { setupLayouts } from "virtual:generated-layouts";  // Not necessary anymore
 import { routes as autoRoutes } from "vue-router/auto-routes";
+import axios from "axios";
 
 // Import your layouts
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import NoHeaderLayout from "@/layouts/NoHeaderLayout.vue";
 import AdminLayout from "@/layouts/AdminLayout.vue";
+
+// Login tester
+const login_test = async () => {
+  try {
+    const response = await axios.post("/api/get_cart",
+      "",
+        {
+          headers:
+          {
+            "Content-Type": "application/json",
+            accept: "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("jwt")}`
+        }
+      } 
+    )
+    return response.status === 200;
+  }
+  catch (error) {
+    return false;
+  }
+}
 
 // Define custom routes
 const customRoutes: RouteRecordRaw[] = [
@@ -64,7 +86,7 @@ const router = createRouter({
 });
 
 // Global navigation guard to apply layouts dynamically
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const layout = to.meta.layoutComponent; // Look for layoutComponent directly
 
   // Dynamically set the layout component in the route's metadata
@@ -72,6 +94,20 @@ router.beforeEach((to, from, next) => {
     to.meta.layoutComponent = layout;
   } else {
     to.meta.layoutComponent = DefaultLayout; // Fallback to DefaultLayout if no layout is specified
+  }
+
+  // Middleware
+  if(to.path === '/cart'
+    || to.path === '/checkout'
+    || to.path === '/appointments'
+    || to.path === '/your-profile'
+    || to.path === '/admin-dashboard'
+    || to.path === '/signin'
+  ) {
+    const loginTest = await login_test()
+    if (!loginTest) {
+      next('/login');
+    }
   }
 
   if(to.path === '/login' || to.path === '/register' || to.path === '/checkout' || to.path === '/signin') {

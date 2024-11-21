@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col cols="3" v-for="tyre in tyreItems" :key="tyre.tyreid">
+    <v-col cols="12" sm="6" md="4" lg="3" v-for="tyre in tyreItems" :key="tyre.tyreid">
       <v-card
         height="400"
         class="container"
@@ -18,11 +18,12 @@
                 <span>RM {{ tyre.unitprice.toFixed(2) }}</span>
                 <span class="ml-2 car-type">{{ tyre.cartype }}</span>
               </div>
-              <v-card-actions>
-                <div class="button-container">
+              <v-spacer></v-spacer>
+              <v-card-actions align="center" justify="center" class="text-center bg-white">
+                <div class="button-container ma-auto">
                   <v-btn
                     class="border-thin view-details-button"
-                    color="primary"
+                    color="#FF3131"
                     @click.stop="goToTyreDetails(tyre)"
                     >View Details</v-btn
                   >
@@ -59,12 +60,12 @@
 .container {
   perspective: 800px;
 }
-.button-container {
+/* .button-container {
   position: absolute;
   bottom: 16px;
   left: 16px;
   size: 20px;
-}
+} */
 .car-type {
   text-align: right;
 }

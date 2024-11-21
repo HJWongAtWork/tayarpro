@@ -3,7 +3,7 @@
     <div class="card">
       <div class="front">
         <div class="image-container">
-          <v-img height="200" src="../assets/tyre.jpg" contain></v-img>
+          <v-img height="200" src="@/assets/tyre.jpg" contain></v-img>
         </div>
         <div class="content-container">
           <div class="description">{{ tyre.description }}</div>
@@ -11,12 +11,17 @@
             <span>RM {{ tyre.unitprice.toFixed(2) }}</span>
             <span class="ml-2 car-type">{{ tyre.cartype }}</span>
           </div>
-          <v-card-actions>
-            <div class="button-container">
-              <v-btn class="border-thin view-details-button" color="primary" @click.stop="goToTyreDetails(tyre)">View
-                Details</v-btn>
-            </div>
-          </v-card-actions>
+          <v-spacer></v-spacer>
+              <v-card-actions align="center" justify="center" class="text-center bg-white">
+                <div class="button-container ma-auto">
+                  <v-btn
+                    class="border-thin view-details-button"
+                    color="#FF3131"
+                    @click.stop="goToTyreDetails(tyre)"
+                    >View Details</v-btn
+                  >
+                </div>
+              </v-card-actions>
         </div>
       </div>
       <div class="back">
@@ -51,12 +56,12 @@
   width: 100%;
 }
 
-.button-container {
+/* .button-container {
   position: absolute;
   bottom: 16px;
   left: 16px;
   size: 20px;
-}
+} */
 
 .car-type {
   text-align: right;
@@ -153,7 +158,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url("../assets/tyre.jpg");
+  background-image: url("@/assets/tyre.jpg");
   background-size: cover;
   background-position: center;
   opacity: 0.1;
