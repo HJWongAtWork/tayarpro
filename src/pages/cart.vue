@@ -10,7 +10,7 @@
       class="text-h6 text-center notification-banner"
       style="background-color: #ffc0cb; padding: 20px"
     >
-      You Sucessfully Added to Your Cart.Check Out Now
+      You Sucessfully Added to Your Cart. Check Out Now
     </h4>
     <div class="cart-container">
       <v-table>
