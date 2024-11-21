@@ -7,8 +7,10 @@ export const useDashboardStore = defineStore("dashboard", {
   }),
   actions: {
     async fetchData() {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
+      
       try {
-        const response = await axios.get("/api/users");
+        const response = await axios.get(`${baseUrl}/users`);
         const data = response.data;
 
         this.userData = data

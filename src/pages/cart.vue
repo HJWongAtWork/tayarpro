@@ -10,7 +10,7 @@
       class="text-h6 text-center notification-banner"
       style="background-color: #ffc0cb; padding: 20px"
     >
-      You Sucessfully Added to Your Cart.Check Out Now
+      You Sucessfully Added to Your Cart. Check Out Now
     </h4>
     <div class="cart-container">
       <v-table>
@@ -124,9 +124,7 @@
                     </tr>
                     <tr>
                       <td class="table-cell-small">SST Fee(8%)</td>
-                      <td class="table-cell-small">
-                        RM {{ SaleServiceTax.toFixed(2) }}
-                      </td>
+                      <td class="table-cell-small">RM {{ SST.toFixed(2) }}</td>
                     </tr>
                     <tr>
                       <td class="table-cell-small">Coupon</td>
@@ -141,16 +139,16 @@
                     <tr>
                       <td colspan="12">
                         <!-- <checkoutDialog v-bind:subtotal="Subtotal" /> -->
-                    <v-btn
-                      @click="handleLogout"
-                      min="260px"
-                      height="55px"
-                      color="#FF6875"
-                      display="flex"
-                      width="-webkit-fill-available"
-                    >
-                      Checkout
-                  </v-btn>
+                        <v-btn
+                          @click="handleLogout"
+                          min="260px"
+                          height="55px"
+                          color="#FF6875"
+                          display="flex"
+                          width="-webkit-fill-available"
+                        >
+                          Checkout
+                        </v-btn>
                       </td>
                     </tr>
                   </tbody>
@@ -172,7 +170,7 @@ import checkoutDialog from "../components/checkoutDialog.vue";
 import { isLogicalExpression } from "@babel/types";
 import placeholderImage from "@/assets/tyre.jpg";
 import { ref } from "vue";
-
+import { useCheckoutStore } from "@/stores/checkout";
 const isLoading = ref(true);
 const handleImageError = () => {
   console.log("Image failed to load");
@@ -186,7 +184,9 @@ export default {
   },
   setup() {
     const router = useRouter();
-    return { router };
+    const checkoutStore = useCheckoutStore();
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    return { router, checkoutStore, baseUrl };
   },
   data() {
     return {
@@ -228,6 +228,13 @@ export default {
         // 5. Stop the method here
         return;
       }
+      this.checkoutStore.setCheckoutData({
+        Subtotal: this.Subtotal,
+        SST: this.SST,
+        Total: this.Total,
+      });
+      
+
       this.router.push("/checkout");
     },
     async fetchCartItems() {
@@ -247,7 +254,7 @@ export default {
         console.log("Making cart request with token..."); // Debug log
 
         const response = await axios.post(
-          "http://tayar.pro/get_cart",
+          `${this.baseUrl}/get_cart`,
           "", // Empty string as data
           {
             headers: {
@@ -266,8 +273,8 @@ export default {
           price: item.unitprice,
           quantity: item.quantity,
           image_link: item.productid.startsWith("SVR")
-            ? "/images/service-placeholder.jpg"
-            : "/images/tyre-placeholder.jpg",
+            ? new URL("@/assets/tyre-install-01.jpg", import.meta.url).href
+            : new URL("@/assets/tyre.jpg", import.meta.url).href,
         }));
       } catch (error) {
         console.error("Cart error details:", {
@@ -289,7 +296,7 @@ export default {
       try {
         console.log("Removing cart item:", productid); // Debug log
         const response = await axios.delete(
-          `http://tayar.pro/delete_cart_item/${productid}`,
+          `${this.baseUrl}/delete_cart_item/${productid}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -319,7 +326,7 @@ export default {
       try {
         const newQuantity = cart.quantity + 1;
         const response = await axios.post(
-          `http://tayar.pro/update_cart_quantity/${cart.productid}/${newQuantity}`,
+          `${this.baseUrl}/update_cart_quantity/${cart.productid}/${newQuantity}`,
           null,
           {
             headers: {
@@ -340,7 +347,7 @@ export default {
         if (cart.quantity > 1) {
           const newQuantity = cart.quantity - 1;
           const response = await axios.post(
-            `http://tayar.pro/update_cart_quantity/${cart.productid}/${newQuantity}`,
+            `${this.baseUrl}/update_cart_quantity/${cart.productid}/${newQuantity}`,
             null,
             {
               headers: {
@@ -383,7 +390,7 @@ export default {
       return;
     }
     await this.fetchCartItems();
-    this.checkLoginStatus()
+    this.checkLoginStatus();
   },
   computed: {
     Subtotal() {
@@ -397,18 +404,18 @@ export default {
       console.log("Subtotal calculated:", subtotal);
       return subtotal;
     },
-    SaleServiceTax() {
+    SST() {
       return (this.Subtotal * 8) / 100;
     },
     Total() {
       if (this.Coupon != null && this.Coupon > 0) {
         return (
           parseFloat(this.Subtotal) +
-          parseFloat(this.SaleServiceTax) -
+          parseFloat(this.SST) -
           parseFloat(this.Coupon)
         );
       } else {
-        return parseFloat(this.Subtotal) + parseFloat(this.SaleServiceTax);
+        return parseFloat(this.Subtotal) + parseFloat(this.SST);
       }
     },
   },

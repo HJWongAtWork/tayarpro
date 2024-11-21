@@ -3,8 +3,8 @@
     <v-app-bar class="px-3" color="red" height="80" width="100">
       <router-link to="/" @click.native="tab = 0" class="link">
         <img
-          src="../assets/logo_tayarpro_partial-removebg-preview.png"
-          height="100"
+          src="@/assets/logo_tayarpro_partial-removebg-preview.png"
+          height="75"
         />
       </router-link>
 
@@ -51,7 +51,7 @@
       <v-icon @click="drawer = !drawer; tab = 0">mdi-menu</v-icon>
       <v-spacer></v-spacer>
       <router-link to="/" @click.native="tab = 0" class="link">
-        <img src="../assets/logo_tayarpro_partial-removebg-preview.png" height="75" />
+        <img src="@/assets/logo_tayarpro_partial-removebg-preview.png" height="75" />
       </router-link>
       <v-spacer></v-spacer>
       <router-link to="/cart" @click.native="tab = 0" class="link" style="margin-right: 12px">
