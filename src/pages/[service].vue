@@ -4,7 +4,7 @@
       <v-row>
         <v-col cols="4">
           <v-img
-            src="../assets/change-engine-oil.jpeg"
+            src="@/assets/change-brake-fluid.webp"
             height="300"
             width="300"
             class="ma-6"
