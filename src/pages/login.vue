@@ -150,7 +150,7 @@
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
-import { useUserStore } from "../stores/userStore";
+import { useUserStore } from "@/stores/userStore";
 
 export default {
   setup() {
@@ -188,6 +188,7 @@ export default {
 
     const handleLogin = async () => {
       if (form.value && form.value.validate()) {
+        const baseUrl = import.meta.env.VITE_API_BASE_URL;
         try {
           isLoading.value = true;
           errorMessage.value = "";
@@ -197,7 +198,7 @@ export default {
           formData.append("password", password.value);
 
           const response = await axios.post(
-            "https://tayar.pro/login",
+            `${baseUrl}/login`,
             formData
           );
 

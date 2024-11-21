@@ -1,5 +1,5 @@
 import { useUserStore } from "@/stores/userStore";
-import { ref, computed } from "vue";
+import { ref } from "vue";
 
 export function useUserComposable(
   isAdmin = false,

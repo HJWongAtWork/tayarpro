@@ -62,6 +62,11 @@ const customRoutes: RouteRecordRaw[] = [
     component: () => import("@/pages/admin-dashboard.vue"), // Lazy load register page
     meta: { layoutComponent: AdminLayout }, // Specify Admin layout for register
   },
+  {
+    path: '/:description',
+    name: 'description', // This is the name you should use
+    component: () => import('@/pages/[description].vue')
+  }
 ];
 
 // Include the rest of the routes with the default layout

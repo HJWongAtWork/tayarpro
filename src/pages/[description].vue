@@ -3,21 +3,14 @@
     <v-card v-if="tyre">
       <v-row>
         <v-col cols="4">
-          <v-img
-            src="../assets/tyre.jpg"
-            height="300"
-            width="300"
-            class="ma-6"
-          ></v-img>
+          <v-img src="../assets/tyre.jpg" height="300" width="300" class="ma-6"></v-img>
         </v-col>
         <v-col cols="8">
           <v-card-title class="text-h4 mt-2 pl-0">{{
             tyre.description
           }}</v-card-title>
           <div class="d-flex pl-0">
-            <v-card-subtitle class="pl-0"
-              >Brand: {{ tyre.brand_name }}</v-card-subtitle
-            >
+            <v-card-subtitle class="pl-0">Brand: {{ tyre.brand_name }}</v-card-subtitle>
             <v-divider vertical class="mx-2"></v-divider>
             <v-card-subtitle>Type: {{ tyre.cartype }}</v-card-subtitle>
           </div>
@@ -26,33 +19,18 @@
           <v-row class="mt-4 ml-1 align-center">
             <div class="quantity">
               <v-col cols="auto" class="pa-0">
-                <button
-                  @click="decreaseQuantity"
-                  :disabled="quantity <= 1"
-                  class="minus-button"
-                  variant="outlined"
-                >
+                <button @click="decreaseQuantity" :disabled="quantity <= 1" class="minus-button" variant="outlined">
                   -
                 </button>
               </v-col>
 
               <v-col cols="auto" class="pa-0">
-                <input
-                  v-model.number="quantity"
-                  type="number"
-                  min="1"
-                  class="quantity"
-                  hide-spin-buttons
-                />
+                <input v-model.number="quantity" type="number" min="1" class="quantity" hide-spin-buttons />
               </v-col>
 
               <v-col cols="auto" class="pa-0">
-                <button
-                  variant="outlined"
-                  class="add-button"
-                  :disabled="quantity >= tyre.stockunit"
-                  @click="increaseQuantity"
-                >
+                <button variant="outlined" class="add-button" :disabled="quantity >= tyre.stockunit"
+                  @click="increaseQuantity">
                   +
                 </button>
               </v-col>
@@ -98,12 +76,7 @@
       <v-slide-group class="pa-4" selected-class="bg-primary" show-arrows>
         <v-slide-group-item v-for="item in recommendedTyres" :key="item.itemid">
           <v-card height="400" width="180" class="mx-2 tyre-card">
-            <v-img
-              src="../assets/tyre.jpg"
-              height="200"
-              contain
-              class="align-end text-white"
-            >
+            <v-img src="@/assets/tyre.jpg" height="200" contain class="align-end text-white">
             </v-img>
             <v-card-text>
               <div class="tyre-description">
@@ -113,11 +86,7 @@
               <div class="tyre-price">RM {{ item.unitprice.toFixed(2) }}</div>
             </v-card-text>
             <v-card-actions>
-              <v-btn
-                class="view-details-button border-thin"
-                color="primary"
-                @click.stop="goToTyreDetails(item)"
-              >
+              <v-btn class="view-details-button border-thin" color="primary" @click.stop="goToTyreDetails(item)">
                 View Details
               </v-btn>
             </v-card-actions>
@@ -133,26 +102,33 @@
   margin-left: 18px;
   margin-top: 4px;
 }
+
 .product-spec {
   margin-top: 10px;
 }
+
 .product-description li {
   margin-top: 7px;
 }
+
 .product-description ul {
   padding-left: 20px;
   margin-left: 10px;
 }
+
 .product-description {
   padding-bottom: 10px;
 }
+
 .quantity {
   display: flex;
 }
+
 .quantity input[type="number"]::-webkit-inner-spin-button,
 .quantity input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
 }
+
 .quantity input,
 .quantity button {
   width: 50px;
@@ -161,6 +137,7 @@
   background: white;
   border: 1px solid #aaa;
 }
+
 .quantity input {
   border-left: none;
   border-right: none;
@@ -212,25 +189,6 @@
 </style>
 
 <script lang="ts">
-interface Tyre {
-  itemid: string;
-  productid: string;
-  description: string;
-  brand_name: string;
-  cartype: string;
-  unitprice: number;
-  stockunit: number;
-  details: string;
-  details2: string;
-  details3: string;
-  loadindex: number;
-  speedindex: string;
-  tyresize: string;
-  brandid: number;
-}
-
-const tyre = ref<Tyre | null>(null);
-
 interface RecommendedTyre {
   itemid: string;
   description: string;
@@ -238,7 +196,7 @@ interface RecommendedTyre {
   unitprice: number;
 }
 import axios from "axios";
-import { defineComponent, ref, onMounted, computed } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import { useUserStore } from "../stores/userStore";
 import { useRouter } from "vue-router";
 
@@ -255,12 +213,13 @@ export default defineComponent({
     const recommendedTyres = ref<RecommendedTyre[]>([]);
 
     const fetchTyre = async () => {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
         loading.value = true;
         const itemId = localStorage.getItem("currentTyreItemId");
         if (itemId) {
           const response = await axios.get(
-            `http://tayar.pro/get_product_by_id?tyre_id=${itemId}`
+            `${baseUrl}/get_product_by_id?tyre_id=${itemId}`
           );
           tyre.value = response.data;
         }
@@ -273,9 +232,10 @@ export default defineComponent({
     };
 
     const addToCart = async () => {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
         const cartResponse = await axios.get(
-          `http://localhost:8000/cart/${userStore.currentUser.accountid}/${tyre.value.itemid}`
+          `${baseUrl}/cart/${userStore.currentUser.accountid}/${tyre.value.itemid}`
         );
         const currentCartQuantity = cartResponse.data.quantity || 0;
         if (currentCartQuantity + quantity.value > tyre.value.stockunit) {
@@ -293,7 +253,7 @@ export default defineComponent({
           description: tyre.value.description,
         };
         console.log(newCartItem);
-        await axios.post("http://localhost:8000/cart", newCartItem);
+        await axios.post(`${baseUrl}/cart`, newCartItem);
         alert("Items added to cart successfully !");
       } catch (error) {
         console.error("Error adding item to cart:", error);
@@ -301,10 +261,11 @@ export default defineComponent({
     };
 
     const fetchRecommendedTyres = async () => {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
         if (tyre.value && tyre.value.brandid) {
           const response = await axios.get<RecommendedTyre[]>(
-            "http://localhost:8000/get_random_tyres"
+            `${baseUrl}/get_random_tyres`
           );
           recommendedTyres.value = response.data.filter(
             (item) => item.itemid !== tyre.value.itemid
@@ -315,17 +276,16 @@ export default defineComponent({
       }
     };
 
-    const goToTyreDetails = (tyre: RecommendedTyre) => {
-      localStorage.setItem("currentTyreItemId", tyre.itemid);
-      router
-        .push({
-          name: "/[description]",
-          params: { description: encodeURIComponent(tyre.description) },
-        })
-        .then(() => {
-          window.location.reload();
-        });
+    const goToTyreDetails = async (tyre: RecommendedTyre) => {
+      try {
+        localStorage.setItem("currentTyreItemId", tyre.itemid);
+        await router.push(`/${encodeURIComponent(tyre.description)}`);
+        window.location.reload();
+      } catch (error) {
+        console.error('Navigation error:', error);
+      }
     };
+
     const decreaseQuantity = () => {
       if (quantity.value > 1) {
         quantity.value--;
