@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import axios from "axios";
 
 export const vehicleStore = defineStore('vehicleStore', {
   state: () => ({
@@ -8,46 +9,56 @@ export const vehicleStore = defineStore('vehicleStore', {
       brand: string,
       model: string,
       year: number,
-      tyreSize: string
-    }[]
+      tyreSize: string,
+      type: string
+    }[],
+    cars: [] as {
+      caryear: number,
+      carid: number,
+      carbrand: string,
+      tyresize: string,
+      createdat: string,
+      accountid: string,
+      carmodel: string,
+      platenumber: string,
+      cartype: string
+    }[],
   }),
   getters: {
     getVehicles: (state) => state.vehicles,
+    getCars: (state) => state.cars
   },
   actions: {
     async fetchVehicles() {
       this.vehicles.splice(0, this.vehicles.length);
-      //dummy data
-      const vehicleData1 = {
-        id: 1, 
-        plateNumber: 'ABC123',
-        brand: 'Toyota',
-        model: 'Camry', 
-        year: 2022,
-        tyreSize: '275/35'
+      const token = localStorage.getItem("jwt");
+      //console.log("token from car store: " + (token !== null));
+      try {
+        const response = await axios.post(
+          "/api/view_car",
+          "", // Empty string as data
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              accept: "application/json",
+            },
+          }
+        );
+        this.cars = response.data.map((car: any) => ({
+          ...car,
+        }));
+        this.vehicles = this.cars.map((car) => ({
+          id: car.carid,
+          plateNumber: car.platenumber,
+          brand: car.carbrand,
+          model: car.carmodel,
+          year: car.caryear,
+          tyreSize: car.tyresize,
+          type: car.cartype
+        }));
+      } catch (error) {
+        console.error("Error fetching vehicles:", error);
       };
-      this.vehicles.push(vehicleData1);
-      const vehicleData2 = {
-        id: 2, 
-        plateNumber: 'DEF456',
-        brand: 'Honda',
-        model: 'Civic',
-        year: 2021,
-        tyreSize: '275/35'
-      };
-      this.vehicles.push(vehicleData2);
-      const vehicleData3 = {
-        id: 3, 
-        plateNumber: 'GHI789',
-        brand: 'Proton',
-        model: 'Exora',
-        year: 2020,
-        tyreSize: '275/35'
-      };
-      this.vehicles.push(vehicleData3);
-      // this.vehicles.push(vehicleData1);
-      // this.vehicles.push(vehicleData2);
-      // this.vehicles.push(vehicleData3);
     },
   },
 });
