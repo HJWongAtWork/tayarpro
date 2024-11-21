@@ -108,9 +108,7 @@
                         </tr>
                         <tr>
                           <td class="table-cell-small">SST Fee(8%)</td>
-                          <td class="table-cell-small">
-                            RM {{ subtotalDisplay }}
-                          </td>
+                          <td class="table-cell-small">RM {{ sstDisplay }}</td>
                         </tr>
                         <tr>
                           <td class="table-cell-small">Total</td>
@@ -214,28 +212,40 @@ import cartButton from "../components/cartButton.vue";
 import { appointmentComposable } from "@/composables/appointmentComposable";
 import { useDateFormatter } from "@/composables/useDateFormatter";
 import axios from "axios";
-
+import { useCheckoutStore } from "@/stores/checkout";
 export default {
   setup() {
     const router = useRouter();
     const { newAppointment } = appointmentComposable();
     const { formatDateToReadable } = useDateFormatter();
+    const checkoutStore = useCheckoutStore();
     return {
       router,
       newAppointment,
       formatDateToReadable,
+      checkoutStore,
     };
   },
   components: { cartButton },
   computed: {
+    //Get this from Pinia Store
+    Subtotal() {
+      return this.checkoutStore.checkoutData.Subtotal;
+    },
+    SST() {
+      return this.checkoutStore.checkoutData.SST;
+    },
+    Total() {
+      return this.checkoutStore.checkoutData.Total;
+    },
     subtotalDisplay() {
-      return this.subtotal.toFixed(2);
+      return this.Subtotal.toFixed(2);
     },
     sstDisplay() {
-      return (this.subtotal * 0.08).toFixed(2);
+      return this.SST.toFixed(2);
     },
     totalDisplay() {
-      return (this.subtotal + this.subtotal * 0.08).toFixed(2);
+      return this.Total.toFixed(2);
     },
     minDate() {
       const today = new Date();
