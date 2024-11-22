@@ -1,48 +1,57 @@
 <template>
-  <v-container max-width="1200">
-    <v-container class="my-12">
-      <v-row class="d-flex align-stretch">
-        <!-- Image Column -->
-        <v-col cols="12" sm="12" md="5">
-          <v-img
-            src="https://t3.ftcdn.net/jpg/08/01/05/86/360_F_801058688_GOSu2veqaKIlo1RG5REMlCOiN9PZobk9.jpg"
-            height="100%"
-            cover
-          ></v-img>
-        </v-col>
+  <div class="title-page">
+    <div class="line"></div>
+    <h2 class="no-background text-center">
+      <span><strong>ABOUT US</strong></span>
+    </h2>
+    <div class="line"></div>
+  </div>
+  <v-container max-width="1200" class="mt-2">
+    <v-row class="d-flex align-stretch">
+      <!-- Image Column -->
+      <v-col cols="12" sm="12" md="5">
+        <v-img
+          src="https://t3.ftcdn.net/jpg/08/01/05/86/360_F_801058688_GOSu2veqaKIlo1RG5REMlCOiN9PZobk9.jpg"
+          height="100%"
+          cover
+        ></v-img>
+      </v-col>
 
-        <!-- Text Column -->
-        <v-col cols="12" sm="12" md="7">
-          <p
-            style="
-              font-size: 35px;
-              font-family: system-ui, -apple-system, BlinkMacSystemFont,
-                'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
-                'Helvetica Neue', sans-serif;
-              margin-bottom: 20px;
-            "
-          >
-            Our <span class="highlight">Company Overview</span>
-          </p>
-          <p style="font-size: 20px">
-            Welcome to TayarPro, your trusted partner for all things tyres! At
-            TayarPro, we pride ourselves on delivering exceptional service,
-            quality products, and expert advice to ensure your vehicle runs
-            smoothly and safely. With a wide selection of tyres from top brands
-            and a team of skilled professionals, we are dedicated to meeting all
-            your tyre needs, from purchasing new tyres to routine maintenance
-            and emergency repairs. Our commitment to customer satisfaction
-            drives everything we do, making TayarPro the go-to destination for
-            drivers who value safety, reliability, and top-notch service.
-            Whether you're hitting the road for a long journey or navigating
-            daily commutes, trust TayarPro to keep you rolling confidently.
-          </p>
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-divider></v-divider>
+      <!-- Text Column -->
+      <v-col cols="12" sm="12" md="7">
+        <p
+          style="
+            font-size: 35px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont,
+              'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+              'Helvetica Neue', sans-serif;
+            margin-bottom: 20px;
+          "
+        >
+          Our <span class="highlight">Company Overview</span>
+        </p>
+        <p style="font-size: 20px">
+          Welcome to TayarPro, your trusted partner for all things tyres! At
+          TayarPro, we pride ourselves on delivering exceptional service,
+          quality products, and expert advice to ensure your vehicle runs
+          smoothly and safely. With a wide selection of tyres from top brands
+          and a team of skilled professionals, we are dedicated to meeting all
+          your tyre needs, from purchasing new tyres to routine maintenance and
+          emergency repairs. Our commitment to customer satisfaction drives
+          everything we do, making TayarPro the go-to destination for drivers
+          who value safety, reliability, and top-notch service. Whether you're
+          hitting the road for a long journey or navigating daily commutes,
+          trust TayarPro to keep you rolling confidently.
+        </p>
+      </v-col>
+    </v-row>
+
+    <br />
+    <!-- <div class="mt-4">
+      <v-divider thickness="2"></v-divider>
+    </div> -->
     <v-container>
-      <h1 class="text-center mb-12">
+      <h1 class="text-center mb-3">
         Our
         <span style="border-bottom: 3px solid red; padding-bottom: 5px"
           >Partners</span
@@ -51,14 +60,14 @@
       <v-carousel
         v-model="currentSlide"
         hide-delimiters
-        height="200"
+        height="140"
         show-arrows="hover"
       >
         <v-carousel-item v-for="(chunk, index) in chunkedLogos" :key="index">
           <v-row align="center" justify="space-between">
             <v-col
               v-for="(logo, i) in chunk"
-              :key="i"
+              :key="index * 4 + i"
               cols="3"
               class="d-flex justify-center"
             >
@@ -194,6 +203,22 @@ export default {
 </script>
 
 <style scoped>
+.title-page {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 2rem auto;
+}
+
+.title-page .line {
+  height: 3px;
+  flex: 1;
+  background-color: #000;
+}
+
+.title-page h2 {
+  padding: 0 2rem;
+}
 .logo-image {
   max-height: 100px;
 }

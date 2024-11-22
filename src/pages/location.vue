@@ -1,34 +1,59 @@
 <template>
-  <v-container class="py-16" max-width="1200">
+  <div class="title-page">
+    <div class="line"></div>
+    <h2 class="no-background text-center">
+      <span><strong>LOCATION</strong></span>
+    </h2>
+    <div class="line"></div>
+  </div>
+  <v-container class="mt-2" max-width="1200">
     <v-row>
-      <v-col cols="12">
+      <!-- <v-col cols="12">
         <h1 class="text-h3 font-weight-bold text-center mb-8">
           <v-icon icon="mdi-map-marker-multiple" color="red" size="large" class="ml-2"></v-icon>
           Our Locations
         </h1>
-      </v-col>
+      </v-col> -->
 
       <v-col cols="12" md="6">
-        <v-card class="elevation-3 map-container"> <!-- Added map-container class -->
-          <v-card-text class="pa-0 h-100"> <!-- Added h-100 -->
+        <v-card class="elevation-3 map-container">
+          <!-- Added map-container class -->
+          <v-card-text class="pa-0 h-100">
+            <!-- Added h-100 -->
             <div id="map" class="map"></div>
-
           </v-card-text>
         </v-card>
       </v-col>
 
-      <v-col cols="12" md="6" class="d-flex flex-column"> <!-- Added d-flex and flex-column -->
+      <v-col cols="12" md="6" class="d-flex flex-column">
+        <!-- Added d-flex and flex-column -->
         <v-slide-y-transition group>
-          <v-card v-for="location in locations" :key="location.title" class="mb-4 elevation-3"
-            :class="{ 'opening-soon': location.isOpeningSoon }">
+          <v-card
+            v-for="location in locations"
+            :key="location.title"
+            class="mb-4 elevation-3"
+            :class="{ 'opening-soon': location.isOpeningSoon }"
+          >
             <v-card-item>
               <template v-slot:prepend>
-                <v-icon color="red" size="32" icon="mdi-map-marker" class="mr-4"></v-icon>
+                <v-icon
+                  color="red"
+                  size="32"
+                  icon="mdi-map-marker"
+                  class="mr-4"
+                ></v-icon>
               </template>
               <v-card-title>
                 <div class="d-flex flex-column">
-                  <span class="text-h5 font-weight-bold">{{ location.title }}</span>
-                  <v-chip v-if="location.isOpeningSoon" color="amber" class="mt-2" size="small">
+                  <span class="text-h5 font-weight-bold">{{
+                    location.title
+                  }}</span>
+                  <v-chip
+                    v-if="location.isOpeningSoon"
+                    color="amber"
+                    class="mt-2"
+                    size="small"
+                  >
                     Opening Soon
                   </v-chip>
                 </div>
@@ -39,15 +64,21 @@
               <v-row no-gutters>
                 <v-col cols="12">
                   <div class="d-flex align-center mb-2">
-                    <v-icon icon="mdi-office-building-marker" color="grey" class="mr-2"></v-icon>
+                    <v-icon
+                      icon="mdi-office-building-marker"
+                      color="grey"
+                      class="mr-2"
+                    ></v-icon>
                     <span class="text-body-1">
-                      {{ location.address.unitNO }}, {{ location.address.street }}
+                      {{ location.address.unitNO }},
+                      {{ location.address.street }}
                     </span>
                   </div>
                   <div class="d-flex align-center mb-2 ml-8">
                     <span class="text-body-1">
                       {{ location.address.city }},
-                      {{ location.address.postcode }}, {{ location.address.state }},
+                      {{ location.address.postcode }},
+                      {{ location.address.state }},
                       {{ location.address.country }}
                     </span>
                   </div>
@@ -63,8 +94,13 @@
             </v-card-text>
 
             <v-card-actions>
-              <v-btn variant="text" color="red" :href="`https://www.google.com/maps?q=${location.latt},${location.lng}`"
-                target="_blank" prepend-icon="mdi-directions">
+              <v-btn
+                variant="text"
+                color="red"
+                :href="`https://www.google.com/maps?q=${location.latt},${location.lng}`"
+                target="_blank"
+                prepend-icon="mdi-directions"
+              >
                 Get Directions
               </v-btn>
             </v-card-actions>
@@ -75,66 +111,83 @@
   </v-container>
 </template>
 
-
 <script setup>
-import { onMounted, ref } from 'vue'
-import L from 'leaflet'
+import { onMounted, ref } from "vue";
+import L from "leaflet";
 
 const locations = ref([
   {
-    title: 'TayarPro Tiara Villa',
+    title: "TayarPro Tiara Villa",
     address: {
-      unitNO: '1',
-      street: 'Jalan Saya Tak Tahu',
-      city: 'Tiara Villa',
-      postcode: '58200',
-      state: 'Kuala Lumpur',
-      country: 'Malaysia'
+      unitNO: "1",
+      street: "Jalan Saya Tak Tahu",
+      city: "Tiara Villa",
+      postcode: "58200",
+      state: "Kuala Lumpur",
+      country: "Malaysia",
     },
     latt: 3.1312055293816248,
     lng: 101.67504766711534,
-    phone: '0198765432',
-    isOpeningSoon: false
+    phone: "0198765432",
+    isOpeningSoon: false,
   },
   {
-    title: 'TayarPro Kuchai Business Park',
+    title: "TayarPro Kuchai Business Park",
     address: {
-      unitNO: '38',
-      street: 'Jalan lagi Tak Tahu',
-      city: 'Kuchai Business Park',
-      postcode: '58200',
-      state: 'Kuala Lumpur',
-      country: 'Malaysia'
+      unitNO: "38",
+      street: "Jalan lagi Tak Tahu",
+      city: "Kuchai Business Park",
+      postcode: "58200",
+      state: "Kuala Lumpur",
+      country: "Malaysia",
     },
     latt: 3.0993248741097914,
     lng: 101.62959694909192,
-    phone: '0123456789',
-    isOpeningSoon: true
-  }
-])
-
+    phone: "0123456789",
+    isOpeningSoon: true,
+  },
+]);
 
 onMounted(() => {
-  document.title = 'Our Locations'
+  document.title = "Our Locations";
 
-  const map = L.map('map').setView([locations.value[0].latt, locations.value[0].lng], 13)
+  const map = L.map("map").setView(
+    [locations.value[0].latt, locations.value[0].lng],
+    13
+  );
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map)
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map);
 
-  locations.value.forEach(location => {
-    const marker = L.marker([location.latt, location.lng]).addTo(map)
-    marker.bindPopup(`<b>${location.title}</b>`, {
-      closeOnClick: false,
-      autoClose: false
-    }).openPopup()
-  })
-})
-
+  locations.value.forEach((location) => {
+    const marker = L.marker([location.latt, location.lng]).addTo(map);
+    marker
+      .bindPopup(`<b>${location.title}</b>`, {
+        closeOnClick: false,
+        autoClose: false,
+      })
+      .openPopup();
+  });
+});
 </script>
 
 <style scoped>
+.title-page .line {
+  height: 3px;
+  flex: 1;
+  background-color: #000;
+}
+.title-page {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 2rem auto;
+}
+.title-page h2 {
+  padding: 0 2rem;
+}
 .map-container {
   height: 100%;
   min-height: 400px;
@@ -142,7 +195,6 @@ onMounted(() => {
 }
 
 .map {
-
   height: 100%;
   width: 100%;
   min-height: 400px;
@@ -150,7 +202,7 @@ onMounted(() => {
 }
 
 .opening-soon {
-  border: 2px solid #FFC107;
+  border: 2px solid #ffc107;
 }
 
 /* Add these styles to your existing Leaflet styles */
@@ -161,7 +213,7 @@ onMounted(() => {
 
 :deep(.leaflet-popup-content) {
   margin: 8px;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-weight: 500;
 }
 

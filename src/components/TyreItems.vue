@@ -26,20 +26,14 @@
                 <span class="ml-2 car-type">{{ tyre.cartype }}</span>
               </div>
               <v-spacer></v-spacer>
-              <v-card-actions
-                align="center"
-                justify="center"
-                class="text-center bg-white"
-              >
-                <div class="button-container ma-auto">
-                  <v-btn
-                    class="border-thin view-details-button"
-                    color="#FF3131"
-                    @click.stop="goToTyreDetails(tyre)"
-                    >View Details</v-btn
-                  >
-                </div>
-              </v-card-actions>
+
+              <div class="button-container ma-auto">
+                <v-btn
+                  class="border-thin view-details-button"
+                  @click.stop="goToTyreDetails(tyre)"
+                  >View Details</v-btn
+                >
+              </div>
             </div>
           </div>
           <div class="back">
@@ -81,6 +75,8 @@
   text-align: right;
 }
 .view-details-button {
+  background-color: white;
+  color: red;
   width: 120px;
   height: 40px;
   font-size: 0.875rem;
