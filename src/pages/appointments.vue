@@ -354,7 +354,7 @@
     </v-container>
 </template>
 
-<style>
+<style scoped>
 v-card {
     box-sizing: border-box !important;
 }

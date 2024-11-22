@@ -457,7 +457,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .summary-container {
   max-width: 100%;
   padding: 0px;
