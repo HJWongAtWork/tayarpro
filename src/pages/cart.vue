@@ -176,8 +176,8 @@ import cartButton from "../components/cartButton.vue";
 import checkoutDialog from "../components/checkoutDialog.vue";
 import { isLogicalExpression } from "@babel/types";
 import placeholderImage from "@/assets/tyre.jpg";
-import { ref } from "vue";
 import { useCheckoutStore } from "@/stores/checkout";
+import { ref, onMounted, onUnmounted } from "vue";
 import ToastNotification from "@/components/ToastNotification.vue"; 
 
 const isLoading = ref(true);
@@ -195,8 +195,12 @@ export default {
     const router = useRouter();
     const checkoutStore = useCheckoutStore();
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    onMounted(() => {
+      document.title = "Cart";
+    });
     return { router, checkoutStore, baseUrl };
   },
+
   data() {
     return {
       carts: [],
@@ -221,6 +225,7 @@ export default {
       placeholderImage,
     };
   },
+
   methods: {
     checkLoginStatus() {
       this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -254,7 +259,6 @@ export default {
         SST: this.SST,
         Total: this.Total,
       });
-      
 
       this.router.push("/checkout"); }
     },
@@ -263,8 +267,8 @@ export default {
         const token = localStorage.getItem("jwt");
         const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-        console.log("Cart - Current token:", token); // Debug log
-        console.log("Cart - IsLoggedIn:", isLoggedIn); // Debug log
+        // console.log("Cart - Current token:", token); // Debug log
+        // console.log("Cart - IsLoggedIn:", isLoggedIn); // Debug log
 
         if (!token || !isLoggedIn) {
           console.log("No auth data, redirecting to login");
@@ -412,7 +416,7 @@ export default {
     },
   },
   async mounted() {
-    console.log("Cart mounted");
+    // console.log("Cart mounted");
     const token = localStorage.getItem("jwt");
     if (!token) {
       console.log("No token found in mounted");
@@ -431,7 +435,7 @@ export default {
         subtotal += price * quantity;
         // subtotal = subtotal.toFixed(2);
       });
-      console.log("Subtotal calculated:", subtotal);
+      // console.log("Subtotal calculated:", subtotal);
       return subtotal;
     },
     SST() {

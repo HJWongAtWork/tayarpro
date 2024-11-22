@@ -1,6 +1,13 @@
 <template>
   <v-row>
-    <v-col cols="12" sm="6" md="4" lg="3" v-for="tyre in tyreItems" :key="tyre.tyreid">
+    <v-col
+      cols="12"
+      sm="6"
+      md="4"
+      lg="3"
+      v-for="tyre in tyreItems"
+      :key="tyre.tyreid"
+    >
       <v-card
         height="400"
         class="container"
@@ -19,7 +26,11 @@
                 <span class="ml-2 car-type">{{ tyre.cartype }}</span>
               </div>
               <v-spacer></v-spacer>
-              <v-card-actions align="center" justify="center" class="text-center bg-white">
+              <v-card-actions
+                align="center"
+                justify="center"
+                class="text-center bg-white"
+              >
                 <div class="button-container ma-auto">
                   <v-btn
                     class="border-thin view-details-button"
@@ -215,7 +226,7 @@ export default {
     goToTyreDetails(tyre) {
       localStorage.setItem("currentTyreItemId", tyre.itemid);
       this.$router.push({
-        name: "SpecificTyre",
+        name: "products-description",
         params: { description: tyre.description }, // Only pass description in the URL
       });
     },
