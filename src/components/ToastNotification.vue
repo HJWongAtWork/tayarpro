@@ -7,6 +7,7 @@
       :timeout="toast.timeout"
       @update:model-value="closeToast(index)"
       :style="{'margin-bottom':calcMargin(index)}"
+      style="margin-right: 100px;"
     >
       {{ toast.message }}
       <v-icon @click="closeToast(index)" style="position: absolute; right: 16px;">mdi-close</v-icon>
@@ -36,7 +37,7 @@ export default {
     };
   },
   methods: {
-    addToast(message, color = this.defaultColor, timeout = this.defaultTimeout) {
+    addToast(message, timeout = this.defaultTimeout, color = this.defaultColor) {
       if (this.toasts.length >= this.maxToasts) {
         this.toasts.shift();
       }

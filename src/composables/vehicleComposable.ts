@@ -5,6 +5,7 @@ export const vehicleComposable = () => {
   const vehicle_store = vehicleStore();
   const { vehicles } = toRefs(vehicle_store);
   const { cars } = toRefs(vehicle_store);
+  const { selectedCar } = toRefs(vehicle_store);
   const idInput = ref(0);
   const plateNumberInput = ref("");
   const brandInput = ref("");
@@ -126,6 +127,7 @@ export const vehicleComposable = () => {
   return {
     vehicles,
     cars,
+    selectedCar,
     idInput,
     plateNumberInput,
     brandInput,

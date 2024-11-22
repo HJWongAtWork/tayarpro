@@ -140,7 +140,7 @@
                       <td colspan="12">
                         <!-- <checkoutDialog v-bind:subtotal="Subtotal" /> -->
                         <v-btn
-                          @click="handleLogout"
+                          @click="handleCheckout"
                           min="260px"
                           height="55px"
                           color="#FF6875"
@@ -160,6 +160,13 @@
       </v-row>
     </v-container>
   </v-container>
+
+  <ToastNotification
+    ref="toast"
+    :default-color="'info'"
+    :default-timeout="2000"
+    :max-toasts="5"
+  />
 </template>
 
 <script>
@@ -169,8 +176,10 @@ import cartButton from "../components/cartButton.vue";
 import checkoutDialog from "../components/checkoutDialog.vue";
 import { isLogicalExpression } from "@babel/types";
 import placeholderImage from "@/assets/tyre.jpg";
-import { useCheckoutStore } from "@/stores/checkout";
 import { ref, onMounted, onUnmounted } from "vue";
+import { useCheckoutStore } from "@/stores/checkout";
+import ToastNotification from "@/components/ToastNotification.vue"; 
+
 const isLoading = ref(true);
 const handleImageError = () => {
   console.log("Image failed to load");
@@ -186,12 +195,13 @@ export default {
     const router = useRouter();
     const checkoutStore = useCheckoutStore();
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
     onMounted(() => {
       document.title = "Cart";
     });
+
     return { router, checkoutStore, baseUrl };
   },
-
   data() {
     return {
       carts: [],
@@ -216,12 +226,11 @@ export default {
       placeholderImage,
     };
   },
-
   methods: {
     checkLoginStatus() {
       this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     },
-    handleLogout() {
+    handleCheckout() {
       this.checkLoginStatus();
       if (!this.isLoggedIn) {
         // 3. Store the return path
@@ -233,13 +242,26 @@ export default {
         // 5. Stop the method here
         return;
       }
+      console.log("product service: " + this.checkoutStore.hasProduct + " " + this.checkoutStore.hasService);
+      if (!this.checkoutStore.hasProduct && !this.checkoutStore.hasService) {
+        this.$refs.toast.addToast("Cart is empty!", 2000);
+      }
+      else if (!this.checkoutStore.hasProduct && this.checkoutStore.hasService) {
+        this.$refs.toast.addToast("No product in cart!", 2000);
+      }
+      else if (this.checkoutStore.hasProduct && !this.checkoutStore.hasService) {
+        this.$refs.toast.addToast("No service in cart!", 2000);
+      }
+      else {
+
       this.checkoutStore.setCheckoutData({
         Subtotal: this.Subtotal,
         SST: this.SST,
         Total: this.Total,
       });
+      
 
-      this.router.push("/checkout");
+      this.router.push("/checkout"); }
     },
     async fetchCartItems() {
       try {
@@ -268,7 +290,7 @@ export default {
           }
         );
 
-        console.log("Cart response:", response.data); // Debug log
+        //console.log("Cart response:", response.data); // Debug log
 
         this.carts = response.data.map((item) => ({
           productid: item.productid,
@@ -280,6 +302,15 @@ export default {
             ? new URL("@/assets/tyre-install-01.jpg", import.meta.url).href
             : new URL("@/assets/tyre.jpg", import.meta.url).href,
         }));
+        console.log("Cart items:", this.carts); // Debug log
+        this.carts.forEach((cart) => {
+          if (cart.productid.startsWith("SVR")) {
+            this.checkoutStore.hasService = true;
+          }
+          if (cart.productid.startsWith("T")) {
+            this.checkoutStore.hasProduct = true;
+          }
+        });
       } catch (error) {
         console.error("Cart error details:", {
           status: error.response?.status,
