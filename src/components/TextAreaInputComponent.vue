@@ -59,7 +59,7 @@ export default defineComponent({
 
 </script>
 
-<style>
+<style scoped>
   .italicBold {
     font-style: italic;
     font-weight: bold;
