@@ -149,7 +149,8 @@ h2.no-background {
 </style>
 
 <script>
-/* import servicepic from '@/assets/service.jpg'; */
+//import servicepic from '@/assets/service.jpg'; 
+import servicepic from "@/assets/tyre-install-01.jpg";
 import { ref, computed, onMounted } from "vue";
 import { useServiceStore } from "@/stores/useServiceStore";
 
@@ -157,7 +158,7 @@ export default {
   setup() {
     const serviceStore = useServiceStore();
 
-    /* const servicePic = servicepic; */
+     const servicePic = servicepic; 
 
     onMounted(() => {
       serviceStore.fetchServiceDetails();
@@ -228,6 +229,7 @@ export default {
       handleSortingCheck,
       /* tyrePic, */
       serviceList,
+      servicePic,
     };
   },
 };

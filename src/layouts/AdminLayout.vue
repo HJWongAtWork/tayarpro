@@ -15,7 +15,6 @@
     </v-app-bar>
     <v-main>
       <router-view />
-      <AppFooter />
     </v-main>
   <!-- Chat Widget Integration -->
   <div class="chat-widget">

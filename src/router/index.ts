@@ -111,7 +111,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if(from.path !== '/cart' && to.path === '/checkout') {
-    next('/cart');
+    return next('/cart');
   }
 
   // Middleware (for clients)
@@ -124,7 +124,7 @@ router.beforeEach(async (to, from, next) => {
   ) {
     const loginTest = await login_test(`${baseUrl}/get_cart`);
     if (!loginTest) {
-      next("/login");
+      return next("/login");
     }
   }
 
@@ -132,7 +132,7 @@ router.beforeEach(async (to, from, next) => {
   if (to.path === "/admin-dashboard") {
     const loginTest = await login_test(`${baseUrl}/all_users`);
     if (!loginTest) {
-      next("/login");
+      return next("/login");
     }
   }
 

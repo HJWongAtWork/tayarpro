@@ -326,6 +326,8 @@ export default {
           year: -1,
           status: "",
         };
+        this.checkoutStore.hasService = false;
+        this.checkoutStore.hasProduct = false;
         this.router.push("/appointments");
       });
     },
@@ -363,7 +365,7 @@ export default {
       this.showOrderDialog = true;
     },
     handleInput(value) {
-      console.log("Input changed: ", value);
+      //console.log("Input changed: ", value);
     },
     async placeOrder() {
       const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -382,10 +384,10 @@ export default {
 
         appointment_bay: this.newAppointment.bay,
       };
-      console.log(checkoutData.appointment_bay);
-      console.log(checkoutData.appointment_date);
-      console.log(checkoutData.appointment_time);
-      console.log(checkoutData);
+      //console.log(checkoutData.appointment_bay);
+      //console.log(checkoutData.appointment_date);
+      //console.log(checkoutData.appointment_time);
+      //console.log(checkoutData);
 
       const response = await axios.post(
         `${baseUrl}/checkout`,
@@ -399,11 +401,11 @@ export default {
           },
         }
       );
-      console.log(response);
+      //console.log(response);
       const data = await response.data;
 
       if (data.message) {
-        console.log("Order placed successfully!");
+        //console.log("Order placed successfully!");
         this.displayError("Order placed successfully!"); // Show success message
         setTimeout(() => {
           this.handleClose(); // Close dialog after success

@@ -134,21 +134,31 @@ export default {
       isLargeScreen: window.innerWidth >= 1000,
       drawer: false,
       tab: 0,
-      isLoggedIn: localStorage.getItem("isLoggedIn"),
+      isLoggedIn: localStorage.getItem("isLoggedIn") === "true",
     };
   },
   mounted() {
     this.tab = 0;
     window.addEventListener("resize", this.updateScreenSize);
 
-    this.isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (localStorage.getItem("isLoggedIn") !== null) {
+      this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    } else {
+      localStorage.setItem("isLoggedIn", "false");
+      this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true"; // or any default behavior you want
+    }
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.updateScreenSize);
   },
   methods: {
     updateScreenSize() {
-      this.isLargeScreen = window.innerWidth >= 1000;
+      //this.isLargeScreen = window.innerWidth >= 1000;
+      const newScreenSize = window.innerWidth >= 1000;
+      // Only update if there's a change to prevent unnecessary re-renders
+      if (this.isLargeScreen !== newScreenSize) {
+        this.isLargeScreen = newScreenSize;
+      }
     },
   },
 };
