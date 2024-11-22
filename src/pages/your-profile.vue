@@ -53,7 +53,8 @@
                     @click="
                       menu = false;
                       isEdit = true;
-                      isChanged = true;
+
+                      storeOriginalValues();
                     "
                     :disabled="isEdit"
                     >Edit Info Details</v-list-item
@@ -151,8 +152,11 @@
                   style="font-size: 24px"
                   v-model="email"
                   :isDisable="!isEdit"
-                  :class="{ glow: inputs.email.hasChanged }"
-                  @input="this.inputs.email.hasChanged = true"
+                  :class="{ glow: inputs.email.hasChanged && isEdit }"
+                  @input="
+                    this.inputs.email.hasChanged = true;
+                    checkForChanges();
+                  "
                   :rules="[rules.emailValid]"
                 />
               </v-col>
@@ -163,8 +167,11 @@
                   style="font-size: 24px"
                   v-model="firstname"
                   :isDisable="!isEdit"
-                  :class="{ glow: inputs.firstName.hasChanged }"
-                  @input="this.inputs.firstName.hasChanged = true"
+                  :class="{ glow: inputs.firstName.hasChanged && isEdit }"
+                  @input="
+                    this.inputs.firstName.hasChanged = true;
+                    checkForChanges();
+                  "
                 />
               </v-col>
               <v-col cols="12" sm="6" md="6">
@@ -173,8 +180,11 @@
                   style="font-size: 24px"
                   v-model="lastname"
                   :isDisable="!isEdit"
-                  :class="{ glow: inputs.lastName.hasChanged }"
-                  @input="this.inputs.lastName.hasChanged = true"
+                  :class="{ glow: inputs.lastName.hasChanged && isEdit }"
+                  @input="
+                    this.inputs.lastName.hasChanged = true;
+                    checkForChanges();
+                  "
                 />
               </v-col>
               <v-col cols="12">
@@ -183,8 +193,11 @@
                   style="font-size: 24px"
                   v-model="phonenumber"
                   :isDisable="!isEdit"
-                  :class="{ glow: inputs.phone.hasChanged }"
-                  @input="this.inputs.phone.hasChanged = true"
+                  :class="{ glow: inputs.phone.hasChanged && isEdit }"
+                  @input="
+                    this.inputs.phone.hasChanged = true;
+                    checkForChanges();
+                  "
                   :rules="[rules.numberOnly, rules.phoneLength]"
                 />
               </v-col>
@@ -725,6 +738,10 @@ export default {
         this.firstname !== this.originalValues.firstname ||
         this.lastname !== this.originalValues.lastname ||
         this.phonenumber !== this.originalValues.phonenumber;
+
+      if (this.isEdit && this.$refs.form) {
+        this.$refs.form.validate();
+      }
     },
 
     async handleSaveBtn() {
@@ -793,6 +810,13 @@ export default {
       this.phonenumber = this.originalValues.phonenumber;
       this.isEdit = false;
       this.isChanged = false;
+
+      this.removeCssClasses();
+
+      if (this.$refs.form) {
+        this.$refs.form.resetValidation();
+      }
+      this.isValidEdit = false;
     },
     changePasswordClicked() {
       this.currentPassword = "";
