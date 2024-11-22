@@ -242,7 +242,7 @@ export default {
         // 5. Stop the method here
         return;
       }
-      console.log("product service: " + this.checkoutStore.hasProduct + " " + this.checkoutStore.hasService);
+      //console.log("product service: " + this.checkoutStore.hasProduct + " " + this.checkoutStore.hasService);
       if (!this.checkoutStore.hasProduct && !this.checkoutStore.hasService) {
         this.$refs.toast.addToast("Cart is empty!", 2000);
       }
@@ -259,7 +259,8 @@ export default {
         SST: this.SST,
         Total: this.Total,
       });
-      
+      this.checkoutStore.hasProduct = false;
+      this.checkoutStore.hasService = false;
 
       this.router.push("/checkout"); }
     },
@@ -277,7 +278,7 @@ export default {
           return;
         }
 
-        console.log("Making cart request with token..."); // Debug log
+        //console.log("Making cart request with token..."); // Debug log
 
         const response = await axios.post(
           `${this.baseUrl}/get_cart`,
@@ -302,7 +303,9 @@ export default {
             ? new URL("@/assets/tyre-install-01.jpg", import.meta.url).href
             : new URL("@/assets/tyre.jpg", import.meta.url).href,
         }));
-        console.log("Cart items:", this.carts); // Debug log
+        //console.log("Cart items:", this.carts); // Debug log
+        this.checkoutStore.hasService = false;
+        this.checkoutStore.hasProduct = false;
         this.carts.forEach((cart) => {
           if (cart.productid.startsWith("SVR")) {
             this.checkoutStore.hasService = true;
@@ -356,6 +359,7 @@ export default {
           console.error("Item not found in cart");
         }
       }
+      await this.fetchCartItems();
     },
     async increaseQuantity(cart) {
       try {
@@ -376,6 +380,7 @@ export default {
       } catch (error) {
         console.error("Error increasing quantity:", error);
       }
+      await this.fetchCartItems();
     },
     async decreaseQuantity(cart) {
       try {
@@ -398,6 +403,7 @@ export default {
       } catch (error) {
         console.error("Error decreasing quantity:", error);
       }
+      await this.fetchCartItems();
     },
     submitCode() {
       const validCode = this.ValidRedeemCode.find(

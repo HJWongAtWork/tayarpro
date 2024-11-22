@@ -21,6 +21,10 @@
             :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :type="showPassword ? 'text' : 'password'"
             :rules="[rules.required]" required @click:append-inner="showPassword = !showPassword"
             :disabled="isLoading"></v-text-field>
+            <div class="text-right"><a @click="showPassword = !showPassword">
+          <span style="font-size: 10px;" v-if="!showPassword">Show Password</span>
+          <span style="font-size: 10px;" v-else>Hide Password</span>
+        </a></div>
         </v-card-title>
 
         <v-card-text v-if="errorMessage">
@@ -245,4 +249,5 @@ onMounted(() => {
   animation-duration: 1s;
   animation-timing-function: ease-in-out;
 }
+
 </style>

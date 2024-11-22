@@ -36,8 +36,6 @@ export const vehicleComposable = () => {
     };
   
     const token = localStorage.getItem("jwt");
-    console.log("New Vehicle:", newVehicle);
-    console.log("JWT Token:", token);
   
     try {
       const response = await axios.post(
@@ -51,7 +49,6 @@ export const vehicleComposable = () => {
           },
         }
       );
-  
       console.log("Response from server:", response.data);
       fetchVehicles(); // Reload vehicles after successful addition
     } catch (error: unknown) {

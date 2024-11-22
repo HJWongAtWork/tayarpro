@@ -122,37 +122,7 @@
       </v-col>
 
       <v-col cols="12" sm="12" md="3">
-        <v-card class="pa-4">
-          <v-col cols="12" sm="12" md="12">
-            <h1>Vehicles</h1>
-          </v-col>
-          <v-col cols="12" sm="12" md="12">
-            <v-btn class="save-btn" @click="handleVehicleDialog(newCar, 'add', null)">
-              + Add Vehicle
-            </v-btn>
-          </v-col>
-          <v-col v-for="car in displayedVehicles" :key="car.id" cols="12" sm="12" md="12">
-            <v-card class="pa-4">
-              <v-card-title>{{ car.plateNumber }}</v-card-title>
-              <v-card-subtitle>{{ car.brand }} {{ car.model }} ({{
-                car.year
-              }})</v-card-subtitle>
-              <v-card-actions class="d-flex justify-end" style="padding-top: 20px">
-                <v-icon class="small-icon text-green glow-on-hover" style="margin-right: 20px"
-                  @click="handleVehicleDialog(car, 'edit', car.id)">
-                  mdi-pencil
-                </v-icon>
-                <v-icon class="small-icon text-red glow-on-hover"
-                  @click="handleVehicleDialog(car, 'delete', car.id)">mdi-delete</v-icon>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-          <v-col v-if="vehicles.length > 3" cols="12" class="text-center mt-4">
-            <v-btn text @click="this.showAll = !this.showAll">
-              {{ showAll ? "Hide some..." : "Show more..." }}
-            </v-btn>
-          </v-col>
-        </v-card>
+        <VehicleInProfile />
       </v-col>
     </v-row>
   </v-container>
@@ -233,7 +203,6 @@
             required></v-text-field>
         </v-form>
       </v-card-text>
-
       <v-card-actions>
         <!-- Cancel and Submit Buttons -->
         <v-spacer></v-spacer>
@@ -294,42 +263,6 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-
-  <v-dialog v-model="vehicleDialog" max-width="500px">
-    <v-card>
-      <v-card-title class="text-h5">
-        <span class="headline">
-          <span v-if="vehicleDialogAction === 'add'">Add Vehicle</span>
-          <span v-if="vehicleDialogAction === 'edit'">Edit Vehicle</span>
-          <span v-if="vehicleDialogAction === 'delete'">Delete Vehicle</span>
-        </span>
-      </v-card-title>
-      <v-card-text>
-        <v-form ref="form" v-model="isValidAddVehicle">
-          <v-text-field label="Plate Number" v-model="plateNumberInput" :rules="[rules.required]" required
-            :disabled="vehicleDialogAction === 'delete'"></v-text-field>
-          <v-text-field label="Brand" v-model="brandInput" :rules="[rules.required]" required
-            :disabled="vehicleDialogAction === 'delete'"></v-text-field>
-          <v-text-field label="Model" v-model="modelInput" :rules="[rules.required]" required
-            :disabled="vehicleDialogAction === 'delete'"></v-text-field>
-          <v-text-field label="Year" v-model="yearInput" type="number" :rules="[rules.required, rules.year]" required
-            :disabled="vehicleDialogAction === 'delete'"></v-text-field>
-          <v-text-field label="Tyre Size (Optional)" v-model="tyreSizeInput" type="string"
-            :disabled="vehicleDialogAction === 'delete'"></v-text-field>
-        </v-form>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text @click="vehicleDialog = false">Cancel</v-btn>
-        <v-btn v-if="vehicleDialogAction === 'add'" class="save-btn" style="margin-right: 0px"
-          :disabled="!isValidAddVehicle" @click="handleAddVehicleBtn">Add</v-btn>
-        <v-btn v-if="vehicleDialogAction === 'edit'" class="save-btn" style="margin-right: 0px"
-          :disabled="!isValidAddVehicle" @click="handleEditVehicleBtn">Save</v-btn>
-        <v-btn v-if="vehicleDialogAction === 'delete'" class="save-btn" style="margin-right: 0px"
-          :disabled="!isValidAddVehicle" @click="handleDeleteVehicleBtn">Delete</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
 </template>
 
 <script setup>
@@ -339,6 +272,7 @@ import { useDateFormatter } from "@/composables/useDateFormatter";
 import TextInput from "@/components/TextInputComponent.vue";
 import { useUserComposable } from "@/composables/userComposable";
 import { vehicleComposable } from "@/composables/vehicleComposable";
+import { onMounted } from "vue";
 import { appointmentComposable } from "@/composables/appointmentComposable";
 import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
@@ -360,20 +294,9 @@ const {
   resetToStoreValues,
 } = useUserComposable();
 
-const {
-  accountid,
-  vehicles,
-  plateNumberInput,
-  brandInput,
-  modelInput,
-  yearInput,
-  tyreSizeInput,
-  fetchVehicles,
-  getLatestVehicleId,
-  addVehicle,
-  editVehicle,
-  deleteVehicle,
-} = vehicleComposable();
+    const {
+      accountid,
+    } = vehicleComposable();
 
 const { pastAppointments, fetchPastAppointments } = appointmentComposable();
 
@@ -752,14 +675,5 @@ onBeforeUnmount(() => {
   /* Ensure the image does not exceed the container's height */
   object-fit: cover;
   /* Cover the container while maintaining aspect ratio */
-}
-
-.small-icon {
-  font-size: 1.25rem;
-  /* Adjust the size to 50% smaller (about 1.25rem) */
-}
-
-.glow-on-hover:hover {
-  box-shadow: 0 0 15px grey, 0 0 30px grey;
 }
 </style>

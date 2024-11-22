@@ -1,20 +1,24 @@
 /**
  * plugins/index.ts
  *
- * Automatically included in `./src/main.ts`
+ * Centralized plugin registration.
  */
 
-// Plugins
-import vuetify from './vuetify'
-import pinia from '../stores'
-import router from '../router'
+import { createPinia } from "pinia";
+import { piniaPluginPersist } from "./piniaPluginPersist";
+import vuetify from "./vuetify";
+import router from "../router";
 
 // Types
-import type { App } from 'vue'
+import type { App } from "vue";
 
-export function registerPlugins (app: App) {
+export function registerPlugins(app: App) {
+  // Pinia setup with custom persistence plugin
+  const pinia = createPinia();
+  pinia.use(piniaPluginPersist);
+
   app
-    .use(vuetify)
-    .use(router)
-    .use(pinia)
+    .use(pinia) // Register Pinia
+    .use(vuetify) // Register Vuetify
+    .use(router); // Register Router
 }

@@ -6,7 +6,6 @@
       </div>
       <Header />
       <router-view />
-      <AppFooter />
     </v-main>
 
     <!-- Chat Widget Integration -->

@@ -127,6 +127,8 @@
 </style>
 
 <script lang="ts">
+//import servicepic from '@/assets/service.jpg'; 
+import servicepic from "@/assets/tyre-install-01.jpg";
 import { defineComponent, ref, computed, onMounted } from "vue";
 // import { useUserStore } from "../stores/userStore";
 import axios from "axios";
@@ -154,6 +156,7 @@ export default defineComponent({
     const ServiceList = ref<Service[]>([]);
     const ServiceTypeList = ref<ServiceType[]>([]);
     const selectedServiceTypes = ref<number[]>([]);
+    const servicePic = servicepic;
     const searchText = ref("");
     const currentPage = ref(1);
     const itemsPerPage = 12;
@@ -267,6 +270,7 @@ export default defineComponent({
       filteredServiceList,
       pageCount,
       paginatedServiceList,
+      servicePic,
     };
   },
 });
