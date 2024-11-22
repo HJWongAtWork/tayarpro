@@ -272,7 +272,6 @@ import { useDateFormatter } from "@/composables/useDateFormatter";
 import TextInput from "@/components/TextInputComponent.vue";
 import { useUserComposable } from "@/composables/userComposable";
 import { vehicleComposable } from "@/composables/vehicleComposable";
-import { onMounted } from "vue";
 import { appointmentComposable } from "@/composables/appointmentComposable";
 import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
@@ -418,6 +417,15 @@ const handleFileChange = () => {
     imageUrl.value = URL.createObjectURL(file.value);
   }
 };
+
+const triggerFileInput = () => {
+      document.querySelector('input[type="file"]').click();
+    };
+
+    const cancelUpload = () => {
+      file.value = null;
+      imageUrl.value = null;
+    };
 
 // Add these methods in your script setup
 const handleSubmitBtn = async () => {
@@ -619,7 +627,6 @@ onMounted(async () => {
   document.title = "Your Profile";
 
   resetToStoreValues();
-  fetchVehicles();
   fetchPastAppointments();
   window.addEventListener("resize", updateScreenSize);
   storeOriginalValues();
