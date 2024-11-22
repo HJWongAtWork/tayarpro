@@ -717,7 +717,7 @@ onBeforeUnmount(() => {
 }
 
 .glow {
-  box-shadow: 0 0 10px 2px rgba(0, 255, 0, 0.8);
+  box-shadow: 0 0 10px 2px rgba(0, 255, 0, 0.8) !important;
   /* green glowing effect */
 }
 
