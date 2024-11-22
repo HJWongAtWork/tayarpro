@@ -97,13 +97,11 @@
               <v-col cols="12" sm="12" md="12"> </v-col>
               <v-col cols="12" sm="6" md="6">
                 <TextInput labelNameUpper="First Name" v-model="firstname" :isDisable="!isEdit"
-                  :class="{ glow: inputs.firstName.hasChanged && isEdit }"
-                  @input="handleInputChange('firstName')" />
+                  :class="{ glow: inputs.firstName.hasChanged && isEdit }" @input="handleInputChange('firstName')" />
               </v-col>
               <v-col cols="12" sm="6" md="6">
                 <TextInput labelNameUpper="Last Name" v-model="lastname" :isDisable="!isEdit"
-                  :class="{ glow: inputs.lastName.hasChanged && isEdit }"
-                  @input="handleInputChange('lastName')" />
+                  :class="{ glow: inputs.lastName.hasChanged && isEdit }" @input="handleInputChange('lastName')" />
               </v-col>
               <v-col cols="12">
                 <TextInput labelNameUpper="Contact No." v-model="phonenumber" :isDisable="!isEdit"
@@ -221,14 +219,18 @@
       <v-card-text>
         <!-- Form for changing password -->
         <v-form ref="form" v-model="isValidCP">
-          <v-text-field label="Current Password" v-model="currentPassword" type="text"
-            :rules="[rules.required, rules.checkPwValid]" required></v-text-field>
+          <!-- <v-text-field label="Current Password" v-model="currentPassword" type="text"
+            :rules="[rules.required, rules.checkPwValid]" required></v-text-field> -->
 
-          <v-text-field label="New Password" v-model="newPassword" type="text" :rules="[rules.required]"
+          <v-text-field label="New Password" v-model="newPassword" :type="showPassword ? 'text' : 'password'"
+            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"
+            :rules="[rules.required]" required></v-text-field>
+
+          <v-text-field label="Confirm New Password" v-model="confirmPassword"
+            :type="showConfirmPassword ? 'text' : 'password'"
+            :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append="showConfirmPassword = !showConfirmPassword" :rules="[rules.required, confirmPasswordRule]"
             required></v-text-field>
-
-          <v-text-field label="Confirm New Password" v-model="confirmPassword" type="text"
-            :rules="[rules.required, rules.confirmPasswordRule]" required></v-text-field>
         </v-form>
       </v-card-text>
 
@@ -400,6 +402,8 @@ const isValidAddVehicle = ref(false);
 const currentPassword = ref("");
 const newPassword = ref("");
 const confirmPassword = ref("");
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 const pastAppointmentsDialog = ref(false);
 const showAll = ref(false);
 const vehicleDialog = ref(false);
@@ -428,6 +432,8 @@ const rules = {
   year: (value) => (value >= 1900 && value <= new Date().getFullYear()) || "Invalid year",
   bay: (value) => value > 0 || "Bay number must be greater than zero",
 };
+
+const confirmPasswordRule = (v) => v === newPassword.value || 'Passwords must match'
 
 // Computed Properties
 const displayedVehicles = computed(() => {
@@ -487,6 +493,49 @@ const handleFileChange = () => {
       return;
     }
     imageUrl.value = URL.createObjectURL(file.value);
+  }
+};
+
+// Add these methods in your script setup
+const handleSubmitBtn = async () => {
+  if (isValidCP.value) {
+    try {
+      const token = localStorage.getItem("jwt");
+      const response = await axios.put(
+        `${baseUrl}/update_password?password=${newPassword.value}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            accept: "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        alert("Password changed successfully");
+        changePassword.value = false;
+        // Reset form values
+        currentPassword.value = "";
+        newPassword.value = "";
+        confirmPassword.value = "";
+      }
+    } catch (error) {
+      console.error("Error changing password:", error);
+      alert("Error changing password. Please check your current password and try again.");
+    }
+  }
+};
+
+const changePasswordClicked = () => {
+  menu.value = false;
+  changePassword.value = true;
+  // Reset form values
+  currentPassword.value = "";
+  newPassword.value = "";
+  confirmPassword.value = "";
+  if (form.value) {
+    form.value.resetValidation();
   }
 };
 
