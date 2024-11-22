@@ -176,8 +176,8 @@ import cartButton from "../components/cartButton.vue";
 import checkoutDialog from "../components/checkoutDialog.vue";
 import { isLogicalExpression } from "@babel/types";
 import placeholderImage from "@/assets/tyre.jpg";
-import { useCheckoutStore } from "@/stores/checkout";
 import { ref, onMounted, onUnmounted } from "vue";
+import { useCheckoutStore } from "@/stores/checkout";
 import ToastNotification from "@/components/ToastNotification.vue"; 
 
 const isLoading = ref(true);
@@ -195,12 +195,13 @@ export default {
     const router = useRouter();
     const checkoutStore = useCheckoutStore();
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
     onMounted(() => {
       document.title = "Cart";
     });
+
     return { router, checkoutStore, baseUrl };
   },
-
   data() {
     return {
       carts: [],
@@ -225,7 +226,6 @@ export default {
       placeholderImage,
     };
   },
-
   methods: {
     checkLoginStatus() {
       this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -259,6 +259,7 @@ export default {
         SST: this.SST,
         Total: this.Total,
       });
+      
 
       this.router.push("/checkout"); }
     },
