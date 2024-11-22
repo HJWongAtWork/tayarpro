@@ -39,7 +39,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .disclaimer-dialog {
     position: fixed;
     top: 0;

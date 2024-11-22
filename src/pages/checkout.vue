@@ -463,7 +463,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .v-date-picker {
   width: 100%;
   max-width: 360px;

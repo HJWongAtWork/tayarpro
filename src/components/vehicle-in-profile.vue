@@ -354,7 +354,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   .save-btn {
     margin-right: 50px;
     background-color: red;

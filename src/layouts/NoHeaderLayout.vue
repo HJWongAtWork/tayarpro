@@ -98,7 +98,7 @@
 
 </script>
 
-<style>
+<style scoped>
   .v-application {
     position: relative;
     overflow-x: hidden;
