@@ -13,6 +13,9 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore"; // Import Firestore
 import { getAuth } from "firebase/auth"; // Import Authentication
 
+// Stores
+import { useUserStore } from "@/stores/userStore";
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyC6FnHjsH8aM21IzgRA5lzGOGv2hEeWCH8",
@@ -50,6 +53,10 @@ vueApp.directive("click-to-expand", {
     });
   },
 });
+
+// Initialize user store
+const userStore = useUserStore();
+userStore.initializeFromLocalStorage();
 
 vueApp.mount("#app");
 

@@ -22,16 +22,13 @@
                   {{ service.maxPrice.toFixed(2) }}
                 </span>
               </div>
-              <v-card-actions>
-                <div class="button-container">
-                  <v-btn
-                    class="border-thin view-details-button"
-                    color="primary"
-                    @click.stop="goToServiceDetails(service)"
-                    >View Details</v-btn
-                  >
-                </div>
-              </v-card-actions>
+              <div class="button-container ma-auto">
+                <v-btn
+                  class="border-thin view-details-button"
+                  @click.stop="goToServiceDetails(service)"
+                  >View Details</v-btn
+                >
+              </div>
             </div>
           </div>
         </div>
@@ -75,13 +72,15 @@
   -webkit-box-orient: vertical;
   margin-bottom: 8px;
 }
-.button-container {
+/* .button-container {
   position: absolute;
   bottom: 16px;
   left: 16px;
   size: 20px;
-}
+} */
 .view-details-button {
+  background-color: white;
+  color: red;
   width: 120px;
   height: 40px;
   font-size: 0.875rem;

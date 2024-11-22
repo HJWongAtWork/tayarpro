@@ -7,8 +7,14 @@
       <v-col cols="12" sm="12" md="3">
         <v-card class="pa-4">
           <v-row>
-            <v-col cols="12" class="text-center fill-height d-flex flex-column align-center justify-center">
-              <div id="image-container" class="d-flex justify-center align-center">
+            <v-col
+              cols="12"
+              class="text-center fill-height d-flex flex-column align-center justify-center"
+            >
+              <div
+                id="image-container"
+                class="d-flex justify-center align-center"
+              >
                 <v-img v-if="imageUrl" :src="imageUrl" class="image-preview" />
                 <v-icon v-else size="150">mdi-account-circle</v-icon>
               </div>
@@ -17,9 +23,20 @@
               <h6>User ID: {{ accountid }}</h6>
             </v-col>
             <v-col cols="12" class="text-center">
-              <v-file-input v-model="file" accept=".jpg, .jpeg, .png" @change="handleFileChange" hide-input
-                style="display: none" />
-              <v-btn v-if="imageUrl" :disabled="!isEdit" height="40" width="200" @click="confirmRemovePicture = true">
+              <v-file-input
+                v-model="file"
+                accept=".jpg, .jpeg, .png"
+                @change="handleFileChange"
+                hide-input
+                style="display: none"
+              />
+              <v-btn
+                v-if="imageUrl"
+                :disabled="!isEdit"
+                height="40"
+                width="200"
+                @click="confirmRemovePicture = true"
+              >
                 <div class="text-h6 d-flex">
                   <v-icon left size="30"> mdi-cancel </v-icon>
                   Remove Picture
@@ -32,19 +49,38 @@
             <v-col cols="12" class="text-center">
               <div v-if="isLargeScreen">
                 <v-list>
-                  <v-list-item @click="
-                    menu = false;
-                  isEdit = true;
+                  <v-list-item
+                    @click="
+                      menu = false;
+                      isEdit = true;
 
-                  storeOriginalValues();
-                  " :disabled="isEdit">Edit Info Details</v-list-item>
-                  <v-list-item @click="changePasswordClicked">Change Password</v-list-item>
-                  <router-link to="/appointments" style="color: black; text-decoration: none">
-                    <v-list-item @click="menu = false">Manage Appointments</v-list-item>
+                      storeOriginalValues();
+                    "
+                    :disabled="isEdit"
+                    >Edit Info Details</v-list-item
+                  >
+                  <v-list-item @click="changePasswordClicked"
+                    >Change Password</v-list-item
+                  >
+                  <router-link
+                    to="/appointments"
+                    style="color: black; text-decoration: none"
+                  >
+                    <v-list-item @click="menu = false"
+                      >Manage Appointments</v-list-item
+                    >
                   </router-link>
-                  <v-list-item @click="pastAppointmentsDialog = true">Past Appointments</v-list-item>
-                  <v-list-item @click="confirmLogout = true" style="color: red">Log Out</v-list-item>
-                  <v-list-item @click="confirmDeleteAccount = true" style="color: red">Delete Account</v-list-item>
+                  <v-list-item @click="pastAppointmentsDialog = true"
+                    >Past Appointments</v-list-item
+                  >
+                  <v-list-item @click="confirmLogout = true" style="color: red"
+                    >Log Out</v-list-item
+                  >
+                  <v-list-item
+                    @click="confirmDeleteAccount = true"
+                    style="color: red"
+                    >Delete Account</v-list-item
+                  >
                 </v-list>
               </div>
 
@@ -56,23 +92,44 @@
                   <v-card-title>More Settings</v-card-title>
                   <v-card-text>
                     <v-list>
-                      <v-list-item @click="
-                        menu = false;
-                      isEdit = true;
-                      " :disabled="isEdit">Edit Info Details</v-list-item>
-                      <v-list-item @click="changePasswordClicked">Change Password</v-list-item>
-                      <router-link to="/appointments" style="color: black; text-decoration: none">
-                        <v-list-item @click="menu = false">Manage Appointments</v-list-item>
+                      <v-list-item
+                        @click="
+                          menu = false;
+                          isEdit = true;
+                        "
+                        :disabled="isEdit"
+                        >Edit Info Details</v-list-item
+                      >
+                      <v-list-item @click="changePasswordClicked"
+                        >Change Password</v-list-item
+                      >
+                      <router-link
+                        to="/appointments"
+                        style="color: black; text-decoration: none"
+                      >
+                        <v-list-item @click="menu = false"
+                          >Manage Appointments</v-list-item
+                        >
                       </router-link>
-                      <v-list-item @click="pastAppointmentsDialog = true">Past Appointments</v-list-item>
-                      <v-list-item @click="
-                        menu = false;
-                      confirmLogout = true;
-                      " style="color: red">Log Out</v-list-item>
-                      <v-list-item @click="
-                        menu = false;
-                      confirmDeleteAccount = true;
-                      " style="color: red">Delete Account</v-list-item>
+                      <v-list-item @click="pastAppointmentsDialog = true"
+                        >Past Appointments</v-list-item
+                      >
+                      <v-list-item
+                        @click="
+                          menu = false;
+                          confirmLogout = true;
+                        "
+                        style="color: red"
+                        >Log Out</v-list-item
+                      >
+                      <v-list-item
+                        @click="
+                          menu = false;
+                          confirmDeleteAccount = true;
+                        "
+                        style="color: red"
+                        >Delete Account</v-list-item
+                      >
                     </v-list>
                   </v-card-text>
                   <v-card-actions>
@@ -90,28 +147,57 @@
           <v-form ref="form" v-model="isValidEdit">
             <v-row>
               <v-col cols="12" sm="12" md="12">
-                <TextInput labelNameUpper="Email" v-model="email" :isDisable="!isEdit"
-                  :class="{ glow: inputs.email.hasChanged && isEdit }" @input="handleInputChange('email')"
-                  :rules="[rules.emailValid]" />
+                <TextInput
+                  labelNameUpper="Email"
+                  v-model="email"
+                  :isDisable="!isEdit"
+                  :class="{ glow: inputs.email.hasChanged && isEdit }"
+                  @input="handleInputChange('email')"
+                  :rules="[rules.emailValid]"
+                />
               </v-col>
               <v-col cols="12" sm="12" md="12"> </v-col>
               <v-col cols="12" sm="6" md="6">
-                <TextInput labelNameUpper="First Name" v-model="firstname" :isDisable="!isEdit"
-                  :class="{ glow: inputs.firstName.hasChanged && isEdit }" @input="handleInputChange('firstName')" />
+                <TextInput
+                  labelNameUpper="First Name"
+                  v-model="firstname"
+                  :isDisable="!isEdit"
+                  :class="{ glow: inputs.firstName.hasChanged && isEdit }"
+                  @input="handleInputChange('firstName')"
+                />
               </v-col>
               <v-col cols="12" sm="6" md="6">
-                <TextInput labelNameUpper="Last Name" v-model="lastname" :isDisable="!isEdit"
-                  :class="{ glow: inputs.lastName.hasChanged && isEdit }" @input="handleInputChange('lastName')" />
+                <TextInput
+                  labelNameUpper="Last Name"
+                  v-model="lastname"
+                  :isDisable="!isEdit"
+                  :class="{ glow: inputs.lastName.hasChanged && isEdit }"
+                  @input="handleInputChange('lastName')"
+                />
               </v-col>
               <v-col cols="12">
-                <TextInput labelNameUpper="Contact No." v-model="phonenumber" :isDisable="!isEdit"
-                  :class="{ glow: inputs.phone.hasChanged && isEdit }" @input="handleInputChange('phone')"
-                  :rules="[rules.numberOnly, rules.phoneLength]" />
+                <TextInput
+                  labelNameUpper="Contact No."
+                  v-model="phonenumber"
+                  :isDisable="!isEdit"
+                  :class="{ glow: inputs.phone.hasChanged && isEdit }"
+                  @input="handleInputChange('phone')"
+                  :rules="[rules.numberOnly, rules.phoneLength]"
+                />
               </v-col>
               <v-col cols="12" sm="12" md="12">
                 <!-- <div style="float: right" v-if="isEdit"> -->
-                <v-card-actions class="d-flex justify-end" style="padding-top: 20px" v-if="isEdit">
-                  <v-btn @click="handleSaveBtn()" :disabled="!isValidEdit" class="save-btn">Save</v-btn>
+                <v-card-actions
+                  class="d-flex justify-end"
+                  style="padding-top: 20px"
+                  v-if="isEdit"
+                >
+                  <v-btn
+                    @click="handleSaveBtn()"
+                    :disabled="!isValidEdit"
+                    class="save-btn"
+                    >Save</v-btn
+                  >
                   <v-btn @click="handleCancelBtn()">Cancel</v-btn>
                 </v-card-actions>
                 <!-- </div> -->
@@ -136,11 +222,17 @@
         </p>
       </v-card-text>
       <v-card-actions class="d-flex justify-center align-center">
-        <v-btn class="save-btn" @click="
-          cancelUpload();
-        confirmRemovePicture = false;
-        ">Confirm</v-btn>
-        <v-btn class="save-btn" @click="confirmRemovePicture = false">Cancel</v-btn>
+        <v-btn
+          class="save-btn"
+          @click="
+            cancelUpload();
+            confirmRemovePicture = false;
+          "
+          >Confirm</v-btn
+        >
+        <v-btn class="save-btn" @click="confirmRemovePicture = false"
+          >Cancel</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -155,13 +247,10 @@
         <v-btn class="save-btn" @click="handleLogout" :loading="isLoggingOut">
           Confirm
         </v-btn>
-        <v-btn class="save-btn" @click="confirmLogout = false">
-          Cancel
-        </v-btn>
+        <v-btn class="save-btn" @click="confirmLogout = false"> Cancel </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
-
 
   <v-dialog v-model="confirmDeleteAccount" persistent width="500">
     <v-card style="text-align: center">
@@ -171,7 +260,12 @@
         <p class="text-red">This action cannot be undone.</p>
       </v-card-text>
       <v-card-actions class="d-flex justify-center align-center">
-        <v-btn class="save-btn" color="error" @click="handleDeleteAccount" :loading="isDeleting">
+        <v-btn
+          class="save-btn"
+          color="error"
+          @click="handleDeleteAccount"
+          :loading="isDeleting"
+        >
           Delete Account
         </v-btn>
         <v-btn class="save-btn" @click="confirmDeleteAccount = false">
@@ -180,7 +274,6 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-
 
   <v-dialog v-model="changePassword" max-width="500" persistent>
     <v-card>
@@ -192,22 +285,36 @@
           <!-- <v-text-field label="Current Password" v-model="currentPassword" type="text"
             :rules="[rules.required, rules.checkPwValid]" required></v-text-field> -->
 
-          <v-text-field label="New Password" v-model="newPassword" :type="showPassword ? 'text' : 'password'"
-            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"
-            :rules="[rules.required]" required></v-text-field>
+          <v-text-field
+            label="New Password"
+            v-model="newPassword"
+            :type="showPassword ? 'text' : 'password'"
+            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append="showPassword = !showPassword"
+            :rules="[rules.required]"
+            required
+          ></v-text-field>
 
-          <v-text-field label="Confirm New Password" v-model="confirmPassword"
+          <v-text-field
+            label="Confirm New Password"
+            v-model="confirmPassword"
             :type="showConfirmPassword ? 'text' : 'password'"
             :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
-            @click:append="showConfirmPassword = !showConfirmPassword" :rules="[rules.required, confirmPasswordRule]"
-            required></v-text-field>
+            @click:append="showConfirmPassword = !showConfirmPassword"
+            :rules="[rules.required, confirmPasswordRule]"
+            required
+          ></v-text-field>
         </v-form>
       </v-card-text>
       <v-card-actions>
         <!-- Cancel and Submit Buttons -->
         <v-spacer></v-spacer>
-        <v-btn color="blue-grey" text @click="changePassword = false">Cancel</v-btn>
-        <v-btn color="primary" :disabled="!isValidCP" @click="handleSubmitBtn">Submit</v-btn>
+        <v-btn color="blue-grey" text @click="changePassword = false"
+          >Cancel</v-btn
+        >
+        <v-btn color="primary" :disabled="!isValidCP" @click="handleSubmitBtn"
+          >Submit</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -217,7 +324,13 @@
       <v-card-title>Past Appointments</v-card-title>
       <v-card-text>
         <v-row>
-          <v-col v-for="appt in pastAppointments.slice(0, 3)" :key="appt.id" cols="12" sm="12" md="3">
+          <v-col
+            v-for="appt in pastAppointments.slice(0, 3)"
+            :key="appt.id"
+            cols="12"
+            sm="12"
+            md="3"
+          >
             <v-card>
               <v-card-title>
                 <p>ID: {{ appt.id }}</p>
@@ -245,12 +358,18 @@
             </v-card>
           </v-col>
           <v-col cols="12" sm="12" md="3" v-if="pastAppointments.length > 3">
-            <v-card outlined class="d-flex align-center justify-center" height="100%">
+            <v-card
+              outlined
+              class="d-flex align-center justify-center"
+              height="100%"
+            >
               <v-card-title class="text-center">
-                <router-link :to="{
-                  path: '/appointments',
-                  query: { tab: 'tab-complete' },
-                }">
+                <router-link
+                  :to="{
+                    path: '/appointments',
+                    query: { tab: 'tab-complete' },
+                  }"
+                >
                   Show more...
                 </router-link>
               </v-card-title>
@@ -266,8 +385,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted, onBeforeUnmount, reactive } from "vue";
+import { useRouter } from "vue-router";
 import { useDateFormatter } from "@/composables/useDateFormatter";
 import TextInput from "@/components/TextInputComponent.vue";
 import { useUserComposable } from "@/composables/userComposable";
@@ -281,8 +400,6 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const userStore = useUserStore();
 const router = useRouter();
 
-userStore.initializeFromLocalStorage();
-
 // Composables
 const {
   email,
@@ -293,9 +410,7 @@ const {
   resetToStoreValues,
 } = useUserComposable();
 
-    const {
-      accountid,
-    } = vehicleComposable();
+const { accountid } = vehicleComposable();
 
 const { pastAppointments, fetchPastAppointments } = appointmentComposable();
 
@@ -346,16 +461,21 @@ const inputs = reactive({
 // Validation Rules
 const rules = {
   required: (v) => !!v || "This field is required",
-  confirmPasswordRule: (value) => value === newPassword.value || "Password does not match",
-  checkPwValid: (value) => value === passwordInput.value || "Password is not correct",
+  confirmPasswordRule: (value) =>
+    value === newPassword.value || "Password does not match",
+  checkPwValid: (value) =>
+    value === passwordInput.value || "Password is not correct",
   emailValid: (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
   numberOnly: (v) => /^\d+$/.test(v) || "Must contain digits only",
-  phoneLength: (v) => (v.length >= 10 && v.length <= 15) || "Phone number must be 10-15 digits",
-  year: (value) => (value >= 1900 && value <= new Date().getFullYear()) || "Invalid year",
+  phoneLength: (v) =>
+    (v.length >= 10 && v.length <= 15) || "Phone number must be 10-15 digits",
+  year: (value) =>
+    (value >= 1900 && value <= new Date().getFullYear()) || "Invalid year",
   bay: (value) => value > 0 || "Bay number must be greater than zero",
 };
 
-const confirmPasswordRule = (v) => v === newPassword.value || 'Passwords must match'
+const confirmPasswordRule = (v) =>
+  v === newPassword.value || "Passwords must match";
 
 // Computed Properties
 const displayedVehicles = computed(() => {
@@ -396,9 +516,7 @@ const handleInputChange = (field) => {
 };
 
 const removeCssClasses = () => {
-  Object.keys(inputs).forEach(
-    (key) => (inputs[key].hasChanged = false)
-  );
+  Object.keys(inputs).forEach((key) => (inputs[key].hasChanged = false));
 };
 
 const handleFileChange = () => {
@@ -419,13 +537,13 @@ const handleFileChange = () => {
 };
 
 const triggerFileInput = () => {
-      document.querySelector('input[type="file"]').click();
-    };
+  document.querySelector('input[type="file"]').click();
+};
 
-    const cancelUpload = () => {
-      file.value = null;
-      imageUrl.value = null;
-    };
+const cancelUpload = () => {
+  file.value = null;
+  imageUrl.value = null;
+};
 
 // Add these methods in your script setup
 const handleSubmitBtn = async () => {
@@ -453,7 +571,9 @@ const handleSubmitBtn = async () => {
       }
     } catch (error) {
       console.error("Error changing password:", error);
-      alert("Error changing password. Please check your current password and try again.");
+      alert(
+        "Error changing password. Please check your current password and try again."
+      );
     }
   }
 };
