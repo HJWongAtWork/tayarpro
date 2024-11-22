@@ -23,6 +23,15 @@ export const vehicleStore = defineStore('vehicleStore', {
       platenumber: string,
       cartype: string
     }[],
+    selectedCar: {
+      carid: -1,
+      carbrand: "",
+      carmodel: "",
+      caryear: -1,
+      platenumber: "",
+      tyresize: "",
+      cartype: ""
+    }
   }),
   getters: {
     getVehicles: (state) => state.vehicles,

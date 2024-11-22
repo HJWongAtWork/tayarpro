@@ -47,10 +47,10 @@ export default {
       this.$refs.toast.addToast("This is a success message!");
     },
     showErrorToast() {
-      this.$refs.toast.addToast("This is an error message!", "error", 5000);
+      this.$refs.toast.addToast("This is an error message!", 2000);
     },
     showWarningToast() {
-      this.$refs.toast.addToast("This is a warning message!", "warning", 3000);
+      this.$refs.toast.addToast("This is a warning message!", 3000, "warning");
     },
   },
 };

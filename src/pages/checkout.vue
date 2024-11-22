@@ -70,7 +70,7 @@
         </v-stepper-window-item>
 
         <v-stepper-window-item value="2">
-          <v-card title="Make Appointment" flat>
+          <v-card title="Set Appointment" flat>
             <v-container>
               <v-row>
                 <v-col cols="12">
@@ -213,18 +213,22 @@ import { appointmentComposable } from "@/composables/appointmentComposable";
 import { useDateFormatter } from "@/composables/useDateFormatter";
 import axios from "axios";
 import { useCheckoutStore } from "@/stores/checkout";
+import { vehicleComposable } from "@/composables/vehicleComposable";
+
 export default {
   setup() {
     const router = useRouter();
     const { newAppointment } = appointmentComposable();
     const { formatDateToReadable } = useDateFormatter();
     const checkoutStore = useCheckoutStore();
-    const baseUrl = import.meta.env.VITE_API_BASE_URL
+    const { selectedCar } = vehicleComposable();
+
     return {
       router,
       newAppointment,
       formatDateToReadable,
       checkoutStore,
+      selectedCar,
     };
   },
   components: { cartButton },
@@ -362,10 +366,11 @@ export default {
       console.log("Input changed: ", value);
     },
     async placeOrder() {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       this.isLoading = true;
 
       const checkoutData = {
-        car_id: "1",
+        car_id: this.selectedCar.carid.toString(),
         appointment_date: this.newAppointment.dateTime
           .toISOString()
           .split("T")[0],
@@ -383,7 +388,7 @@ export default {
       console.log(checkoutData);
 
       const response = await axios.post(
-        `${this.baseUrl}/checkout`,
+        `${baseUrl}/checkout`,
         checkoutData,
         {
           method: "POST",

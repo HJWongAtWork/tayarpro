@@ -251,7 +251,7 @@
 
       const dateSelected = ref(new Date("2024-10-01"));
 
-      const { vehicles, plateNumberInput, brandInput, modelInput, yearInput, tyreSizeInput,
+      const { vehicles, selectedCar, plateNumberInput, brandInput, modelInput, yearInput, tyreSizeInput,
         typeInput, fetchVehicles, getLatestVehicleId, addVehicle } = vehicleComposable();
       const selectedCarStr = ref("");
       const selectedCarObj = computed(() => {
@@ -367,6 +367,14 @@
             typeInput.value = newType.value;
             addVehicle();
           }
+          //set selectedcar in vehicleStore to selectedCarObj
+          selectedCar.value.carid = selectedCarObj.value.id;
+          selectedCar.value.platenumber = selectedCarObj.value.plateNumber;
+          selectedCar.value.carbrand = selectedCarObj.value.brand;
+          selectedCar.value.carmodel = selectedCarObj.value.model;
+          selectedCar.value.caryear = selectedCarObj.value.year;
+          selectedCar.value.tyresize = selectedCarObj.value.tyreSize;
+          selectedCar.value.cartype = selectedCarObj.value.type;
           //set new appt in schedule format for schedule update
           newApptInScheduleFormat.value = {
             id: latestApptsId,
@@ -525,6 +533,7 @@
         newTyreSize,
         newApptInScheduleFormat,
         newAppointment,
+        selectedCar,
       };
     },
     watch: {
