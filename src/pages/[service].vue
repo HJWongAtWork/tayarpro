@@ -78,7 +78,8 @@ export default defineComponent({
 
     const fetchService = async () => {
       try {
-        const serviceDescription = localStorage.getItem("servicedescription");
+        const serviceDescription = localStorage.getItem("serviceDescription");
+        console.log(serviceDescription);
         if (serviceDescription) {
           const response = await axios.get<ServiceItem[]>(
             `http://localhost:8000/service/${serviceDescription}`

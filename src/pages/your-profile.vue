@@ -32,15 +32,26 @@
             <v-col cols="12" class="text-center">
               <div v-if="isLargeScreen">
                 <v-list>
-                  <v-list-item @click="
-                    menu = false;
-                  isEdit = true;
-                  storeOriginalValues();
-                  isChanged = true;
-                  " :disabled="isEdit">Edit Info Details</v-list-item>
-                  <v-list-item @click="changePasswordClicked">Change Password</v-list-item>
-                  <router-link to="/appointments" style="color: black; text-decoration: none">
-                    <v-list-item @click="menu = false">Manage Appointments</v-list-item>
+                  <v-list-item
+                    @click="
+                      menu = false;
+                      isEdit = true;
+
+                      storeOriginalValues();
+                    "
+                    :disabled="isEdit"
+                    >Edit Info Details</v-list-item
+                  >
+                  <v-list-item @click="changePasswordClicked"
+                    >Change Password</v-list-item
+                  >
+                  <router-link
+                    to="/appointments"
+                    style="color: black; text-decoration: none"
+                  >
+                    <v-list-item @click="menu = false"
+                      >Manage Appointments</v-list-item
+                    >
                   </router-link>
                   <v-list-item @click="pastAppointmentsDialog = true">Past Appointments</v-list-item>
                   <v-list-item @click="confirmLogout = true" style="color: red">Log Out</v-list-item>
@@ -90,23 +101,59 @@
           <v-form ref="form" v-model="isValidEdit">
             <v-row>
               <v-col cols="12" sm="12" md="12">
-                <TextInput labelNameUpper="Email" style="font-size: 24px" v-model="email" :isDisable="!isEdit"
-                  :class="{ glow: inputs.email.hasChanged && isEdit }" @input="this.inputs.email.hasChanged = true; checkForChanges();"
-                  :rules="[rules.emailValid]" />
+                <TextInput
+                  labelNameUpper="Email"
+                  style="font-size: 24px"
+                  v-model="email"
+                  :isDisable="!isEdit"
+                  :class="{ glow: inputs.email.hasChanged && isEdit }"
+                  @input="
+                    this.inputs.email.hasChanged = true;
+                    checkForChanges();
+                  "
+                  :rules="[rules.emailValid]"
+                />
               </v-col>
               <v-col cols="12" sm="12" md="12"> </v-col>
               <v-col cols="12" sm="6" md="6">
-                <TextInput labelNameUpper="First Name" style="font-size: 24px" v-model="firstname" :isDisable="!isEdit"
-                  :class="{ glow: inputs.firstName.hasChanged && isEdit }" @input="this.inputs.firstName.hasChanged = true; checkForChanges();" />
+                <TextInput
+                  labelNameUpper="First Name"
+                  style="font-size: 24px"
+                  v-model="firstname"
+                  :isDisable="!isEdit"
+                  :class="{ glow: inputs.firstName.hasChanged && isEdit }"
+                  @input="
+                    this.inputs.firstName.hasChanged = true;
+                    checkForChanges();
+                  "
+                />
               </v-col>
               <v-col cols="12" sm="6" md="6">
-                <TextInput labelNameUpper="Last Name" style="font-size: 24px" v-model="lastname" :isDisable="!isEdit"
-                  :class="{ glow: inputs.lastName.hasChanged && isEdit }" @input="this.inputs.lastName.hasChanged = true; checkForChanges();" />
+                <TextInput
+                  labelNameUpper="Last Name"
+                  style="font-size: 24px"
+                  v-model="lastname"
+                  :isDisable="!isEdit"
+                  :class="{ glow: inputs.lastName.hasChanged && isEdit }"
+                  @input="
+                    this.inputs.lastName.hasChanged = true;
+                    checkForChanges();
+                  "
+                />
               </v-col>
               <v-col cols="12">
-                <TextInput labelNameUpper="Contact No." style="font-size: 24px" v-model="phonenumber"
-                  :isDisable="!isEdit" :class="{ glow: inputs.phone.hasChanged && isEdit }"
-                  @input="this.inputs.phone.hasChanged = true; checkForChanges();" :rules="[rules.numberOnly, rules.phoneLength]" />
+                <TextInput
+                  labelNameUpper="Contact No."
+                  style="font-size: 24px"
+                  v-model="phonenumber"
+                  :isDisable="!isEdit"
+                  :class="{ glow: inputs.phone.hasChanged && isEdit }"
+                  @input="
+                    this.inputs.phone.hasChanged = true;
+                    checkForChanges();
+                  "
+                  :rules="[rules.numberOnly, rules.phoneLength]"
+                />
               </v-col>
               <v-col cols="12" sm="12" md="12">
                 <!-- <div style="float: right" v-if="isEdit"> -->
@@ -585,47 +632,144 @@ const handleSaveBtn = async () => {
       lastname: lastname.value,
       phone_number: phonenumber.value.toString(),
     };
-    try {
-      const response = await axios.put(
-        `${baseUrl}/update_user`,
-        updatedUserData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const result = response.data;
-      updateUserStore({
-        email: result.email,
-        firstname: result.firstname,
-        lastname: result.lastname,
-        phonenumber: result.phonenumber,
-      });
-      isEdit.value = false;
-      storeOriginalValues();
-      isChanged.value = false;
-      removeCssClasses();
-      alert("Profile updated successfully");
-    } catch (error) {
-      console.error('Error updating profile:', error);
-    }
-  }
-};
+  },
+  mounted() {
+    window.addEventListener("resize", this.updateScreenSize);
+    this.storeOriginalValues();
+    // this.initialDOB = this.dateOfBirthInput;
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.updateScreenSize);
+  },
+  // watch: {
+  //   dateOfBirthInput(newValue) {
+  //     this.handleChangeDOB();
+  //     this.initialDOB = this.dateOfBirthInput;
+  //   },
+  // },
+  methods: {
+    storeOriginalValues() {
+      this.originalValues = {
+        email: this.email,
+        firstname: this.firstname,
+        lastname: this.lastname,
+        phonenumber: this.phonenumber,
+      };
+    },
+    checkForChanges() {
+      this.isChanged =
+        this.email !== this.originalValues.email ||
+        this.firstname !== this.originalValues.firstname ||
+        this.lastname !== this.originalValues.lastname ||
+        this.phonenumber !== this.originalValues.phonenumber;
 
-const handleSubmitBtn = async () => {
-  if (isValidCP.value) {
-    try {
-      const token = localStorage.getItem("jwt");
-      await axios.put(
-        `${baseUrl}/update_password`,
-        {
-          password: newPassword.value,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      if (this.isEdit && this.$refs.form) {
+        this.$refs.form.validate();
+      }
+    },
+
+    async handleSaveBtn() {
+      console.log(this.email);
+      console.log(this.firstname);
+      console.log(this.lastname);
+      console.log(this.phonenumber);
+      if (this.isChanged && this.isValidEdit) {
+        const token = localStorage.getItem("jwt");
+        const updatedUserData = {
+          email: this.email,
+          firstname: this.firstname,
+          lastname: this.lastname,
+          phone_number: this.phonenumber.toString(),
+        };
+        const response = await axios.put(
+          `https://tayar.pro/update_user`,
+          updatedUserData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const result = response.data;
+        this.updateUserStore({
+          email: result.email,
+          firstname: result.firstname,
+          lastname: result.lastname,
+          phonenumber: result.phonenumber,
+        });
+        this.isEdit = false;
+        this.storeOriginalValues();
+        this.isChanged = false;
+
+        this.removeCssClasses();
+
+        alert("Profile updated successfully");
+      }
+    },
+    handleChangeDOB() {
+      if (this.initialDOB !== this.dateOfBirthInput) {
+        this.inputs.dateOfBirth.hasChanged = true;
+      }
+    },
+    updateScreenSize() {
+      this.isLargeScreen = window.innerWidth >= 960;
+    },
+    // handleSaveBtn() {
+    //   this.updateUserStore();
+    //   this.isEdit = false;
+    //   Object.keys(this.inputs).forEach(
+    //     (key) => (this.inputs[key].hasChanged = false)
+    //   );
+    // },
+
+    removeCssClasses() {
+      Object.keys(this.inputs).forEach(
+        (key) => (this.inputs[key].hasChanged = false)
+      );
+    },
+    handleCancelBtn() {
+      this.email = this.originalValues.email;
+      this.firstname = this.originalValues.firstname;
+      this.lastname = this.originalValues.lastname;
+      this.phonenumber = this.originalValues.phonenumber;
+      this.isEdit = false;
+      this.isChanged = false;
+
+      this.removeCssClasses();
+
+      if (this.$refs.form) {
+        this.$refs.form.resetValidation();
+      }
+      this.isValidEdit = false;
+    },
+    changePasswordClicked() {
+      this.currentPassword = "";
+      this.newPassword = "";
+      this.confirmPassword = "";
+      this.changePassword = true;
+    },
+    handleSubmitBtn() {
+      if (this.isValidCP) {
+        try {
+          const token = localStorage.getItem("jwt");
+          const response = axios.put(
+            `https://tayar.pro/update_password`,
+            {
+              password: this.newPassword,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          alert("Password changed successfully");
+          this.changePassword = false;
+          this.currentPassword = "";
+          this.newPassword = "";
+          this.confirmPassword = "";
+        } catch (error) {
+          console.log(error);
         }
       );
       alert("Password changed successfully");

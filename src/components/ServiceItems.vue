@@ -112,7 +112,7 @@ export default {
   },
   methods: {
     goToServiceDetails(service) {
-      localStorage.setItem("servicedescription", service.description);
+      localStorage.setItem("serviceDescription", service.description);
       this.$router.push({
         name: "services-description",
         params: { description: service.description },

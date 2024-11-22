@@ -1,234 +1,274 @@
 <template>
-  <v-container max-width="1200">
-    <h2 class="no-background text-center mt-2">
-      <span><strong>Services</strong></span>
+  <div class="title-page">
+    <div class="line"></div>
+    <h2 class="no-background text-center">
+      <span>SERVICES</span>
     </h2>
+    <div class="line"></div>
+  </div>
 
-    <v-responsive width="100%" class="mt-2">
-      <v-row>
-        <v-col cols="12" sm="12" md="3">
-          <v-container>
-            <v-row>
-              <v-col cols="12" class="pa-0">
-                <div class="text-center">
-                  <strong>Service Categories</strong>
-                </div>
-                <div>
-                  <v-list class="text-left ma-5 pa-0">
-                    <v-list-item
-                      v-for="(item, index) in serviceList"
-                      :key="index"
-                    >
-                      <div class="d-flex align-center">
-                        <v-list-item-title
-                          class="flex-grow-1 text-body-2 mr-2"
-                          >{{ item.title }}</v-list-item-title
-                        >
-                        <v-checkbox
-                          class="ma-0 pa-0"
-                          hide-details
-                          v-model="selectedServices"
-                          :value="item"
-                        ></v-checkbox>
-                      </div>
-                    </v-list-item>
-                  </v-list>
-                </div>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-col>
-        <v-col cols="12" sm="12" md="9">
-          <v-container>
-            <v-row>
-              <v-col cols="12" sm="12" md="8">
-                <v-text-field
-                  prepend-icon="mdi-magnify"
-                  hide-details
-                  single-line
-                  v-model="searchText"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="12" md="4" class="text-right">
-                <v-menu open-on-hover>
-                  <template v-slot:activator="{ props }">
-                    <v-btn
-                      color="#ffffff"
-                      v-bind="props"
-                      height="50"
-                      width="150"
-                      >Filter</v-btn
-                    >
-                  </template>
-                  <v-list>
-                    <v-list-item
-                      v-for="(item, index) in filterMenu"
-                      :key="index"
-                      @click="handleSortingCheck(item)"
-                    >
-                      <div class="d-flex">
-                        <v-btn variant="text"
-                          ><v-list-item-title>{{
-                            item.title
-                          }}</v-list-item-title></v-btn
-                        >
-                        <v-spacer />
-                        <v-icon>{{ item.icon }}</v-icon>
-                      </div>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col
-                v-for="service in filteredServices"
-                :key="service.serviceId"
-                cols="12"
-                sm="4"
-                md="3"
-              >
-                <v-card height="400">
-                  <v-img
-                    height="200"
-                    :src="servicePic"
-                    :alt="service.description"
-                  ></v-img>
-                  <v-card-title class="text-h7 text-wrap">{{
-                    service.description
-                  }}</v-card-title>
-                  <v-card-text>
-                    <div>{{ service.cartype }}</div>
-                    <div class="text-h6 mt-2">
-                      RM {{ service.price.toFixed(2) }}
-                    </div>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-col>
-      </v-row>
-    </v-responsive>
+  <v-container class="mt-2" max-width="1200">
+    <v-row>
+      <v-col cols="3">
+        <div class="ma-2 pa-0">
+          <h3><strong>SERVICES CATEGORIES</strong></h3>
+        </div>
+        <v-divider thickness="2"></v-divider>
+        <v-list class="service-list">
+          <v-list-item
+            class="pa-0"
+            v-for="serviceType in ServiceTypeList"
+            :key="serviceType.typeid"
+          >
+            <v-checkbox
+              v-model="selectedServiceTypes"
+              :label="serviceType.description"
+              :value="serviceType.typeid"
+              hide-details
+            >
+            </v-checkbox>
+          </v-list-item>
+        </v-list>
+      </v-col>
+      <v-col cols="9" class="content-column">
+        <div ref="searchWrapper" class="search-wrapper">
+          <div
+            ref="searchContainer"
+            :class="['search-container', { sticky: isSticky }]"
+          >
+            <v-text-field
+              prepend-inner-icon="mdi-magnify"
+              hide-details
+              single-line
+              v-model="searchText"
+              class="search-field"
+            ></v-text-field>
+          </div>
+        </div>
+        <div v-show="isSticky" class="search-placeholder"></div>
+        <v-row class="mt-9 items-container">
+          <ServiceItems :serviceItems="paginatedServiceList"> </ServiceItems>
+        </v-row>
+        <v-row justify="center" class="mt-4">
+          <v-pagination
+            v-model="currentPage"
+            :length="pageCount"
+            :total-visible="8"
+          ></v-pagination>
+        </v-row>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
-<style>
-h2.no-background {
+<style scoped>
+.items-container {
   position: relative;
-  overflow: hidden;
+  z-index: 1;
+}
 
-  span {
-    display: inline-block;
-    vertical-align: baseline;
-    zoom: 1;
-    display: inline;
-    vertical-align: auto;
-    position: relative;
-    padding: 0 20px;
+.sticky-container {
+  position: sticky !important;
+  top: 0;
+  background-color: transparent;
+  border-color: none;
+  z-index: 1000;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.content-column {
+  position: relative;
+}
+.search-wrapper {
+  position: relative;
+  z-index: 1000;
+}
+.search-container {
+  background-color: white;
+  transition: all 0.3s ease;
+}
+.search-container.sticky {
+  position: fixed;
+  top: 70px;
+  left: auto;
+  right: auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  z-index: 999;
+}
+.search-placeholder {
+  height: 56px;
+}
+.search-field {
+  width: 100%;
+  margin: 0px;
+}
 
-    &:before,
-    &:after {
-      content: "";
-      display: block;
-      width: 1000px;
-      position: absolute;
-      top: 0.73em;
-      border-top: 1px solid red;
-    }
+.service-list {
+  background-color: transparent;
+}
+.title-page {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 2rem auto;
+}
 
-    &:before {
-      right: 100%;
-    }
+.title-page .line {
+  height: 3px;
+  flex: 1;
+  background-color: #000;
+}
 
-    &:after {
-      left: 100%;
-    }
-  }
+.title-page h2 {
+  padding: 0 2rem;
 }
 </style>
 
-<script>
-/* import servicepic from '@/assets/service.jpg'; */
-import { ref, computed, onMounted } from "vue";
-import { useServiceStore } from "@/stores/useServiceStore";
+<script lang="ts">
+import { defineComponent, ref, computed, onMounted } from "vue";
+import { useUserStore } from "../stores/userStore";
+import axios from "axios";
+import ServiceItems from "@/components/ServiceItems.vue";
 
-export default {
+interface ServiceType {
+  typeid: number;
+  description: string;
+}
+
+interface Service {
+  serviceid: number;
+  description: string;
+  typeid: number;
+  price: number;
+  minPrice?: number;
+  maxPrice?: number;
+}
+
+export default defineComponent({
+  components: {
+    // ServiceItems,
+  },
   setup() {
-    const serviceStore = useServiceStore();
+    const userStore = useUserStore();
+    const ServiceList = ref<Service[]>([]);
+    const ServiceTypeList = ref<ServiceType[]>([]);
+    const selectedServiceTypes = ref<number[]>([]);
+    const searchText = ref("");
+    const currentPage = ref(1);
+    const itemsPerPage = 12;
 
-    /* const servicePic = servicepic; */
+    const searchWrapper = ref(null);
+    const searchContainer = ref(null);
+    const isSticky = ref(false);
+
+    const handleScroll = () => {
+      if (searchWrapper.value && searchContainer.value) {
+        // const rect = searchWrapper.value.getBoundingClientRect();
+        // isSticky.value = rect.top <= 64;
+        // if (isSticky.value) {
+        //   const parentWidth = searchWrapper.value.offsetWidth;
+        //   searchContainer.value.style.width = `${parentWidth}px`;
+        // } else {
+        //   searchContainer.value.style.width = "100%";
+        // }
+      }
+    };
+    const fetchServiceTypeList = async () => {
+      try {
+        const response = await axios.get<ServiceType[]>(
+          "https://tayar.pro/get_all_service_types"
+        );
+        ServiceTypeList.value = response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const fetchServiceList = async () => {
+      try {
+        const response = await axios.get<Service[]>(
+          "https://tayar.pro/get_all_services"
+        );
+
+        const groupedServices = response.data.reduce((acc, service) => {
+          if (!acc[service.description]) {
+            acc[service.description] = {
+              ...service,
+              minPrice: service.price,
+              maxPrice: service.price,
+            };
+          } else {
+            acc[service.description].minPrice = Math.min(
+              acc[service.description].minPrice!,
+              service.price
+            );
+            acc[service.description].maxPrice = Math.max(
+              acc[service.description].maxPrice!,
+              service.price
+            );
+          }
+          return acc;
+        }, {} as Record<string, Service>);
+
+        ServiceList.value = Object.values(groupedServices);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const filteredServiceList = computed(() => {
+      return ServiceList.value.filter((service) => {
+        const typeMatch =
+          selectedServiceTypes.value.length === 0 ||
+          selectedServiceTypes.value.includes(service.typeid);
+        const searchMatch =
+          !searchText.value ||
+          service.description
+            .toLowerCase()
+            .includes(searchText.value.toLowerCase());
+        return typeMatch && searchMatch;
+      });
+    });
+
+    const pageCount = computed(() => {
+      return Math.ceil(filteredServiceList.value.length / itemsPerPage);
+    });
+
+    const paginatedServiceList = computed(() => {
+      const start = (currentPage.value - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      return filteredServiceList.value.slice(start, end);
+    });
 
     onMounted(() => {
-      serviceStore.fetchServiceDetails();
-      document.title = "Services";
+      fetchServiceList();
+      fetchServiceTypeList();
+
+      window.addEventListener("scroll", handleScroll);
+      window.addEventListener("resize", handleScroll);
     });
 
-    const serviceList = [
-      { id: "ADJSVR", title: "Caster Adjustments" },
-      { id: "ALGSVR", title: "Alignment" },
-      { id: "BLCSVR", title: "Balancing" },
-      { id: "BRKSVR", title: "Brakes" },
-      { id: "ENGOIL", title: "Engine Oil" },
-      { id: "FXWSVR", title: "Fixing Wheel" },
-      { id: "OTHSVR", title: "Others" },
-    ];
-
-    const searchText = ref("");
-    const currentSort = ref("none");
-
-    const filterMenu = [
-      {
-        title: "Price Ascending",
-        icon: "mdi-arrow-up-bold",
-        sort: "priceAsc",
-      },
-      {
-        title: "Price Descending",
-        icon: "mdi-arrow-down-bold",
-        sort: "priceDesc",
-      },
-      { title: "Rating Ascending" }, // Consider removing if no rating data
-      { title: "Rating Descending" }, // Consider removing if no rating data
-    ];
-
-    const selectedServices = ref([]);
-
-    const filteredServices = computed(() => {
-      let result = serviceStore.serviceDetails.filter((service) => {
-        const matchesCategory =
-          selectedServices.value.length === 0 ||
-          selectedServices.value.some(
-            (selected) => selected.id === service.typeid
-          );
-        const matchesSearch = service.description
-          .toLowerCase()
-          .includes(searchText.value.toLowerCase());
-        const isActive = service.status === "Active";
-        return matchesCategory && matchesSearch && isActive;
-      });
-
-      if (currentSort.value === "priceAsc") {
-        result.sort((a, b) => a.price - b.price);
-      } else if (currentSort.value === "priceDesc") {
-        result.sort((a, b) => b.price - a.price);
-      }
-      return result;
+    onUnmounted(() => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
     });
-
-    const handleSortingCheck = (item) => {
-      currentSort.value = item.sort;
-    };
 
     return {
+      searchWrapper,
+      searchContainer,
+      isSticky,
+      ServiceList,
+      ServiceTypeList,
+      selectedServiceTypes,
       searchText,
-      filterMenu,
-      selectedServices,
-      filteredServices,
-      handleSortingCheck,
-      /* tyrePic, */
-      serviceList,
+      currentPage,
+      itemsPerPage,
+      filteredServiceList,
+      pageCount,
+      paginatedServiceList,
     };
   },
-};
+});
 </script>
