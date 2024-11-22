@@ -19,6 +19,7 @@
           <div class="car-types">
             <v-btn
               v-for="service in serviceData"
+              class="mr-4"
               :key="service.cartype"
               :value="service.cartype"
               @click="updateSelectedType(service.cartype)"
@@ -35,7 +36,9 @@
 
           <v-row>
             <v-col cols="12">
-              <v-btn @click="addToCart" color="black">ADD TO CART</v-btn>
+              <v-btn @click="addToCart" color="black" class="add-to-cart-button"
+                >ADD TO CART</v-btn
+              >
             </v-col>
           </v-row>
         </v-col>
@@ -44,12 +47,21 @@
   </v-container>
 </template>
 
-<style scoped></style>
+<style scoped>
+.price-display {
+  margin-top: 16px;
+}
+.add-to-cart-button {
+  margin-top: 16px;
+}
+</style>
 
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from "vue";
 import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
+import { useRouter } from "vue-router";
+// import { ro } from "vuetify/locale";
 
 interface ServiceItem {
   serviceid: number;
@@ -68,6 +80,7 @@ export default defineComponent({
   },
   setup(props) {
     const userStore = useUserStore();
+    const router = useRouter();
     const serviceData = ref<ServiceItem[]>(props.service);
     const loading = ref(true);
     const selectedType = ref<string | null>(null);
@@ -82,7 +95,7 @@ export default defineComponent({
         console.log(serviceDescription);
         if (serviceDescription) {
           const response = await axios.get<ServiceItem[]>(
-            `http://localhost:8000/service/${serviceDescription}`
+            `https://tayar.pro/service?description=${serviceDescription}`
           );
           serviceData.value = response.data;
           if (serviceData.value.length > 0) {
@@ -97,23 +110,54 @@ export default defineComponent({
     };
 
     const addToCart = async () => {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
-        if (!selectedType.value || serviceData.value.length === 0) return;
+        if (!selectedType.value || serviceData.value.length === 0) {
+          return;
+        }
+        // const serviceResponse = await axios.get<ServiceItem>(
+        //   `https://localhost:8000/service/${serviceData.value[0].description}/${selectedType.value}`
+        // );
 
-        const serviceResponse = await axios.get<ServiceItem>(
-          `http://localhost:8000/service/${serviceData.value[0].description}/${selectedType.value}`
+        const service = serviceData.value.find(
+          (item) => item.cartype === selectedType.value
         );
+        if (!service) {
+          console.error("Selected service not found");
+          return;
+        }
 
-        const service = serviceResponse.data;
-        console.log(service);
+        const token = localStorage.getItem("jwt");
+        if (!token) {
+          console.log("No authentication token found");
+          router.push("/login");
+          return;
+        }
+
+        // const service = serviceResponse.data;
+        // console.log(service);
 
         const newCartItem = {
           accountid: userStore.currentUser.accountid,
           productid: service.serviceid,
-          // Add other necessary fields here
+          quantity: 1,
+          unitprice: service.price,
+          description: service.description,
         };
+        // console.log(newCartItem);
 
-        // TODO: Implement the actual cart addition logic
+        await axios.post(
+          `${baseUrl}/add_service_to_cart`,
+          {
+            service_id: service.serviceid,
+            quantity: 1,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         console.log("Adding to cart:", newCartItem);
       } catch (error) {
         console.error("Error adding to cart:", error);

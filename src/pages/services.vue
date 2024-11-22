@@ -128,7 +128,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from "vue";
-import { useUserStore } from "../stores/userStore";
+// import { useUserStore } from "../stores/userStore";
 import axios from "axios";
 import ServiceItems from "@/components/ServiceItems.vue";
 
@@ -151,7 +151,6 @@ export default defineComponent({
     // ServiceItems,
   },
   setup() {
-    const userStore = useUserStore();
     const ServiceList = ref<Service[]>([]);
     const ServiceTypeList = ref<ServiceType[]>([]);
     const selectedServiceTypes = ref<number[]>([]);
