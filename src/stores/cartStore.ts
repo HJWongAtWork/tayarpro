@@ -20,8 +20,14 @@ export const useCartStore = defineStore("cart", {
     // Fetch cart items from the API
     async fetchCartItems(accountId: string): Promise<void> {
       try {
-        const response = await axios.get<CartItem[]>(
-          `http://tayar.pro/get_cart/${accountId}`
+        const response = await axios.post<CartItem[]>(
+          `https://tayar.pro/get_cart/`,
+          "",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+            },
+          }
         );
         this.cartItems = response.data;
       } catch (error) {
