@@ -390,7 +390,7 @@ import { useRouter } from "vue-router";
 import { useDateFormatter } from "@/composables/useDateFormatter";
 import TextInput from "@/components/TextInputComponent.vue";
 import { useUserComposable } from "@/composables/userComposable";
-import { vehicleComposable } from "@/composables/vehicleComposable";
+// import { vehicleComposable } from "@/composables/vehicleComposable";
 import { appointmentComposable } from "@/composables/appointmentComposable";
 import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
@@ -410,7 +410,7 @@ const {
   resetToStoreValues,
 } = useUserComposable();
 
-const { accountid } = vehicleComposable();
+// const { accountid } = vehicleComposable();
 
 const { pastAppointments, fetchPastAppointments } = appointmentComposable();
 
@@ -435,7 +435,7 @@ const confirmDeleteAccount = ref(false);
 const changePassword = ref(false);
 const isValidCP = ref(false);
 const isValidEdit = ref(false);
-const isValidAddVehicle = ref(false);
+// const isValidAddVehicle = ref(false);
 const currentPassword = ref("");
 const newPassword = ref("");
 const confirmPassword = ref("");
@@ -443,9 +443,9 @@ const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 const pastAppointmentsDialog = ref(false);
 const showAll = ref(false);
-const vehicleDialog = ref(false);
-const vehicleDialogAction = ref("");
-const selectedVehicleId = ref(null);
+// const vehicleDialog = ref(false);
+// const vehicleDialogAction = ref("");
+// const selectedVehicleId = ref(null);
 const passwordInput = ref("");
 const isLoggingOut = ref(false);
 const isDeleting = ref(false);
@@ -478,9 +478,9 @@ const confirmPasswordRule = (v) =>
   v === newPassword.value || "Passwords must match";
 
 // Computed Properties
-const displayedVehicles = computed(() => {
-  return showAll.value ? vehicles.value : vehicles.value.slice(0, 3);
-});
+// const displayedVehicles = computed(() => {
+//   return showAll.value ? vehicles.value : vehicles.value.slice(0, 3);
+// });
 
 const user = computed(() => userStore.currentUser);
 
@@ -678,49 +678,49 @@ const handleDeleteAccount = async () => {
 };
 
 // Vehicle Methods
-const handleVehicleDialog = (car, action, id) => {
-  vehicleDialog.value = true;
-  vehicleDialogAction.value = action;
-  selectedVehicleId.value = id;
+// const handleVehicleDialog = (car, action, id) => {
+//   vehicleDialog.value = true;
+//   vehicleDialogAction.value = action;
+//   selectedVehicleId.value = id;
 
-  if (action === "add") {
-    plateNumberInput.value = "";
-    brandInput.value = "";
-    modelInput.value = "";
-    yearInput.value = "";
-    tyreSizeInput.value = "";
-  } else {
-    plateNumberInput.value = car.plateNumber;
-    brandInput.value = car.brand;
-    modelInput.value = car.model;
-    yearInput.value = car.year;
-    tyreSizeInput.value = car.tyreSize;
-  }
-};
+//   if (action === "add") {
+//     plateNumberInput.value = "";
+//     brandInput.value = "";
+//     modelInput.value = "";
+//     yearInput.value = "";
+//     tyreSizeInput.value = "";
+//   } else {
+//     plateNumberInput.value = car.plateNumber;
+//     brandInput.value = car.brand;
+//     modelInput.value = car.model;
+//     yearInput.value = car.year;
+//     tyreSizeInput.value = car.tyreSize;
+//   }
+// };
 
-const handleAddVehicleBtn = () => {
-  if (isValidAddVehicle.value) {
-    addVehicle();
-    vehicleDialog.value = false;
-    vehicleDialogAction.value = "";
-  }
-};
+// const handleAddVehicleBtn = () => {
+//   if (isValidAddVehicle.value) {
+//     addVehicle();
+//     vehicleDialog.value = false;
+//     vehicleDialogAction.value = "";
+//   }
+// };
 
-const handleEditVehicleBtn = () => {
-  if (isValidAddVehicle.value) {
-    editVehicle(selectedVehicleId.value);
-    vehicleDialog.value = false;
-    vehicleDialogAction.value = "";
-    selectedVehicleId.value = null;
-  }
-};
+// const handleEditVehicleBtn = () => {
+//   if (isValidAddVehicle.value) {
+//     editVehicle(selectedVehicleId.value);
+//     vehicleDialog.value = false;
+//     vehicleDialogAction.value = "";
+//     selectedVehicleId.value = null;
+//   }
+// };
 
-const handleDeleteVehicleBtn = () => {
-  deleteVehicle(selectedVehicleId.value);
-  vehicleDialog.value = false;
-  vehicleDialogAction.value = "";
-  selectedVehicleId.value = null;
-};
+// const handleDeleteVehicleBtn = () => {
+//   deleteVehicle(selectedVehicleId.value);
+//   vehicleDialog.value = false;
+//   vehicleDialogAction.value = "";
+//   selectedVehicleId.value = null;
+// };
 
 const handleCancelBtn = () => {
   // Reset form values to original values
