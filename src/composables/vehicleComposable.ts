@@ -50,7 +50,14 @@ export const vehicleComposable = () => {
         }
       );
       console.log("Response from server:", response.data);
-      fetchVehicles(); // Reload vehicles after successful addition
+      await fetchVehicles(); // Reload vehicles after successful addition
+      plateNumberInput.value = "";
+      brandInput.value = "";
+      modelInput.value = "";
+      yearInput.value = -1;
+      tyreSizeInput.value = "";
+      typeInput.value = "";
+      
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         // Axios-specific error
