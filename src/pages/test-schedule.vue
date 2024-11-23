@@ -1,5 +1,9 @@
 <template>
   <v-container>
+    <h1>Test add car in schedule</h1>
+    <AddCarInSchedule />
+    <h1>Test schedule</h1>
+    <Schedule />
     <h1>Test vehicle in profile</h1>
     <VehicleInProfile />
     <h1>Test cars</h1>
@@ -9,11 +13,10 @@
       height="300px" width="300px"
     />
     <Loader />
-    <h1>Test Schedule and Toast-Notification</h1>
+    <h1>Test Toast-Notification</h1>
     <v-btn @click="showSuccessToast">Show Success Toast</v-btn>
     <v-btn @click="showErrorToast">Show Error Toast</v-btn>
     <v-btn @click="showWarningToast">Show Warning Toast</v-btn>
-    <Schedule />
   </v-container>
   <ToastNotification
     ref="toast"
@@ -38,6 +41,9 @@ export default {
       cars,
       fetchVehicles,
     };
+  },
+  mounted() {
+    document.title = "Amar Test Page";
   },
   components: {
     ToastNotification,

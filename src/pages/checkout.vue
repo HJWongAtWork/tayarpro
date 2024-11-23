@@ -72,12 +72,12 @@
         <v-stepper-window-item value="2">
           <v-card title="Set Appointment" flat>
             <v-container>
+              <AddCarInSchedule />
               <v-row>
                 <v-col cols="12">
                   <Schedule />
                 </v-col>
               </v-row>
-              <v-row> </v-row>
             </v-container>
           </v-card>
         </v-stepper-window-item>
@@ -122,12 +122,12 @@
                           </td>
                           <td class="table-cell-small"></td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                           <td class="table-cell-small">Appointment ID</td>
                           <td class="table-cell-small">
                             {{ newAppointment.id }}
                           </td>
-                        </tr>
+                        </tr> -->
                         <tr>
                           <td class="table-cell-small">Date</td>
                           <td class="table-cell-small">
@@ -140,29 +140,30 @@
                             {{ newAppointment.dateTime.toLocaleTimeString() }}
                           </td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                           <td class="table-cell-small">Service</td>
                           <td class="table-cell-small">
                             {{ newAppointment.service }}
                           </td>
-                        </tr>
+                        </tr> -->
                         <tr>
                           <td class="table-cell-small">Bay Number</td>
                           <td class="table-cell-small">
                             {{ newAppointment.bay }}
                           </td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                           <td class="table-cell-small">Status</td>
                           <td class="table-cell-small">
                             {{ newAppointment.status }}
                           </td>
-                        </tr>
+                        </tr> -->
                         <tr>
                           <td class="table-cell-small">Car Details</td>
                           <td class="table-cell-small">
-                            {{ newAppointment.brand }}
-                            {{ newAppointment.model }} {{ newAppointment.year }}
+                            Car ID: {{ selectedCar.carid }}
+                            <!-- {{ newAppointment.brand }}
+                            {{ newAppointment.model }} {{ newAppointment.year }} -->
                           </td>
                         </tr>
                       </tbody>
@@ -439,7 +440,7 @@ export default {
           return false;
 
         case 1: // Payment Details
-          if (this.newAppointment.id === -1) {
+          if (this.newAppointment.id === -1 || this.selectedCar.carid === -1) {
             return true;
           }
           return false;

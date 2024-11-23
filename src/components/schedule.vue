@@ -1,41 +1,20 @@
 <template>
   <v-container>
     <h2>Tire Shop Schedule</h2>
-
-    <!-- <v-row>
-      <v-col cols="12" sm="12" md="6">
-        <DatePicker v-model="dateSelected" label="Date" :min="minDate" />
-      </v-col>
-
-      <v-col cols="4" sm="4" md="2" class="d-flex justify-center">
-        <v-btn @click="previousDate()">
-          <v-icon>mdi-chevron-left</v-icon>
-        </v-btn>
-      </v-col>
-
-      <v-col cols="4" sm="4" md="2" class="d-flex justify-center">
-        <v-btn @click="nextAvailableDate()"> earliest date </v-btn>
-      </v-col>
-
-      <v-col cols="4" sm="4" md="2" class="d-flex justify-center">
-        <v-btn @click="nextDate()">
-          <v-icon>mdi-chevron-right</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row> -->
-
     <v-row>
       <v-col cols="12" sm="4" md="2" class="d-flex justify-center align-center">
-        <v-btn @click="previousDate()">
+        <v-btn 
+          @click="previousDate()" 
+          :disabled="dateSelected.toDateString() === new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString() || newApptInScheduleFormat.id !== ''">
           <v-icon>mdi-chevron-left</v-icon>
           previous date
         </v-btn>
       </v-col>
       <v-col cols="12" sm="4" md="8" class="d-flex justify-center align-center">
-        <DatePicker v-model="dateSelected" label="Date" :min="minDate" />
+        <DatePicker v-model="dateSelected" label="Date" :min="minDate" :disabled="newApptInScheduleFormat.id !== ''"/>
       </v-col>
       <v-col cols="12" sm="4" md="2" class="d-flex justify-center align-center">
-        <v-btn @click="nextDate()">
+        <v-btn @click="nextDate()" :disabled="newApptInScheduleFormat.id !== ''">
           next date
           <v-icon>mdi-chevron-right</v-icon>
         </v-btn>
@@ -57,18 +36,18 @@
             <td class="text-center"><strong>{{ bay }}</strong></td>
             <td v-for="(hour, hourIndex) in hours" :key="'bay-' + bayIndex + '-hour-' + hourIndex" class="slot-cell">
               <v-chip
-                v-if="(schedule[hour][bay].year !== -1 && userType === 'admin') || (schedule[hour][bay].id === newApptInScheduleFormat.id && userType === 'customer')"
+                v-if="(schedule[hour][bay].status === 'Future' && userType === 'admin') || (newApptInScheduleFormat.bay === schedule[hour][bay].bay && newApptInScheduleFormat.startHour === schedule[hour][bay].startHour && userType === 'customer')"
                 color="primary"
                 outlined
                 class="appointment-chip"
                 @click="openDialog(bay, hour)"
               >
-                id: {{ schedule[hour][bay].id }}
+                <v-icon>mdi-eye</v-icon>
               </v-chip>
-              <v-chip v-if="(schedule[hour][bay].year !== -1 && userType === 'customer') && schedule[hour][bay].id !== newApptInScheduleFormat.id" color="red lighten-2" outlined class="appointment-chip">
+              <v-chip v-if="(schedule[hour][bay].status === 'Future' && userType === 'customer')" color="red lighten-2" outlined class="appointment-chip">
                 NA
               </v-chip>
-              <v-chip v-else-if="schedule[hour][bay].year === -1" color="green lighten-2" outlined class="empty-slot-chip" @click="selectSlot(bay, hour)" :disabled="newApptInScheduleFormat.year !== -1">
+              <v-chip v-else-if="schedule[hour][bay].status === '' && newApptInScheduleFormat.status !== 'Future'" color="green lighten-2" outlined class="empty-slot-chip" @click="selectSlot(bay, hour)" :disabled="newApptInScheduleFormat.id !== ''">
                 +
               </v-chip>
             </td>
@@ -80,7 +59,7 @@
     <h3 class="mt-5">Add New Appointment</h3>
     <v-form v-model="addFormValid" :disabled="userType === ''">
       <v-row>
-        <v-col cols="12" sm="12" md="4">
+        <v-col cols="12" sm="12" md="6">
           <v-select
             v-model="newBay"
             :items="filteredBays.map(bay => bay.text)"
@@ -91,10 +70,10 @@
             outlined
             dense
             :rules="[rules.required]"
-            :disabled="newApptInScheduleFormat.year !== -1"
+            :disabled="newApptInScheduleFormat.id !== ''"
           ></v-select>
         </v-col>
-        <v-col cols="12" sm="12" md="4">
+        <v-col cols="12" sm="12" md="6">
           <v-select
             v-model="newStartHour"
             :items="filteredHours.map(hour => hour.text)"
@@ -105,39 +84,16 @@
             outlined
             dense
             :rules="[rules.required]"
-            :disabled="newBay === '' || newApptInScheduleFormat.year !== -1"
+            :disabled="newBay === '' || newApptInScheduleFormat.id !== ''"
           ></v-select>
         </v-col>
-        <v-col cols="12" sm="12" md="4">
-          <v-select v-model="selectedCarStr" :items="formattedCarText" label="Select Car" outlined dense :rules="[rules.required]" :disabled="newApptInScheduleFormat.year !== -1"> </v-select>
-        </v-col>
-        <v-row v-if="selectedCarStr === 'Add New Car'">
-          <v-col cols="12" sm="12" md="4">
-            <v-text-field label="Plate Number" v-model="newNumberPlate" :rules="[rules.required]" required></v-text-field>
-          </v-col>
-          <v-col cols="12" sm="12" md="4">
-            <v-select v-model="newBrand" :items="brandSelections" label="Select Brand" outlined dense :rules="[rules.required]" required></v-select>
-          </v-col>
-          <v-col cols="12" sm="12" md="4">
-            <v-select v-model="newModel" :items="modelSelections" label="Select Model" outlined dense :rules="[rules.required]" required></v-select>
-          </v-col>
-          <v-col cols="12" sm="12" md="4">
-            <v-select v-model="newYear" :items="yearSelections" label="Select Car Year" outlined dense :rules="[rules.required, rules.year, rules.numberOnly]" required></v-select>
-          </v-col>
-          <v-col cols="12" sm="12" md="4">
-            <v-select v-model="newTyreSize" :items="tyreSizeSelections" label="Select Tyre Size" outlined dense :rules="[rules.required]" required></v-select>
-          </v-col>
-          <v-col cols="12" sm="12" md="4">
-            <v-select v-model="newType" :items="typeSelections" label="Select Car Type" outlined dense :rules="[rules.required]" required></v-select>
-          </v-col>
-        </v-row>
       </v-row>
       <v-row>
         <v-col cols="12" class="d-flex justify-center">
           <v-btn color="primary" class="mt-3" @click="addAppointment" :disabled="!addFormValid">Confirm Appointment</v-btn>
         </v-col>
-        <v-col cols="12" v-if="newApptInScheduleFormat.year !== -1" align="center">
-          appointment slot is on hold, press complete to proceed OR press
+        <v-col cols="12" v-if="newApptInScheduleFormat.id !== ''" align="center">
+          appointment slot is on hold, please proceed OR press
           <a @click="resetApptSlot" style="color: blue;">here</a>
           to reset.
         </v-col>
@@ -153,7 +109,6 @@
             <strong>Duration:</strong>
             {{ selectedAppointment.startHour }} - {{ selectedAppointment.endHour }}
           </p>
-          <p><strong>Service:</strong> {{ selectedAppointment.service }}</p>
           <p><strong>Appointment ID:</strong> {{ selectedAppointment.id }}</p>
         </v-card-text>
         <v-card-actions>
@@ -176,7 +131,6 @@
 <script>
   import { scheduleComposable } from "@/composables/scheduleComposable";
   import DatePicker from "@/components/DatePicker.vue";
-  import { vehicleComposable } from "@/composables/vehicleComposable";
   import { appointmentComposable } from "@/composables/appointmentComposable";
   import axios from "axios";
   import ToastNotification from "../components/ToastNotification.vue";
@@ -186,21 +140,18 @@
       return {
         rules: {
           required: (v) => !!v || "This field is required",
-          numberOnly: (v) => /^\d+$/.test(v) || "Must contain digits only",
-          year: (value) => (value >= 1900 && value <= new Date().getFullYear()) || "Invalid year. Year must be more than 1900.",
-          tyreFormat: (value) => !value || /^[0-9]{3}\/[0-9]{2}R[0-9]{2}$/.test(value) || "Invalid tire size format. Use 215/65R15.",
         },
         addFormValid: false,
-        brandSelections: [],
-        modelSelections: [],
-        tyreSizeSelections: [],
-        typeSelections: ["Unsure", "SUV", "Passenger"],
       };
     },
     components: {
       DatePicker,
     },
     setup() {
+
+      onMounted(() => {
+        fetchAllAppointments();
+      })
       const hours = ["9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM"];
       const hours2 = ref([
         { text: "9 AM", value: "9 AM", disabled: false },
@@ -224,33 +175,6 @@
       ]);
       const filteredBays = ref([]);
 
-      const appts = [
-        { id: 1, dateTime: new Date("2024-12-02T09:00:00"), service: "Oil Change", bay: 1, brand: "Honda", model: "Civic", year: 2021, status: "upcoming" },
-        { id: 2, dateTime: new Date("2024-12-02T10:00:00"), service: "Tire Change", bay: 2, brand: "Ford", model: "Focus", year: 2019, status: "upcoming" },
-        { id: 3, dateTime: new Date("2024-12-02T11:00:00"), service: "Brake Inspection", bay: 3, brand: "Chevrolet", model: "Malibu", year: 2020, status: "upcoming" },
-        { id: 4, dateTime: new Date("2024-12-02T12:00:00"), service: "Repair", bay: 1, brand: "Toyota", model: "Camry", year: 2022, status: "upcoming" },
-        { id: 5, dateTime: new Date("2024-12-02T13:00:00"), service: "Alignment", bay: 4, brand: "Nissan", model: "Altima", year: 2018, status: "upcoming" },
-        { id: 6, dateTime: new Date("2024-12-02T14:00:00"), service: "Battery Check", bay: 2, brand: "Kia", model: "Soul", year: 2023, status: "upcoming" },
-        { id: 7, dateTime: new Date("2024-12-02T15:00:00"), service: "Transmission Check", bay: 5, brand: "Volkswagen", model: "Jetta", year: 2020, status: "upcoming" },
-        { id: 8, dateTime: new Date("2024-12-02T16:00:00"), service: "Suspension Check", bay: 3, brand: "Hyundai", model: "Elantra", year: 2022, status: "upcoming" },
-        { id: 9, dateTime: new Date("2024-12-02T17:00:00"), service: "Tire Rotation", bay: 1, brand: "Mazda", model: "CX-5", year: 2021, status: "upcoming" },
-        { id: 10, dateTime: new Date("2024-12-02T15:00:00"), service: "Engine Tune-Up", bay: 2, brand: "Subaru", model: "Forester", year: 2021, status: "upcoming" },
-        { id: 11, dateTime: new Date("2024-12-02T10:00:00"), service: "Oil Change", bay: 1, brand: "Honda", model: "Civic", year: 2021, status: "upcoming" },
-        { id: 12, dateTime: new Date("2024-12-02T11:00:00"), service: "Tire Change", bay: 1, brand: "Ford", model: "Focus", year: 2019, status: "upcoming" },
-        { id: 13, dateTime: new Date("2024-12-02T13:00:00"), service: "Brake Inspection", bay: 1, brand: "Chevrolet", model: "Malibu", year: 2020, status: "upcoming" },
-        { id: 14, dateTime: new Date("2024-12-02T14:00:00"), service: "Repair", bay: 1, brand: "Toyota", model: "Camry", year: 2022, status: "upcoming" },
-        { id: 15, dateTime: new Date("2024-12-02T15:00:00"), service: "Alignment", bay: 1, brand: "Nissan", model: "Altima", year: 2018, status: "upcoming" },
-        { id: 16, dateTime: new Date("2024-12-02T16:00:00"), service: "Battery Check", bay: 1, brand: "Kia", model: "Soul", year: 2023, status: "upcoming" },
-        { id: 17, dateTime: new Date("2024-12-02T09:00:00"), service: "Transmission Check", bay: 4, brand: "Volkswagen", model: "Jetta", year: 2020, status: "upcoming" },
-        { id: 18, dateTime: new Date("2024-12-02T10:00:00"), service: "Suspension Check", bay: 4, brand: "Hyundai", model: "Elantra", year: 2022, status: "upcoming" },
-        { id: 19, dateTime: new Date("2024-12-02T11:00:00"), service: "Tire Rotation", bay: 4, brand: "Mazda", model: "CX-5", year: 2021, status: "upcoming" },
-        { id: 20, dateTime: new Date("2024-12-02T12:00:00"), service: "Engine Tune-Up", bay: 4, brand: "Subaru", model: "Forester", year: 2021, status: "upcoming" },
-        { id: 21, dateTime: new Date("2024-12-02T14:00:00"), service: "Oil Change", bay: 4, brand: "Honda", model: "Civic", year: 2021, status: "upcoming" },
-        { id: 22, dateTime: new Date("2024-12-02T15:00:00"), service: "Tire Change", bay: 4, brand: "Ford", model: "Focus", year: 2019, status: "upcoming" },
-        { id: 23, dateTime: new Date("2024-12-02T16:00:00"), service: "Brake Inspection", bay: 4, brand: "Chevrolet", model: "Malibu", year: 2020, status: "upcoming" },
-        { id: 24, dateTime: new Date("2024-12-02T17:00:00"), service: "Repair", bay: 4, brand: "Toyota", model: "Camry", year: 2022, status: "upcoming" },
-      ];
-
       let latestApptsId = null;
       const dialog = ref(false);
 
@@ -258,92 +182,76 @@
       const newBayInt = ref(null);
       const newStartHour = ref("");
       const newEndHour = ref("");
-      const newBrand = ref("");
-      const newModel = ref("");
-      const newYear = ref(null);
-      const newTyreSize = ref("");
-      const newNumberPlate = ref("");
-      const newType = ref("");
 
       const selectedAppointment = {
         bay: "",
         startHour: "",
         endHour: "",
         id: "",
-        service: "",
+        carid: -1,
+        status: "",
       };
 
       const { schedule, initializeSchedule } = scheduleComposable();
 
-      const userType = ref("admin");
+      const userType = ref("");
 
-      const dateSelected = ref(new Date(Date.now() + 24 * 60 * 60 * 1000));
-      const minDate = new Date(Date.now());
-
-      const { vehicles, selectedCar, plateNumberInput, brandInput, modelInput, yearInput, tyreSizeInput,
-        typeInput, fetchVehicles, getLatestVehicleId, addVehicle } = vehicleComposable();
-      const selectedCarStr = ref("");
-      const selectedCarObj = computed(() => {
-        return vehicles.value.find((vehicle) => vehicle.plateNumber === plateNumberOfSelectedCar(selectedCarStr.value));
-      });
+      const dateSelected = ref(new Date(Date.now() + 1 * 24 * 60 * 60 * 1000));
+      const minDate = new Date(Date.now() + 0 * 24 * 60 * 60 * 1000);
 
       const newApptInScheduleFormat = ref({
-        id: -2,
         bay: "",
         startHour: "",
         endHour: "",
-        service: "",
+        id: "",
+        carid: -1,
         status: "",
-        brand: "",
-        model: "",
-        year: -1,
       });
 
-      const { newAppointment } = appointmentComposable();
-
-      const formattedCarText = ref([]);
+      const { newAppointment, allAppointments, fetchAllAppointments } = appointmentComposable();
 
       const toast = ref(null);
 
       onMounted(() => {
         transformToSchedule();
         isBaysfull();
-        fetchVehicles();
 
-        //for testing only
-        //later need to be removed
-        localStorage.setItem("userType", "customer");
+        const userData = JSON.parse(localStorage.getItem("user"));
 
-        userType.value = localStorage.getItem("userType");
-      });
-
-      function plateNumberOfSelectedCar(str) {
-        let match = str.match(/\(([^)]+)\)/); // Match content inside the parentheses
-        if (match) {
-          return match[1]; // Return the first captured group (content inside parentheses)
-        } else {
-          return "";
+        if (userData && userData.isadmin === null) {
+          userType.value = "customer";
+        } else if (userData && userData.isadmin !== null) {
+          userType.value = "admin";
         }
-      }
+      });
 
       const transformToSchedule = () => {
         initializeSchedule();
-        appts.forEach((appt) => {
-          const date = new Date(`${appt.dateTime.getFullYear()}-${appt.dateTime.getMonth() + 1}-${appt.dateTime.getDate()}`);
-          const startHour = appt.dateTime.toLocaleTimeString([], { hour: "numeric", hour12: true });
-          const endHour = new Date(appt.dateTime.getTime() + 60 * 60 * 1000).toLocaleTimeString([], { hour: "numeric", hour12: true });
-          const bayKey = `Bay ${appt.bay}`;
-          if (date.getFullYear() === dateSelected.value.getFullYear() && date.getMonth() === dateSelected.value.getMonth() && date.getDate() === dateSelected.value.getDate()) {
+        allAppointments.value.forEach((appt) => {
+          // const date = new Date(`${appt.dateTime.getFullYear()}-${appt.dateTime.getMonth() + 1}-${appt.dateTime.getDate()}`);
+          // const startHour = appt.dateTime.toLocaleTimeString([], { hour: "numeric", hour12: true });
+          // const endHour = new Date(appt.dateTime.getTime() + 60 * 60 * 1000).toLocaleTimeString([], { hour: "numeric", hour12: true });
+
+          const apptdate = new Date(appt.appointmentdate);
+
+          const date = `${apptdate.getFullYear()}-${(apptdate.getMonth() + 1).toString().padStart(2, '0')}-${apptdate.getDate().toString().padStart(2, '0')}`;
+
+          const startHour = apptdate.toLocaleTimeString([], { hour: "numeric", hour12: true });
+
+          const endHour = new Date(apptdate.getTime() + 60 * 60 * 1000).toLocaleTimeString([], { hour: "numeric", hour12: true });
+
+          const bayKey = `Bay ${appt.appointment_bay}`;
+          //console.log("bayKey: " + bayKey);
+          if (apptdate.getFullYear() === dateSelected.value.getFullYear() && apptdate.getMonth() === dateSelected.value.getMonth() 
+          && apptdate.getDate() === dateSelected.value.getDate() && appt.status === "Future") {
+            
             schedule.value[startHour][bayKey] = {
-              id: appt.id,
-              service: appt.service,
+              id: appt.appointmentid,
               bay: bayKey,
               startHour: startHour,
               endHour: endHour,
-              brand: appt.brand,
-              model: appt.model,
-              year: appt.year,
               status: appt.status,
+              carid: appt.carid,
             };
           }
         });
@@ -352,7 +260,7 @@
       const isBaysfull = () => {
         bays2.value.forEach((bay) => (bay.disabled = false));
         bays.forEach((bay) => {
-          const isFull = hours.every((hour) => schedule.value[hour][bay].id !== -1);
+          const isFull = hours.every((hour) => schedule.value[hour][bay].id !== "");
           bays2.value.forEach((bay2) => {
             if (bay2.value === bay) {
               bay2.disabled = isFull;
@@ -380,80 +288,35 @@
         newBayInt.value = parseInt(newBay.value.match(/\d+/)[0]);
         if (newBayInt && newStartHour) {
           getNewEndHour();
-          getNextApptsId();
+          //getNextApptsId();
           let dateTime = createDateTime(dateSelected.value, newStartHour.value);
-          if (!newBrand.value && !newModel.value && !newYear.value && !newNumberPlate.value && selectedCarObj.value) {
-            newBrand.value = selectedCarObj.value.brand;
-            newModel.value = selectedCarObj.value.model;
-            newYear.value = selectedCarObj.value.year;
-            newNumberPlate.value = selectedCarObj.value.plateNumber;
-            newTyreSize.value = selectedCarObj.value.tyreSize;
-          } else if (newBrand.value && newModel.value && newYear.value && newNumberPlate.value) {
-            //adding new vehicle
-            plateNumberInput.value = newNumberPlate.value;
-            brandInput.value = newBrand.value;
-            modelInput.value = newModel.value;
-            yearInput.value = newYear.value;
-            tyreSizeInput.value = newTyreSize.value;
-            typeInput.value = newType.value;
-            addVehicle();
-          }
-          //set selectedcar in vehicleStore to selectedCarObj
-          selectedCar.value.carid = selectedCarObj.value.id;
-          selectedCar.value.platenumber = selectedCarObj.value.plateNumber;
-          selectedCar.value.carbrand = selectedCarObj.value.brand;
-          selectedCar.value.carmodel = selectedCarObj.value.model;
-          selectedCar.value.caryear = selectedCarObj.value.year;
-          selectedCar.value.tyresize = selectedCarObj.value.tyreSize;
-          selectedCar.value.cartype = selectedCarObj.value.type;
           //set new appt in schedule format for schedule update
           newApptInScheduleFormat.value = {
-            id: latestApptsId,
+            id: "-1",
             bay: newBay.value,
             startHour: newStartHour.value,
             endHour: newEndHour.value,
-            //later, service must get from database
-            service: "Services",
-            status: "upcoming",
-            brand: newBrand.value,
-            model: newModel.value,
-            year: newYear.value,
+            status: "Future",
           };
           //set new appt in appts store. so later can be use in api
           newAppointment.value = {
-            id: latestApptsId,
+            //id: latestApptsId,
             dateTime: dateTime,
-            //later, service must get from database
-            service: "Services",
             bay: newBayInt.value,
-            brand: newBrand.value,
-            model: newModel.value,
-            year: newYear.value,
-            status: "upcoming",
           };
-          //add appointment to dummy data
-          appts.push({
-            id: latestApptsId,
-            dateTime: dateTime,
-            //later, service must get from database
-            service: "Services",
-            bay: newBayInt.value,
-            brand: newBrand.value,
-            model: newModel.value,
-            year: newYear.value,
-            status: "upcoming",
-          });
+          // //add appointment to dummy data (to be removed. api is not here)
+          // appts.push({
+          //   id: latestApptsId,
+          //   dateTime: dateTime,
+          //   bay: newBayInt.value,
+          //   status: "upcoming",
+          //   carid: Math.floor(Math.random() * 100),
+          // });
           //reset values
           newBay.value = "";
           newBayInt.value = null;
           newStartHour.value = "";
           newEndHour.value = "";
-          newBrand.value = "";
-          newModel.value = "";
-          newYear.value = null;
-          newNumberPlate.value = "";
-          newTyreSize.value = "";
-          selectedCarStr.value = "";
         }
         transformToSchedule();
         isBaysfull();
@@ -481,30 +344,25 @@
           selectedAppointment.bay = bay;
           selectedAppointment.startHour = startHour;
           selectedAppointment.endHour = appointment.endHour;
-          selectedAppointment.service = appointment.service;
           selectedAppointment.id = appointment.id;
+          selectedAppointment.carid = appointment.carid;
+          selectedAppointment.status = appointment.status;
           dialog.value = true;
         }
       };
 
-      const getNextApptsId = () => {
-        if (appts.length > 0) {
-          latestApptsId = appts[appts.length - 1].id + 1;
-        } else {
-          latestApptsId = 0;
-        }
-      };
+      // const getNextApptsId = () => {
+      //   if (appts.length > 0) {
+      //     latestApptsId = appts[appts.length - 1].id + 1;
+      //   } else {
+      //     latestApptsId = 0;
+      //   }
+      // };
 
       const selectSlot = (bay, startHour) => {
         newBay.value = bay;
         newBayInt.value = parseInt(bay.match(/\d+/)[0]);
         newStartHour.value = startHour;
-      };
-
-      const nextAvailableDate = () => {
-        dateSelected.value = new Date(Date.now() + 24 * 60 * 60 * 1000);
-        transformToSchedule();
-        isBaysfull();
       };
 
       const nextDate = () => {
@@ -519,6 +377,7 @@
         if (newDate > minDate) {
           dateSelected.value = newDate;
         } else {
+          dateSelected.value.setDate(Date.now() + 24 * 60 * 60 * 1000);
           const showDate = new Date(newDate);
           showDate.setDate(showDate.getDate() + 1);
           toast.value.addToast(`Cannot select a date before ${showDate.toDateString()}`, 2000);
@@ -528,21 +387,17 @@
       };
 
       return {
-        appts,
+        //appts,
         hours,
         bays,
         newStartHour,
         newEndHour,
         newBay,
-        newBrand,
-        newModel,
-        newYear,
-        newType,
         dialog,
         selectedAppointment,
         addAppointment,
         openDialog,
-        getNextApptsId,
+        //getNextApptsId,
         selectSlot,
         schedule,
         transformToSchedule,
@@ -554,25 +409,10 @@
         filteredBays,
         isBaysfull,
         dateSelected,
-        nextAvailableDate,
         nextDate,
         previousDate,
-        vehicles,
-        plateNumberInput,
-        brandInput,
-        modelInput,
-        yearInput,
-        tyreSizeInput,
-        typeInput,
-        fetchVehicles,
-        addVehicle,
-        selectedCarStr,
-        selectedCarObj,
-        newNumberPlate,
-        newTyreSize,
         newApptInScheduleFormat,
         newAppointment,
-        selectedCar,
         minDate,
         toast,
       };
@@ -585,38 +425,13 @@
         this.transformToSchedule();
         this.isBaysfull();
       },
-      newBrand() {
-        this.brandInput = this.newBrand;
-      },
-      brandInput() {
-        this.getModelSelections();
-      },
-    },
-    computed: {
-      formattedCarText() {
-        const vehicleTexts = this.vehicles.map((vehicle) => `${vehicle.brand} ${vehicle.model} ${vehicle.year} (${vehicle.plateNumber})`);
-        return [...vehicleTexts, "Add New Car"]; // Append "Add New Car" to the array
-      },
-      yearSelections() {
-        const startYear = 1990;
-        const currentYear = new Date().getFullYear();
-        const yearSelections = [];
-        for (let year = startYear; year <= currentYear; year++) {
-          yearSelections.push(year);
-        }
-        return yearSelections;
-      },
-    },
-    mounted() {
-      this.getBrandSelections();
-      this.getTyreSizeSelections();
     },
     methods: {
       updateDisabledHours() {
         this.hours2.forEach((hour) => (hour.disabled = false));
         this.hours2.forEach((hour) => {
           if (this.newBay !== "") {
-            hour.disabled = this.schedule[hour.value][this.newBay].id !== -1;
+            hour.disabled = this.schedule[hour.value][this.newBay].id !== "";
           }
         });
         this.filteredHours = this.hours2.filter((hour) => hour.disabled === false);
@@ -625,105 +440,23 @@
       resetApptSlot() {
         //reset new appt in schedule format for schedule update
         this.newApptInScheduleFormat.value = {
-          id: -2,
+          id: "",
           bay: "",
           startHour: "",
           endHour: "",
-          service: "",
           status: "",
-          brand: "",
-          model: "",
-          year: -1,
+          carid: -1,
         };
         //reset new appt in appts store. so later can be use in api
         this.newAppointment.value = {
           id: -1,
           dateTime: new Date(),
-          service: "",
           bay: -1,
-          brand: "",
-          model: "",
-          year: -1,
-          status: "",
+          carid: -1,
         };
-        //delete appointment to dummy data
-        this.appts.pop();
         this.transformToSchedule();
         this.isBaysfull();
         window.location.reload();
-      },
-      async getBrandSelections() {
-        try {
-          const response = await axios.get(
-            "/api/car_brands",
-            {
-              headers: {
-                Accept: "application/json",
-              },
-            }
-          );
-          this.brandSelections = response.data.car_brands;
-          this.brandSelections = this.brandSelections.map((brand) => brand.toUpperCase());
-        } catch (error) {
-          if (axios.isAxiosError(error)) {
-            // Axios-specific error
-            console.error("Axios error:", error.message); 
-            console.error("Response data:", error.response?.data); // Log the server's response if available
-            console.error("Status code:", error.response?.status); // Log HTTP status code
-          } else {
-            // Non-Axios error
-            console.error("Unknown error occurred:", error);
-          }
-        }
-      },
-      async getModelSelections() {
-        try {
-          const response = await axios.get(
-            `/api/car_models/${this.brandInput.toLowerCase()}`,
-            {
-              headers: {
-                Accept: "application/json",
-              },
-            }
-          );
-          this.modelSelections = response.data.car_models;
-          this.modelSelections = this.modelSelections.map((brand) => brand.toUpperCase());
-        } catch (error) {
-          if (axios.isAxiosError(error)) {
-            // Axios-specific error
-            console.error("Axios error:", error.message); 
-            console.error("Response data:", error.response?.data); // Log the server's response if available
-            console.error("Status code:", error.response?.status); // Log HTTP status code
-          } else {
-            // Non-Axios error
-            console.error("Unknown error occurred:", error);
-          }
-        }
-      },
-      async getTyreSizeSelections() {
-        try {
-          const response = await axios.get(
-            `/api/tyre_sizes`,
-            {
-              headers: {
-                Accept: "application/json",
-              },
-            }
-          );
-          this.tyreSizeSelections = response.data.tyre_sizes;
-          this.tyreSizeSelections = ["Unsure", ...this.tyreSizeSelections];
-          //this.tyreSizeSelections = this.tyreSizeSelections.map((brand) => brand.toUpperCase());
-        } catch (error) {
-          if (axios.isAxiosError(error)) {
-            // Axios-specific error
-            console.error("Axios error:", error.message); 
-            console.error("Response data:", error.response?.data); // Log the server's response if available
-            console.error("Status code:", error.response?.status); // Log HTTP status code
-          } else {
-            // Non-Axios error
-            console.error("Unknown error occurred:", error);
-          }
-        }
       },
     },
   };
