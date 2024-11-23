@@ -70,7 +70,7 @@
         </v-stepper-window-item>
 
         <v-stepper-window-item value="2">
-          <v-card title="Make Appointment" flat>
+          <v-card title="Set Appointment" flat>
             <v-container>
               <v-row>
                 <v-col cols="12">
@@ -213,17 +213,22 @@ import { appointmentComposable } from "@/composables/appointmentComposable";
 import { useDateFormatter } from "@/composables/useDateFormatter";
 import axios from "axios";
 import { useCheckoutStore } from "@/stores/checkout";
+import { vehicleComposable } from "@/composables/vehicleComposable";
+
 export default {
   setup() {
     const router = useRouter();
     const { newAppointment } = appointmentComposable();
     const { formatDateToReadable } = useDateFormatter();
     const checkoutStore = useCheckoutStore();
+    const { selectedCar } = vehicleComposable();
+
     return {
       router,
       newAppointment,
       formatDateToReadable,
       checkoutStore,
+      selectedCar,
     };
   },
   components: { cartButton },
@@ -321,6 +326,8 @@ export default {
           year: -1,
           status: "",
         };
+        this.checkoutStore.hasService = false;
+        this.checkoutStore.hasProduct = false;
         this.router.push("/appointments");
       });
     },
@@ -358,13 +365,14 @@ export default {
       this.showOrderDialog = true;
     },
     handleInput(value) {
-      console.log("Input changed: ", value);
+      //console.log("Input changed: ", value);
     },
     async placeOrder() {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       this.isLoading = true;
 
       const checkoutData = {
-        car_id: "1",
+        car_id: this.selectedCar.carid.toString(),
         appointment_date: this.newAppointment.dateTime
           .toISOString()
           .split("T")[0],
@@ -376,13 +384,13 @@ export default {
 
         appointment_bay: this.newAppointment.bay,
       };
-      console.log(checkoutData.appointment_bay);
-      console.log(checkoutData.appointment_date);
-      console.log(checkoutData.appointment_time);
-      console.log(checkoutData);
+      //console.log(checkoutData.appointment_bay);
+      //console.log(checkoutData.appointment_date);
+      //console.log(checkoutData.appointment_time);
+      //console.log(checkoutData);
 
       const response = await axios.post(
-        "http://tayar.pro/checkout",
+        `${baseUrl}/checkout`,
         checkoutData,
         {
           method: "POST",
@@ -393,11 +401,11 @@ export default {
           },
         }
       );
-      console.log(response);
+      //console.log(response);
       const data = await response.data;
 
       if (data.message) {
-        console.log("Order placed successfully!");
+        //console.log("Order placed successfully!");
         this.displayError("Order placed successfully!"); // Show success message
         setTimeout(() => {
           this.handleClose(); // Close dialog after success
@@ -455,7 +463,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .v-date-picker {
   width: 100%;
   max-width: 360px;

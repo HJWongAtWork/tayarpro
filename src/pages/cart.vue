@@ -1,16 +1,23 @@
 <template>
+    <div class="title-page">
+    <div class="line"></div>
+    <h2 class="no-background text-center">
+      <span><strong>MY CART</strong></span>
+    </h2>
+    <div class="line"></div>
+  </div>
   <v-container max-width="1200">
-    <h2
+    <!-- <h2
       class="text-h3 text-center weight-bold sticky responsive-title"
       style="padding: 10px"
     >
       My Cart
-    </h2>
+    </h2> -->
     <h4
       class="text-h6 text-center notification-banner"
       style="background-color: #ffc0cb; padding: 20px"
     >
-      You Sucessfully Added to Your Cart.Check Out Now
+      You Sucessfully Added to Your Cart. Check Out Now
     </h4>
     <div class="cart-container">
       <v-table>
@@ -140,7 +147,7 @@
                       <td colspan="12">
                         <!-- <checkoutDialog v-bind:subtotal="Subtotal" /> -->
                         <v-btn
-                          @click="handleLogout"
+                          @click="handleCheckout"
                           min="260px"
                           height="55px"
                           color="#FF6875"
@@ -160,6 +167,13 @@
       </v-row>
     </v-container>
   </v-container>
+
+  <ToastNotification
+    ref="toast"
+    :default-color="'info'"
+    :default-timeout="2000"
+    :max-toasts="5"
+  />
 </template>
 
 <script>
@@ -169,8 +183,10 @@ import cartButton from "../components/cartButton.vue";
 import checkoutDialog from "../components/checkoutDialog.vue";
 import { isLogicalExpression } from "@babel/types";
 import placeholderImage from "@/assets/tyre.jpg";
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useCheckoutStore } from "@/stores/checkout";
+import ToastNotification from "@/components/ToastNotification.vue"; 
+
 const isLoading = ref(true);
 const handleImageError = () => {
   console.log("Image failed to load");
@@ -185,7 +201,13 @@ export default {
   setup() {
     const router = useRouter();
     const checkoutStore = useCheckoutStore();
-    return { router, checkoutStore };
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+    onMounted(() => {
+      document.title = "Cart";
+    });
+
+    return { router, checkoutStore, baseUrl };
   },
   data() {
     return {
@@ -215,7 +237,7 @@ export default {
     checkLoginStatus() {
       this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     },
-    handleLogout() {
+    handleCheckout() {
       this.checkLoginStatus();
       if (!this.isLoggedIn) {
         // 3. Store the return path
@@ -227,22 +249,35 @@ export default {
         // 5. Stop the method here
         return;
       }
+      //console.log("product service: " + this.checkoutStore.hasProduct + " " + this.checkoutStore.hasService);
+      if (!this.checkoutStore.hasProduct && !this.checkoutStore.hasService) {
+        this.$refs.toast.addToast("Cart is empty!", 2000);
+      }
+      else if (!this.checkoutStore.hasProduct && this.checkoutStore.hasService) {
+        this.$refs.toast.addToast("No product in cart!", 2000);
+      }
+      else if (this.checkoutStore.hasProduct && !this.checkoutStore.hasService) {
+        this.$refs.toast.addToast("No service in cart!", 2000);
+      }
+      else {
+
       this.checkoutStore.setCheckoutData({
         Subtotal: this.Subtotal,
         SST: this.SST,
         Total: this.Total,
       });
-      
+      this.checkoutStore.hasProduct = false;
+      this.checkoutStore.hasService = false;
 
-      this.router.push("/checkout");
+      this.router.push("/checkout"); }
     },
     async fetchCartItems() {
       try {
         const token = localStorage.getItem("jwt");
         const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-        console.log("Cart - Current token:", token); // Debug log
-        console.log("Cart - IsLoggedIn:", isLoggedIn); // Debug log
+        // console.log("Cart - Current token:", token); // Debug log
+        // console.log("Cart - IsLoggedIn:", isLoggedIn); // Debug log
 
         if (!token || !isLoggedIn) {
           console.log("No auth data, redirecting to login");
@@ -250,10 +285,10 @@ export default {
           return;
         }
 
-        console.log("Making cart request with token..."); // Debug log
+        //console.log("Making cart request with token..."); // Debug log
 
         const response = await axios.post(
-          "http://tayar.pro/get_cart",
+          `${this.baseUrl}/get_cart`,
           "", // Empty string as data
           {
             headers: {
@@ -263,7 +298,7 @@ export default {
           }
         );
 
-        console.log("Cart response:", response.data); // Debug log
+        //console.log("Cart response:", response.data); // Debug log
 
         this.carts = response.data.map((item) => ({
           productid: item.productid,
@@ -275,6 +310,17 @@ export default {
             ? new URL("@/assets/tyre-install-01.jpg", import.meta.url).href
             : new URL("@/assets/tyre.jpg", import.meta.url).href,
         }));
+        //console.log("Cart items:", this.carts); // Debug log
+        this.checkoutStore.hasService = false;
+        this.checkoutStore.hasProduct = false;
+        this.carts.forEach((cart) => {
+          if (cart.productid.startsWith("SVR")) {
+            this.checkoutStore.hasService = true;
+          }
+          if (cart.productid.startsWith("T")) {
+            this.checkoutStore.hasProduct = true;
+          }
+        });
       } catch (error) {
         console.error("Cart error details:", {
           status: error.response?.status,
@@ -295,7 +341,7 @@ export default {
       try {
         console.log("Removing cart item:", productid); // Debug log
         const response = await axios.delete(
-          `http://tayar.pro/delete_cart_item/${productid}`,
+          `${this.baseUrl}/delete_cart_item/${productid}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -320,12 +366,13 @@ export default {
           console.error("Item not found in cart");
         }
       }
+      await this.fetchCartItems();
     },
     async increaseQuantity(cart) {
       try {
         const newQuantity = cart.quantity + 1;
         const response = await axios.post(
-          `http://tayar.pro/update_cart_quantity/${cart.productid}/${newQuantity}`,
+          `${this.baseUrl}/update_cart_quantity/${cart.productid}/${newQuantity}`,
           null,
           {
             headers: {
@@ -340,13 +387,14 @@ export default {
       } catch (error) {
         console.error("Error increasing quantity:", error);
       }
+      await this.fetchCartItems();
     },
     async decreaseQuantity(cart) {
       try {
         if (cart.quantity > 1) {
           const newQuantity = cart.quantity - 1;
           const response = await axios.post(
-            `http://tayar.pro/update_cart_quantity/${cart.productid}/${newQuantity}`,
+            `${this.baseUrl}/update_cart_quantity/${cart.productid}/${newQuantity}`,
             null,
             {
               headers: {
@@ -362,6 +410,7 @@ export default {
       } catch (error) {
         console.error("Error decreasing quantity:", error);
       }
+      await this.fetchCartItems();
     },
     submitCode() {
       const validCode = this.ValidRedeemCode.find(
@@ -381,7 +430,7 @@ export default {
     },
   },
   async mounted() {
-    console.log("Cart mounted");
+    // console.log("Cart mounted");
     const token = localStorage.getItem("jwt");
     if (!token) {
       console.log("No token found in mounted");
@@ -400,7 +449,7 @@ export default {
         subtotal += price * quantity;
         // subtotal = subtotal.toFixed(2);
       });
-      console.log("Subtotal calculated:", subtotal);
+      // console.log("Subtotal calculated:", subtotal);
       return subtotal;
     },
     SST() {
@@ -421,7 +470,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .summary-container {
   max-width: 100%;
   padding: 0px;
@@ -537,5 +586,20 @@ td {
   .quantity-text {
     min-width: 20px;
   }
+}
+
+.title-page .line {
+  height: 3px;
+  flex: 1;
+  background-color: #000;
+}
+.title-page {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 2rem auto;
+}
+.title-page h2 {
+  padding: 0 2rem;
 }
 </style>

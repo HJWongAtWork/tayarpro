@@ -1,16 +1,11 @@
 /**
  * main.ts
  *
- * Bootstraps Vuetify and other plugins then mounts the App
+ * Bootstraps Vuetify and other plugins, then mounts the App.
  */
 
-// Plugins
 import { registerPlugins } from "@/plugins";
-
-// Components
 import App from "./App.vue";
-
-// Composables
 import { createApp } from "vue";
 
 // Import Firebase functions
@@ -18,14 +13,8 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore"; // Import Firestore
 import { getAuth } from "firebase/auth"; // Import Authentication
 
-// Additional for chat-related stores
-import { createPinia } from 'pinia'
-import { piniaPluginPersist } from './plugins/piniaPluginPersist'
-import router from './router'
-import vuetify from './plugins/vuetify'
-
-const pinia = createPinia()
-pinia.use(piniaPluginPersist)
+// Stores
+import { useUserStore } from "@/stores/userStore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -38,20 +27,14 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Initialize Firestore
-const db = getFirestore(app);
-
-// Initialize Authentication
-const auth = getAuth(app);
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+const auth = getAuth(firebaseApp);
 
 const vueApp = createApp(App);
 
-// Additional for chat-related stores
-vueApp.use(pinia)
-vueApp.use(router)
-vueApp.use(vuetify)
+// Register all plugins in one place
+registerPlugins(vueApp);
 
 vueApp.directive("click-to-expand", {
   mounted(el, binding) {
@@ -71,7 +54,9 @@ vueApp.directive("click-to-expand", {
   },
 });
 
-registerPlugins(vueApp);
+// Initialize user store
+const userStore = useUserStore();
+userStore.initializeFromLocalStorage();
 
 vueApp.mount("#app");
 

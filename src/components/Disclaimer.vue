@@ -1,6 +1,6 @@
 <template>
     <div v-if="showDisclaimer" class="disclaimer-dialog">
-        <v-card class="ma-5">
+        <v-card class="ma-5" max-width="600">
             <v-row align="center">
                 <v-col cols="12" align="center" class="mx-auto my-5" style="box-sizing: border-box !important;">
                     <v-card-title class="font-weight-black mx-5">
@@ -39,7 +39,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .disclaimer-dialog {
     position: fixed;
     top: 0;

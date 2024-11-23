@@ -59,6 +59,8 @@
 </template>
 
 <script>
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default {
     data() {
         return {
@@ -74,7 +76,7 @@ export default {
 
     methods: {
         getServicesData() {
-            fetch('http://tayar.pro/api/get_services')
+            fetch(`${baseUrl}/get_all_services`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);

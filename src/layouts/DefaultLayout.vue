@@ -6,7 +6,6 @@
       </div>
       <Header />
       <router-view />
-      <AppFooter />
     </v-main>
 
     <!-- Chat Widget Integration -->
@@ -94,7 +93,7 @@
 
 </script>
 
-<style>
+<style scoped>
   .v-application {
     position: relative;
     overflow-x: hidden;

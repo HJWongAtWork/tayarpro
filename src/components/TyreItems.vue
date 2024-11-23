@@ -1,6 +1,13 @@
 <template>
   <v-row>
-    <v-col cols="3" v-for="tyre in tyreItems" :key="tyre.tyreid">
+    <v-col
+      cols="12"
+      sm="6"
+      md="4"
+      lg="3"
+      v-for="tyre in tyreItems"
+      :key="tyre.tyreid"
+    >
       <v-card
         height="400"
         class="container"
@@ -18,16 +25,15 @@
                 <span>RM {{ tyre.unitprice.toFixed(2) }}</span>
                 <span class="ml-2 car-type">{{ tyre.cartype }}</span>
               </div>
-              <v-card-actions>
-                <div class="button-container">
-                  <v-btn
-                    class="border-thin view-details-button"
-                    color="primary"
-                    @click.stop="goToTyreDetails(tyre)"
-                    >View Details</v-btn
-                  >
-                </div>
-              </v-card-actions>
+              <v-spacer></v-spacer>
+
+              <div class="button-container ma-auto">
+                <v-btn
+                  class="border-thin view-details-button"
+                  @click.stop="goToTyreDetails(tyre)"
+                  >View Details</v-btn
+                >
+              </div>
             </div>
           </div>
           <div class="back">
@@ -59,16 +65,18 @@
 .container {
   perspective: 800px;
 }
-.button-container {
+/* .button-container {
   position: absolute;
   bottom: 16px;
   left: 16px;
   size: 20px;
-}
+} */
 .car-type {
   text-align: right;
 }
 .view-details-button {
+  background-color: white;
+  color: red;
   width: 120px;
   height: 40px;
   font-size: 0.875rem;
@@ -214,7 +222,7 @@ export default {
     goToTyreDetails(tyre) {
       localStorage.setItem("currentTyreItemId", tyre.itemid);
       this.$router.push({
-        name: "SpecificTyre",
+        name: "products-description",
         params: { description: tyre.description }, // Only pass description in the URL
       });
     },

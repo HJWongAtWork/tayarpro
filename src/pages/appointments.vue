@@ -1,6 +1,17 @@
 <template>
-    <v-container align="center" max-width="1200">
-        <v-row>
+  <v-container align="center" max-width="1200">
+    <v-row>
+      <v-col cols="12">
+        <v-card min-width="350" max-width="800" class="ma-auto" color="#FFE2E5">
+          <v-row>
+            <v-col cols="12" class="mb-0 pb-0">
+              <v-card-title class="text-center text-h5 mb-0 pb-0 pb-auto">
+                Your Appointments
+              </v-card-title>
+            </v-col>
+          </v-row>
+          <v-divider class="ma-3 mb-0" thickness="2" opacity="0.3" />
+          <v-row>
             <v-col cols="12">
               <v-tabs
                 v-model="activeTab"
@@ -176,7 +187,7 @@
                           >WARNING</v-card-title
                         >
                         <v-card-text
-                          >Are you sure you want to cancel you Appointment
+                          >Are you sure you want to cancel your Appointment
                           {{ selectedItem.appointmentid }}?</v-card-text
                         >
                         <v-btn
@@ -359,29 +370,104 @@
                                 </v-col>
                               </v-row>
                             </v-card>
-                        </v-col>
-                    </v-row>
-                </v-card>
+                          </v-col>
+                          <v-col cols="12" sm="7">
+                            <v-card max-width="300" min-height="225">
+                              <v-card-subtitle
+                                class="mt-3 mb-0 font-weight-medium text-subtitle-1"
+                                >Order Detail
+                              </v-card-subtitle>
+                              <v-divider
+                                class="mx-3"
+                                thickness="2"
+                                opacity="0.3"
+                              />
+                              <v-row class="ma-0 pa-0">
+                                <v-list>
+                                  <div
+                                    v-for="(item, index) in appt.order_detail"
+                                    :key="item.productid"
+                                  >
+                                    <v-list-item>
+                                      <template v-slot:prepend>
+                                        <v-avatar color="#FFE2E5" size="40">
+                                          {{ index + 1 }}
+                                        </v-avatar>
+                                      </template>
+
+                                      <v-list-item-title
+                                        class="font-weight-medium"
+                                      >
+                                        {{ item.productid }}
+                                      </v-list-item-title>
+
+                                      <v-list-item-subtitle>
+                                        <v-row no-gutters>
+                                          <v-col cols="12">
+                                            Car ID: {{ item.carid }}
+                                          </v-col>
+                                          <v-col cols="12" class="mt-1">
+                                            <v-chip
+                                              size="small"
+                                              color="#FFE2E5"
+                                              class="mr-2"
+                                            >
+                                              Qty: {{ item.quantity }}
+                                            </v-chip>
+                                            <v-chip
+                                              size="small"
+                                              color="#FFE2E5"
+                                              class="mr-2"
+                                            >
+                                              Unit: RM {{ item.unitprice }}
+                                            </v-chip>
+                                            <v-chip
+                                              size="small"
+                                              color="#FF3131"
+                                              class="white--text"
+                                            >
+                                              Total: RM {{ item.totalprice }}
+                                            </v-chip>
+                                          </v-col>
+                                        </v-row>
+                                      </v-list-item-subtitle>
+                                    </v-list-item>
+                                  </div>
+                                </v-list>
+                              </v-row>
+                            </v-card>
+                          </v-col>
+                        </v-row>
+                      </v-card>
+                    </template>
+                    <v-card-text>End of list.</v-card-text>
+                  </v-tabs-window-item>
+                </v-tabs-window>
+              </v-card>
             </v-col>
-        </v-row>
-    </v-container>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<style>
+<style scoped>
 v-card {
-    box-sizing: border-box !important;
+  box-sizing: border-box !important;
 }
 </style>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
+import axios from "axios";
 import { onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
-/* import axios from 'axios'; */
-import ModifyApptDialog from '@/components/ModifyApptDialog.vue';
+import ModifyApptDialog from "@/components/ModifyApptDialog.vue";
 
-const activeTab = ref('tab-future');
+const activeTab = ref("tab-future");
 const route = useRoute();
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 watch(
       () => route.query.tab,
@@ -407,16 +493,6 @@ watch(
   }
 );
 
-watch(
-  () => route.query.tab,
-  (newTab) => {
-    if (newTab) {
-      activeTab.value = newTab;
-    }
-  },
-  { immediate: true }
-);
-
 /* // Create an Axios instance with a base URL
 const api = axios.create({
   baseURL: 'http://your-api-base-url.com/api', // Replace with your actual API base URL
@@ -428,94 +504,40 @@ const api = axios.create({
 }); */
 
 /* const appointments = []; */
-const appointments = ref([{
-    appointment_id: 1,
-    date: "2024-05-12",
-    time: "09:00",
-    service_type: "Install",
-    payment_due: 4623.12,
-    tyre_brand: "Continental",
-    model: "Random model",
-    country: "Germany",
-    size: "260/85R15",
-    load_index: 76,
-    speed_index: "B",
-    status: "completed"
-},
-{
-    appointment_id: 2,
-    date: "2024-05-20",
-    time: "04:35",
-    payment_due: 2135.31,
-    service_type: "Tuning",
-    tyre_brand: "Hankook",
-    model: "Randomer model",
-    country: "North Korea",
-    size: "275/80R17",
-    load_index: 85,
-    speed_index: "A",
-    status: "cancelled"
-},
-{
-    appointment_id: 3,
-    date: "2024-06-12",
-    time: "21:00",
-    payment_due: 2365.34,
-    service_type: "Consult",
-    tyre_brand: "Michelin",
-    model: "Randomest model",
-    country: "France",
-    size: "285/75R16",
-    load_index: 100,
-    speed_index: "C",
-    status: "completed"
-},
-{
-    appointment_id: 4,
-    date: "2025-11-13",
-    time: "21:00",
-    payment_due: 2250.22,
-    service_type: "Install",
-    tyre_brand: "Bridgestone",
-    model: "More Random than Random",
-    country: "UK",
-    size: "280/74R13",
-    load_index: 97,
-    speed_index: "D",
-    status: "future"
-}
-]);
-
+const appointments = ref([]);
 const dialogVisible = ref(false);
 const deleteVisible = ref(false);
 const selectedIndex = ref(null);
 const isLoading = ref(false);
 
 const selectedItem = computed(() => {
-    return selectedIndex.value !== null ? { ...appointments.value[selectedIndex.value] } : {};
+  return selectedIndex.value !== null
+    ? { ...appointments.value[selectedIndex.value] }
+    : {};
 });
 
 const openDialog = (index) => {
-    selectedIndex.value = index;
-    dialogVisible.value = true;
+  selectedIndex.value = index;
+  dialogVisible.value = true;
 };
 
 const openDelete = (index) => {
-    selectedIndex.value = index;
-    deleteVisible.value = true;
+  selectedIndex.value = index;
+  deleteVisible.value = true;
 };
 
 const handleSubmit = async (updatedData) => {
-    if (selectedIndex.value !== null) {
-        isLoading.value = true;
-        try {
-            const appointmentId = appointments.value[selectedIndex.value].appointment_id;
+  if (selectedIndex.value !== null) {
+    isLoading.value = true;
+    try {
+      const appointmentId =
+        appointments.value[selectedIndex.value].appointment_id;
 
-            /* Temp */
-            appointments.value[selectedIndex.value].date = updatedData.date;
-            appointments.value[selectedIndex.value].time = updatedData.time;
+      /* Temp */
+      appointments.value[selectedIndex.value].date = updatedData.date;
+      appointments.value[selectedIndex.value].time = updatedData.time;
 
-            /* // Update the database using Axios
+      /* // Update the database using Axios
             const response = await api.put(`/appointments/${appointmentId}`, updatedData);
 
             // Check if the request was successful
@@ -527,16 +549,16 @@ const handleSubmit = async (updatedData) => {
             } else {
               throw new Error('Failed to update appointment');
             } */
-        } catch (error) {
-            console.error('Error updating appointment:', error);
-            // Handle error (e.g., show an error message to the user)
-        } finally {
-            // Reset selection and close dialog
-            isLoading.value = false;
-            selectedIndex.value = null;
-            dialogVisible.value = false;
-        }
+    } catch (error) {
+      console.error("Error updating appointment:", error);
+      // Handle error (e.g., show an error message to the user)
+    } finally {
+      // Reset selection and close dialog
+      isLoading.value = false;
+      selectedIndex.value = null;
+      dialogVisible.value = false;
     }
+  }
 };
 
 const handleCancel = async () => {
@@ -572,20 +594,30 @@ const handleCancel = async () => {
       selectedIndex.value = null;
       deleteVisible.value = false;
     }
+  }
 };
 
 // Function to fetch appointments from the server
 const fetchAppointments = async () => {
-    isLoading.value = true;
-    try {
-        /* const response = await api.get('/appointments');
+  isLoading.value = true;
+  try {
+    const response = await axios.post(`${baseUrl}/get_appointment`, "", {
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+    });
+    appointments.value = response.data;
+    console.log("Appointments fetched:", appointments.value);
+    console.log("Appointments data:", response.data);
+    /* const response = await api.get('/appointments');
         appointments.value = response.data; */
-    } catch (error) {
-        console.error('Error fetching appointments:', error);
-        // Handle error (e.g., show an error message to the user)
-    } finally {
-        isLoading.value = false;
-    }
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    // Handle error (e.g., show an error message to the user)
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 // Call fetchAppointments when the component is created

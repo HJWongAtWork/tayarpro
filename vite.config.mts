@@ -67,7 +67,7 @@ export default defineConfig({
     // API proxy pathing
     proxy: {
       "/api": {
-        target: "http://tayar.pro/",
+        target: "https://tayar.pro/",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

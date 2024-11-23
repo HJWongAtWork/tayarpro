@@ -6,7 +6,7 @@
       :color="toast.color"
       :timeout="toast.timeout"
       @update:model-value="closeToast(index)"
-      :style="{'margin-bottom':calcMargin(index)}"
+      :style="calcMargin(index)"
     >
       {{ toast.message }}
       <v-icon @click="closeToast(index)" style="position: absolute; right: 16px;">mdi-close</v-icon>
@@ -23,7 +23,7 @@ export default {
     },
     defaultTimeout: {
       type: Number,
-      default: -1,
+      default: 2000,
     },
     maxToasts: {
       type: Number,
@@ -36,7 +36,7 @@ export default {
     };
   },
   methods: {
-    addToast(message, color = this.defaultColor, timeout = this.defaultTimeout) {
+    addToast(message, timeout = this.defaultTimeout, color = this.defaultColor) {
       if (this.toasts.length >= this.maxToasts) {
         this.toasts.shift();
       }
@@ -53,9 +53,15 @@ export default {
         this.toasts.splice(index, 1);
       }, 300); 
     },
-    calcMargin(i) {
-      return (i*50) + 'px'
+    calcMargin(index) {
+      const isMobile = window.innerWidth <= 600; // Adjust for mobile view
+      const baseMargin = isMobile ? 16 : 100; // Use smaller margin for mobile
+      return {
+        marginBottom: `${index * 50 + 60}px`,
+        //marginRight: `${baseMargin}px`,
+      };
     },
+
   },
 };
 </script>
