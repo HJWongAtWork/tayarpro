@@ -2,9 +2,9 @@
   <v-container>
     <h2>Tire Shop Schedule</h2>
 
-    <v-row>
+    <!-- <v-row>
       <v-col cols="12" sm="12" md="6">
-        <DatePicker v-model="dateSelected" label="Date" />
+        <DatePicker v-model="dateSelected" label="Date" :min="minDate" />
       </v-col>
 
       <v-col cols="4" sm="4" md="2" class="d-flex justify-center">
@@ -14,11 +14,29 @@
       </v-col>
 
       <v-col cols="4" sm="4" md="2" class="d-flex justify-center">
-        <v-btn @click="todayDate()"> today </v-btn>
+        <v-btn @click="nextAvailableDate()"> earliest date </v-btn>
       </v-col>
 
       <v-col cols="4" sm="4" md="2" class="d-flex justify-center">
         <v-btn @click="nextDate()">
+          <v-icon>mdi-chevron-right</v-icon>
+        </v-btn>
+      </v-col>
+    </v-row> -->
+
+    <v-row>
+      <v-col cols="12" sm="4" md="2" class="d-flex justify-center align-center">
+        <v-btn @click="previousDate()">
+          <v-icon>mdi-chevron-left</v-icon>
+          previous date
+        </v-btn>
+      </v-col>
+      <v-col cols="12" sm="4" md="8" class="d-flex justify-center align-center">
+        <DatePicker v-model="dateSelected" label="Date" :min="minDate" />
+      </v-col>
+      <v-col cols="12" sm="4" md="2" class="d-flex justify-center align-center">
+        <v-btn @click="nextDate()">
+          next date
           <v-icon>mdi-chevron-right</v-icon>
         </v-btn>
       </v-col>
@@ -145,6 +163,14 @@
       </v-card>
     </v-dialog>
   </v-container>
+
+  <ToastNotification
+    ref="toast"
+    :default-color="'info'"
+    :default-timeout="-1"
+    :max-toasts="5"
+  />
+
 </template>
 
 <script>
@@ -153,6 +179,7 @@
   import { vehicleComposable } from "@/composables/vehicleComposable";
   import { appointmentComposable } from "@/composables/appointmentComposable";
   import axios from "axios";
+  import ToastNotification from "../components/ToastNotification.vue";
 
   export default {
     data() {
@@ -198,31 +225,32 @@
       const filteredBays = ref([]);
 
       const appts = [
-        { id: 1, dateTime: new Date("2024-10-01T09:00:00"), service: "Oil Change", bay: 1, brand: "Honda", model: "Civic", year: 2021, status: "upcoming" },
-        { id: 2, dateTime: new Date("2024-10-01T10:00:00"), service: "Tire Change", bay: 2, brand: "Ford", model: "Focus", year: 2019, status: "upcoming" },
-        { id: 3, dateTime: new Date("2024-10-01T11:00:00"), service: "Brake Inspection", bay: 3, brand: "Chevrolet", model: "Malibu", year: 2020, status: "upcoming" },
-        { id: 4, dateTime: new Date("2024-10-01T12:00:00"), service: "Repair", bay: 1, brand: "Toyota", model: "Camry", year: 2022, status: "upcoming" },
-        { id: 5, dateTime: new Date("2024-10-01T13:00:00"), service: "Alignment", bay: 4, brand: "Nissan", model: "Altima", year: 2018, status: "upcoming" },
-        { id: 6, dateTime: new Date("2024-10-01T14:00:00"), service: "Battery Check", bay: 2, brand: "Kia", model: "Soul", year: 2023, status: "upcoming" },
-        { id: 7, dateTime: new Date("2024-10-01T15:00:00"), service: "Transmission Check", bay: 5, brand: "Volkswagen", model: "Jetta", year: 2020, status: "upcoming" },
-        { id: 8, dateTime: new Date("2024-10-01T16:00:00"), service: "Suspension Check", bay: 3, brand: "Hyundai", model: "Elantra", year: 2022, status: "upcoming" },
-        { id: 9, dateTime: new Date("2024-10-01T17:00:00"), service: "Tire Rotation", bay: 1, brand: "Mazda", model: "CX-5", year: 2021, status: "upcoming" },
-        { id: 10, dateTime: new Date("2024-10-01T15:00:00"), service: "Engine Tune-Up", bay: 2, brand: "Subaru", model: "Forester", year: 2021, status: "upcoming" },
-        { id: 11, dateTime: new Date("2024-10-01T10:00:00"), service: "Oil Change", bay: 1, brand: "Honda", model: "Civic", year: 2021, status: "upcoming" },
-        { id: 12, dateTime: new Date("2024-10-01T11:00:00"), service: "Tire Change", bay: 1, brand: "Ford", model: "Focus", year: 2019, status: "upcoming" },
-        { id: 13, dateTime: new Date("2024-10-01T13:00:00"), service: "Brake Inspection", bay: 1, brand: "Chevrolet", model: "Malibu", year: 2020, status: "upcoming" },
-        { id: 14, dateTime: new Date("2024-10-01T14:00:00"), service: "Repair", bay: 1, brand: "Toyota", model: "Camry", year: 2022, status: "upcoming" },
-        { id: 15, dateTime: new Date("2024-10-01T15:00:00"), service: "Alignment", bay: 1, brand: "Nissan", model: "Altima", year: 2018, status: "upcoming" },
-        { id: 16, dateTime: new Date("2024-10-01T16:00:00"), service: "Battery Check", bay: 1, brand: "Kia", model: "Soul", year: 2023, status: "upcoming" },
-        { id: 17, dateTime: new Date("2024-10-01T09:00:00"), service: "Transmission Check", bay: 4, brand: "Volkswagen", model: "Jetta", year: 2020, status: "upcoming" },
-        { id: 18, dateTime: new Date("2024-10-01T10:00:00"), service: "Suspension Check", bay: 4, brand: "Hyundai", model: "Elantra", year: 2022, status: "upcoming" },
-        { id: 19, dateTime: new Date("2024-10-01T11:00:00"), service: "Tire Rotation", bay: 4, brand: "Mazda", model: "CX-5", year: 2021, status: "upcoming" },
-        { id: 20, dateTime: new Date("2024-10-01T12:00:00"), service: "Engine Tune-Up", bay: 4, brand: "Subaru", model: "Forester", year: 2021, status: "upcoming" },
-        { id: 21, dateTime: new Date("2024-10-01T14:00:00"), service: "Oil Change", bay: 4, brand: "Honda", model: "Civic", year: 2021, status: "upcoming" },
-        { id: 22, dateTime: new Date("2024-10-01T15:00:00"), service: "Tire Change", bay: 4, brand: "Ford", model: "Focus", year: 2019, status: "upcoming" },
-        { id: 23, dateTime: new Date("2024-10-01T16:00:00"), service: "Brake Inspection", bay: 4, brand: "Chevrolet", model: "Malibu", year: 2020, status: "upcoming" },
-        { id: 24, dateTime: new Date("2024-10-01T17:00:00"), service: "Repair", bay: 4, brand: "Toyota", model: "Camry", year: 2022, status: "upcoming" },
+        { id: 1, dateTime: new Date("2024-12-02T09:00:00"), service: "Oil Change", bay: 1, brand: "Honda", model: "Civic", year: 2021, status: "upcoming" },
+        { id: 2, dateTime: new Date("2024-12-02T10:00:00"), service: "Tire Change", bay: 2, brand: "Ford", model: "Focus", year: 2019, status: "upcoming" },
+        { id: 3, dateTime: new Date("2024-12-02T11:00:00"), service: "Brake Inspection", bay: 3, brand: "Chevrolet", model: "Malibu", year: 2020, status: "upcoming" },
+        { id: 4, dateTime: new Date("2024-12-02T12:00:00"), service: "Repair", bay: 1, brand: "Toyota", model: "Camry", year: 2022, status: "upcoming" },
+        { id: 5, dateTime: new Date("2024-12-02T13:00:00"), service: "Alignment", bay: 4, brand: "Nissan", model: "Altima", year: 2018, status: "upcoming" },
+        { id: 6, dateTime: new Date("2024-12-02T14:00:00"), service: "Battery Check", bay: 2, brand: "Kia", model: "Soul", year: 2023, status: "upcoming" },
+        { id: 7, dateTime: new Date("2024-12-02T15:00:00"), service: "Transmission Check", bay: 5, brand: "Volkswagen", model: "Jetta", year: 2020, status: "upcoming" },
+        { id: 8, dateTime: new Date("2024-12-02T16:00:00"), service: "Suspension Check", bay: 3, brand: "Hyundai", model: "Elantra", year: 2022, status: "upcoming" },
+        { id: 9, dateTime: new Date("2024-12-02T17:00:00"), service: "Tire Rotation", bay: 1, brand: "Mazda", model: "CX-5", year: 2021, status: "upcoming" },
+        { id: 10, dateTime: new Date("2024-12-02T15:00:00"), service: "Engine Tune-Up", bay: 2, brand: "Subaru", model: "Forester", year: 2021, status: "upcoming" },
+        { id: 11, dateTime: new Date("2024-12-02T10:00:00"), service: "Oil Change", bay: 1, brand: "Honda", model: "Civic", year: 2021, status: "upcoming" },
+        { id: 12, dateTime: new Date("2024-12-02T11:00:00"), service: "Tire Change", bay: 1, brand: "Ford", model: "Focus", year: 2019, status: "upcoming" },
+        { id: 13, dateTime: new Date("2024-12-02T13:00:00"), service: "Brake Inspection", bay: 1, brand: "Chevrolet", model: "Malibu", year: 2020, status: "upcoming" },
+        { id: 14, dateTime: new Date("2024-12-02T14:00:00"), service: "Repair", bay: 1, brand: "Toyota", model: "Camry", year: 2022, status: "upcoming" },
+        { id: 15, dateTime: new Date("2024-12-02T15:00:00"), service: "Alignment", bay: 1, brand: "Nissan", model: "Altima", year: 2018, status: "upcoming" },
+        { id: 16, dateTime: new Date("2024-12-02T16:00:00"), service: "Battery Check", bay: 1, brand: "Kia", model: "Soul", year: 2023, status: "upcoming" },
+        { id: 17, dateTime: new Date("2024-12-02T09:00:00"), service: "Transmission Check", bay: 4, brand: "Volkswagen", model: "Jetta", year: 2020, status: "upcoming" },
+        { id: 18, dateTime: new Date("2024-12-02T10:00:00"), service: "Suspension Check", bay: 4, brand: "Hyundai", model: "Elantra", year: 2022, status: "upcoming" },
+        { id: 19, dateTime: new Date("2024-12-02T11:00:00"), service: "Tire Rotation", bay: 4, brand: "Mazda", model: "CX-5", year: 2021, status: "upcoming" },
+        { id: 20, dateTime: new Date("2024-12-02T12:00:00"), service: "Engine Tune-Up", bay: 4, brand: "Subaru", model: "Forester", year: 2021, status: "upcoming" },
+        { id: 21, dateTime: new Date("2024-12-02T14:00:00"), service: "Oil Change", bay: 4, brand: "Honda", model: "Civic", year: 2021, status: "upcoming" },
+        { id: 22, dateTime: new Date("2024-12-02T15:00:00"), service: "Tire Change", bay: 4, brand: "Ford", model: "Focus", year: 2019, status: "upcoming" },
+        { id: 23, dateTime: new Date("2024-12-02T16:00:00"), service: "Brake Inspection", bay: 4, brand: "Chevrolet", model: "Malibu", year: 2020, status: "upcoming" },
+        { id: 24, dateTime: new Date("2024-12-02T17:00:00"), service: "Repair", bay: 4, brand: "Toyota", model: "Camry", year: 2022, status: "upcoming" },
       ];
+
       let latestApptsId = null;
       const dialog = ref(false);
 
@@ -249,7 +277,8 @@
 
       const userType = ref("admin");
 
-      const dateSelected = ref(new Date("2024-10-01"));
+      const dateSelected = ref(new Date(Date.now() + 24 * 60 * 60 * 1000));
+      const minDate = new Date(Date.now());
 
       const { vehicles, selectedCar, plateNumberInput, brandInput, modelInput, yearInput, tyreSizeInput,
         typeInput, fetchVehicles, getLatestVehicleId, addVehicle } = vehicleComposable();
@@ -273,6 +302,8 @@
       const { newAppointment } = appointmentComposable();
 
       const formattedCarText = ref([]);
+
+      const toast = ref(null);
 
       onMounted(() => {
         transformToSchedule();
@@ -470,8 +501,8 @@
         newStartHour.value = startHour;
       };
 
-      const todayDate = () => {
-        dateSelected.value = new Date();
+      const nextAvailableDate = () => {
+        dateSelected.value = new Date(Date.now() + 24 * 60 * 60 * 1000);
         transformToSchedule();
         isBaysfull();
       };
@@ -483,7 +514,15 @@
       };
 
       const previousDate = () => {
-        dateSelected.value = new Date(dateSelected.value.setDate(dateSelected.value.getDate() - 1));
+        const newDate = new Date(dateSelected.value);
+        newDate.setDate(newDate.getDate() - 1);
+        if (newDate > minDate) {
+          dateSelected.value = newDate;
+        } else {
+          const showDate = new Date(newDate);
+          showDate.setDate(showDate.getDate() + 1);
+          toast.value.addToast(`Cannot select a date before ${showDate.toDateString()}`, 2000);
+        }
         transformToSchedule();
         isBaysfull();
       };
@@ -515,7 +554,7 @@
         filteredBays,
         isBaysfull,
         dateSelected,
-        todayDate,
+        nextAvailableDate,
         nextDate,
         previousDate,
         vehicles,
@@ -534,6 +573,8 @@
         newApptInScheduleFormat,
         newAppointment,
         selectedCar,
+        minDate,
+        toast,
       };
     },
     watch: {

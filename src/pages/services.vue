@@ -2,11 +2,10 @@
   <div class="title-page">
     <div class="line"></div>
     <h2 class="no-background text-center">
-      <span>SERVICES</span>
+      <span><strong>SERVICES</strong></span>
     </h2>
     <div class="line"></div>
   </div>
-
   <v-container class="mt-2" max-width="1200">
     <v-row>
       <v-col cols="3">

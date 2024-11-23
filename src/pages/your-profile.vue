@@ -1,9 +1,13 @@
 <template>
+  <div class="title-page">
+    <div class="line"></div>
+    <h2 class="no-background text-center">
+      <span><strong>YOUR PROFILE</strong></span>
+    </h2>
+    <div class="line"></div>
+  </div>
   <v-container max-width="1200">
     <v-row>
-      <v-col cols="12" sm="12" md="12">
-        <h1>Your Profile</h1>
-      </v-col>
       <v-col cols="12" sm="12" md="3">
         <v-card class="pa-4">
           <v-row>
@@ -802,5 +806,20 @@ onBeforeUnmount(() => {
   /* Ensure the image does not exceed the container's height */
   object-fit: cover;
   /* Cover the container while maintaining aspect ratio */
+}
+
+.title-page .line {
+  height: 3px;
+  flex: 1;
+  background-color: #000;
+}
+.title-page {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 2rem auto;
+}
+.title-page h2 {
+  padding: 0 2rem;
 }
 </style>

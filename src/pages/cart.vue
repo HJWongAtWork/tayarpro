@@ -1,11 +1,18 @@
 <template>
+    <div class="title-page">
+    <div class="line"></div>
+    <h2 class="no-background text-center">
+      <span><strong>MY CART</strong></span>
+    </h2>
+    <div class="line"></div>
+  </div>
   <v-container max-width="1200">
-    <h2
+    <!-- <h2
       class="text-h3 text-center weight-bold sticky responsive-title"
       style="padding: 10px"
     >
       My Cart
-    </h2>
+    </h2> -->
     <h4
       class="text-h6 text-center notification-banner"
       style="background-color: #ffc0cb; padding: 20px"
@@ -579,5 +586,20 @@ td {
   .quantity-text {
     min-width: 20px;
   }
+}
+
+.title-page .line {
+  height: 3px;
+  flex: 1;
+  background-color: #000;
+}
+.title-page {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 2rem auto;
+}
+.title-page h2 {
+  padding: 0 2rem;
 }
 </style>
