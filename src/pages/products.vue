@@ -72,13 +72,24 @@
             </div>
           </v-list-item>
         </v-list>
+        <div class="filter-section ma-2">
+          <h3><strong>CAR FILTER</strong></h3>
+        </div>
+        <v-divider thickness="2"></v-divider>
+
+        <v-select
+          v-model="selectedCarId"
+          :items="carOptionsWithAll"
+          item-title="text"
+          item-value="value"
+          label="Select a car"
+          @update:model-value="onCarSelect"
+        >
+        </v-select>
       </v-col>
       <v-col cols="12" md="9" class="content-column px-10">
         <div ref="searchWrapper" class="search-wrapper">
-          <div
-            ref="searchContainer"
-            :class="['search-container', { sticky: isSticky }]"
-          >
+          <div ref="searchContainer">
             <v-text-field
               prepend-inner-icon="mdi-magnify"
               hide-details
@@ -88,10 +99,10 @@
             ></v-text-field>
           </div>
         </div>
-        <div v-show="isSticky" class="search-placeholder"></div>
+        <div class="search-placeholder"></div>
         <v-row class="mt-9 items-container">
           <TyreItems
-            :tyreItems="paginatedTyreItems"
+            :tyreItems="paginatedFilteredTyreItems"
             @flip-card="flipTyreCard"
           ></TyreItems>
         </v-row>
@@ -183,61 +194,158 @@
 <script>
 import axios from "axios";
 import TyreItems from "../components/TyreItems.vue";
-import { ref, onMounted, onUnmounted } from "vue";
+import { useVehicleStore } from "../stores/vehicleStore";
+import { ref, computed, onMounted, watch } from "vue";
+import { storeToRefs } from "pinia";
 
 export default {
   components: {
     TyreItems,
   },
   setup() {
-    const searchWrapper = ref(null);
-    const searchContainer = ref(null);
-    const isSticky = ref(false);
+    const vehicleStore = useVehicleStore();
+    const { cars, selectedCar } = storeToRefs(vehicleStore);
+    const selectedCarId = ref("all");
+    const tyreList = ref([]);
+    const page = ref(1);
+    const itemsPerPage = ref(12);
+    const searchText = ref("");
+    const selectedProducts = ref([]);
+    const selectedBrands = ref([]);
+    const selectedFilter = ref({
+      priceAsc: false,
+      priceDesc: false,
+    });
 
-    const handleScroll = () => {
-      if (searchWrapper.value && searchContainer.value) {
-        const rect = searchWrapper.value.getBoundingClientRect();
-        isSticky.value = rect.top <= 0;
-        if (isSticky.value) {
-          searchContainer.value.style.width = `${rect.width}px`;
-        } else {
-          searchContainer.value.style.width = "100%";
-        }
+    const carOptionsWithAll = computed(() => [
+      { text: "ALL CAR", value: "all" },
+      ...cars.value.map((car) => ({
+        text: `${car.carbrand} ${car.carmodel} ${car.platenumber}`,
+        value: car.carid,
+      })),
+    ]);
+
+    const filteredTyreItems = computed(() => {
+      let filtered = tyreList.value.filter((tyre) => {
+        const productMatch =
+          selectedProducts.value.length === 0 ||
+          selectedProducts.value.includes(tyre.productid);
+        const brandMatch =
+          selectedBrands.value.length === 0 ||
+          selectedBrands.value.includes(tyre.brandid);
+        const searchMatch =
+          !searchText.value ||
+          tyre.description
+            .toLowerCase()
+            .includes(searchText.value.toLowerCase());
+        const carMatch =
+          selectedCarId.value === "all" ||
+          !selectedCar.value ||
+          (selectedCar.value && selectedCar.value.tyresize === tyre.tyresize);
+        return productMatch && brandMatch && searchMatch && carMatch;
+      });
+
+      if (selectedFilter.value.priceAsc) {
+        filtered.sort((a, b) => a.unitprice - b.unitprice);
+      } else if (selectedFilter.value.priceDesc) {
+        filtered.sort((a, b) => b.unitprice - a.unitprice);
+      }
+
+      return filtered;
+    });
+
+    const paginatedFilteredTyreItems = computed(() => {
+      const start = (page.value - 1) * itemsPerPage.value;
+      const end = start + itemsPerPage.value;
+      return filteredTyreItems.value.slice(start, end);
+    });
+
+    const onCarSelect = (value) => {
+      selectedCarId.value = value;
+      vehicleStore.setSelectedCar(value);
+    };
+
+    const fetchTyreList = async () => {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
+      try {
+        const response = await axios.get(`${baseUrl}/get_all_tyres`);
+        tyreList.value = response.data.map((tyre) => ({
+          ...tyre,
+          flipped: false,
+        }));
+      } catch (error) {
+        console.error("Error fetching tyre brands:", error);
       }
     };
 
     onMounted(() => {
-      window.addEventListener("scroll", handleScroll);
-      window.addEventListener("resize", handleScroll);
+      vehicleStore.fetchVehicles();
+      fetchTyreList();
     });
 
-    onUnmounted(() => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
+    watch(filteredTyreItems, () => {
+      page.value = 1;
     });
 
     return {
-      searchWrapper,
-      searchContainer,
-      isSticky,
+      selectedCarId,
+      carOptionsWithAll,
+      onCarSelect,
+      page,
+      itemsPerPage,
+      paginatedFilteredTyreItems,
+      filteredTyreItems,
+      searchText,
+      selectedProducts,
+      selectedBrands,
+      selectedFilter,
+      tyreList,
+      fetchTyreList,
     };
   },
-  watch: {
-    selectedFilter() {
-      this.sortTyreItems();
+  methods: {
+    async fetchAllProduct() {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
+      try {
+        const ProductsResponse = await axios.get(`${baseUrl}/products`);
+        const BrandsResponse = await axios.get(`${baseUrl}/brands`);
+        this.ProductsList = ProductsResponse.data;
+        this.BrandsList = BrandsResponse.data;
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    },
+    getBrandsForProducts(productId) {
+      return this.BrandsList.filter((brand) => brand.productid === productId);
+    },
+    toggleAllBrands(productId) {
+      // ... (keep your existing method)
+    },
+    flipTyreCard(tyre) {
+      const index = this.tyreList.findIndex(
+        (item) => item.itemid === tyre.itemid
+      );
+      if (index !== -1) {
+        this.tyreList[index].flipped = !this.tyreList[index].flipped;
+      }
+    },
+    handleSortingChange(sort) {
+      if (sort === "priceAsc") {
+        this.selectedFilter.priceDesc = false;
+        this.selectedFilter.priceAsc = true;
+      } else if (sort === "priceDesc") {
+        this.selectedFilter.priceAsc = false;
+        this.selectedFilter.priceDesc = true;
+      }
     },
   },
-
   mounted() {
-    this.fetchTyreList();
     this.fetchAllProduct();
+    this.fetchTyreList();
     document.title = "Tyres";
   },
   data() {
     return {
-      searchText: "", // added here
-      page: 1,
-      itemsPerPage: 12,
       filterMenu: [
         {
           title: "Price Ascending",
@@ -250,145 +358,9 @@ export default {
           sort: "priceDesc",
         },
       ],
-      selectedFilter: {
-        priceAsc: false,
-        priceDesc: false,
-      },
-      tyreList: [],
-      // products List
       ProductsList: [],
-      // brands List
       BrandsList: [],
-      selectedProducts: [],
-      selectedBrands: [],
     };
-  },
-
-  methods: {
-    // for tyre
-    toggleAllTyreItems() {
-      if (this.isTyreChecked) {
-        this.selectedTyreBrands = this.TyreBrandList.map(
-          (brand) => brand.value
-        );
-      } else {
-        this.selectedTyreBrands = [];
-      }
-    },
-
-    //for service
-    toggleAllServiceItems() {
-      if (this.isServiceChecked) {
-        this.selectedService = this.ServiceTypeList.map(
-          (service) => service.value
-        );
-      } else {
-        this.selectedService = [];
-      }
-    },
-
-    handleSortingChange(sort) {
-      if (sort === "priceAsc") {
-        this.selectedFilter.priceDesc = false;
-      } else if (sort === "priceDesc") {
-        this.selectedFilter.priceAsc = false;
-      }
-      this.sortTyreItems();
-    },
-
-    sortTyreItems() {
-      if (this.selectedFilter.priceAsc) {
-        this.tyreList.sort((a, b) => a.unitprice - b.unitprice);
-      } else if (this.selectedFilter.priceDesc) {
-        this.tyreList.sort((a, b) => b.unitprice - a.unitprice);
-      }
-    },
-
-    async fetchAllProduct() {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL;
-      try {
-        const ProductsResponse = await axios.get(`${baseUrl}/products`);
-        const BrandsResponse = await axios.get(`${baseUrl}/brands`);
-        this.ProductsList = ProductsResponse.data;
-        this.BrandsList = BrandsResponse.data;
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    },
-
-    getBrandsForProducts(productId) {
-      return this.BrandsList.filter((brand) => brand.productid === productId);
-    },
-
-    toggleAllBrands(productId) {
-      const isProductSelected = this.selectedProducts.includes(productId);
-      const brandsForProduct = this.getBrandsForProducts(productId);
-      if (isProductSelected) {
-        brandsForProduct.forEach((brand) => {
-          if (!this.selectedBrands.includes(brand.brandid)) {
-            this.selectedBrands.push(brand.brandid);
-          }
-        });
-      } else {
-        this.selectedBrands = this.selectedBrands.filter(
-          (brandId) =>
-            !brandsForProduct.some((brand) => brand.brandid === brandId)
-        );
-      }
-    },
-    async fetchTyreList() {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL;
-      try {
-        const response = await axios.get(`${baseUrl}/get_all_tyres`);
-        this.tyreList = response.data.map((tyre) => ({
-          ...tyre,
-          flipped: false,
-        }));
-      } catch (error) {
-        console.error("Error fetching tyre brands:", error);
-      }
-    },
-    flipTyreCard(tyre) {
-      const index = this.tyreList.findIndex(
-        (item) => item.itemid === tyre.itemid
-      );
-      if (index !== -1) {
-        this.tyreList[index].flipped = !this.tyreList[index].flipped;
-      }
-    },
-  },
-  computed: {
-    paginatedTyreItems() {
-      const start = (this.page - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.filteredTyreItems.slice(start, end);
-    },
-    filteredTyreItems() {
-      let filtered = this.tyreList.filter((tyre) => {
-        const productMatch =
-          this.selectedProducts.length === 0 ||
-          this.selectedProducts.includes(tyre.productid);
-        const brandMatch =
-          this.selectedBrands.length === 0 ||
-          this.selectedBrands.includes(tyre.brandid);
-        const searchMatch =
-          !this.searchText ||
-          tyre.description
-            .toLowerCase()
-            .includes(this.searchText.toLowerCase());
-
-        return productMatch && brandMatch && searchMatch;
-      });
-
-      // Apply sorting
-      if (this.selectedFilter.priceAsc) {
-        filtered.sort((a, b) => a.unitprice - b.unitprice);
-      } else if (this.selectedFilter.priceDesc) {
-        filtered.sort((a, b) => b.unitprice - a.unitprice);
-      }
-
-      return filtered;
-    },
   },
 };
 </script>

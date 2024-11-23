@@ -158,6 +158,7 @@ export default defineComponent({
             },
           }
         );
+        alert("Services added to cart successfully!");
         console.log("Adding to cart:", newCartItem);
       } catch (error) {
         console.error("Error adding to cart:", error);
