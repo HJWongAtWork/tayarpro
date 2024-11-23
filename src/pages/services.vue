@@ -127,12 +127,12 @@
 </style>
 
 <script lang="ts">
-//import servicepic from '@/assets/service.jpg'; 
+//import servicepic from '@/assets/service.jpg';
 import servicepic from "@/assets/tyre-install-01.jpg";
 import { defineComponent, ref, computed, onMounted } from "vue";
 // import { useUserStore } from "../stores/userStore";
 import axios from "axios";
-import ServiceItems from "@/components/ServiceItems.vue";
+// import ServiceItems from "@/components/ServiceItems.vue";
 
 interface ServiceType {
   typeid: number;
