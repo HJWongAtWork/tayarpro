@@ -35,7 +35,7 @@
                       v-for="(appt, i) in appointments"
                       :key="appt.appointmentid"
                     >
-                      <v-card v-if="appt.status == 'Pending'" class="ma-3 pa-3">
+                      <v-card v-if="appt.status == 'Future'" class="ma-3 pa-3">
                         <v-row>
                           <v-col cols="12" sm="5">
                             <v-card max-width="300" min-height="225">
@@ -56,6 +56,7 @@
                                     <br />
                                     Date:<br />
                                     Time:<br />
+                                    Bay:<br />
                                   </v-card-text>
                                 </v-col>
                                 <v-col cols="6" class="pl-0 pb-0">
@@ -71,6 +72,7 @@
                                         appt.appointmentdate
                                       ).toLocaleTimeString()
                                     }}<br />
+                                    {{ appt.appointment_bay }}<br />
                                   </v-card-text>
                                 </v-col>
                                 <v-col
@@ -134,15 +136,15 @@
                                           <v-col cols="12" class="mt-1">
                                             <v-chip
                                               size="small"
-                                              color="#FFE2E5"
-                                              class="mr-2"
+                                              color="#FFD1D1"
+                                              class="mr-2 text-black"
                                             >
                                               Qty: {{ item.quantity }}
                                             </v-chip>
                                             <v-chip
                                               size="small"
-                                              color="#FFE2E5"
-                                              class="mr-2"
+                                              color="#FFD1D1"
+                                              class="mr-2 text-black"
                                             >
                                               Unit: RM {{ item.unitprice }}
                                             </v-chip>
@@ -185,15 +187,15 @@
                           >WARNING</v-card-title
                         >
                         <v-card-text
-                          >Are you sure you want to delete Appointment
-                          {{ selectedItem.appointment_id }}?</v-card-text
+                          >Are you sure you want to cancel your Appointment
+                          {{ selectedItem.appointmentid }}?</v-card-text
                         >
                         <v-btn
                           class="mx-auto"
                           width="100"
                           color="#FF3131"
-                          @click="handleDelete(selectedItem)"
-                          >Delete</v-btn
+                          @click="handleCancel(selectedItem)"
+                          >Cancel</v-btn
                         >
                       </v-card>
                     </v-dialog>
@@ -347,6 +349,7 @@
                                     <br />
                                     Date:<br />
                                     Time:<br />
+                                    Bay:<br />
                                   </v-card-text>
                                 </v-col>
                                 <v-col cols="6" class="pl-0 pb-0">
@@ -362,6 +365,7 @@
                                         appt.appointmentdate
                                       ).toLocaleTimeString()
                                     }}<br />
+                                    {{ appt.appointment_bay }}<br />
                                   </v-card-text>
                                 </v-col>
                               </v-row>
@@ -466,13 +470,27 @@ const route = useRoute();
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 watch(
-  () => route.query.tab,
-  (newTab) => {
+      () => route.query.tab,
+      (newTab) => {
+        if (newTab) {
+          activeTab.value = newTab;
+        }
+      },
+      { immediate: true }
+    );
+  () => activeTab.value,
+  async (newTab) => {
     if (newTab) {
-      activeTab.value = newTab;
+      isLoading.value = true;
+      try {
+        await fetchAppointments();
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+      } finally {
+        isLoading.value = false;
+      }
     }
-  },
-  { immediate: true }
+  }
 );
 
 /* // Create an Axios instance with a base URL
@@ -521,12 +539,12 @@ const handleSubmit = async (updatedData) => {
 
       /* // Update the database using Axios
             const response = await api.put(`/appointments/${appointmentId}`, updatedData);
-            
+
             // Check if the request was successful
             if (response.status === 200 || response.status === 204) {
               // Update the local appointments array with the response from the server
               appointments.value[selectedIndex.value] = response.data;
-      
+
               console.log('Appointment updated successfully');
             } else {
               throw new Error('Failed to update appointment');
@@ -543,35 +561,35 @@ const handleSubmit = async (updatedData) => {
   }
 };
 
-const handleDelete = async () => {
+const handleCancel = async () => {
   if (selectedIndex.value !== null) {
     isLoading.value = true;
     try {
       const appointmentId =
-        appointments.value[selectedIndex.value].appointment_id;
+        appointments.value[selectedIndex.value].appointmentid;
 
-      /* Temp */
+      const response = await axios.put(
+        `${baseUrl}/cancel_appointment?appointment_id=${appointmentId}`,
+        null,
+        {
+          headers: {
+            accept: "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        }
+      );
+
       if (selectedIndex.value > -1) {
         appointments.value.splice(selectedIndex.value, 1);
       }
-
-      /* // Update the database using Axios
-            const response = await api.delete(`/appointments/${appointmentId}`);
-            
-            // Check if the request was successful
-            if (response.status === 200 || response.status === 204) {
-              // Update the local appointments array with the response from the server
-              appointments.value[deleteIndex] = response.data;
-      
-              console.log('Appointment deleted successfully');
-            } else {
-              throw new Error('Failed to update appointment');
-            } */
+      if (response.status === 200 || response.status === 204) {
+        console.log("Appointment deleted successfully");
+      } else {
+        throw new Error("Failed to delete appointment");
+      }
     } catch (error) {
       console.error("Error deleting appointment:", error);
-      // Handle error (e.g., show an error message to the user)
     } finally {
-      // Reset selection and close dialog
       isLoading.value = false;
       selectedIndex.value = null;
       deleteVisible.value = false;
