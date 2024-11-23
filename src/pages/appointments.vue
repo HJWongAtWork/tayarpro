@@ -579,6 +579,7 @@ const handleCancel = async () => {
       }
       if (response.status === 200 || response.status === 204) {
         console.log("Appointment deleted successfully");
+        fetchAppointments();
       } else {
         throw new Error("Failed to delete appointment");
       }
