@@ -87,6 +87,13 @@
                                     @click="openDialog(i)"
                                     >Modify</v-btn
                                   >
+                                  <!-- <v-btn
+                                    width="70"
+                                    class="mr-2 my-1"
+                                    color="#FFE2E5"
+                                    @click="handleModify(appt.appointmentid)"
+                                    >Modify</v-btn
+                                  > -->
                                   <v-btn
                                     width="70"
                                     class="ml-2 my-1"
@@ -195,7 +202,7 @@
                           width="100"
                           color="#FF3131"
                           @click="handleCancel(selectedItem)"
-                          >Cancel</v-btn
+                          >Confirm</v-btn
                         >
                       </v-card>
                     </v-dialog>
@@ -450,6 +457,23 @@
       </v-col>
     </v-row>
   </v-container>
+
+  <!-- <v-dialog v-model="modifyDialog" max-width="500px" background-color="white">
+    <v-card>
+      <v-card-title>Modify Appointment</v-card-title>
+      <v-container>
+              <AddCarInSchedule />
+              <v-row>
+                <v-col cols="12">
+                  <Schedule />
+                </v-col>
+              </v-row>
+            </v-container>
+    </v-card>
+    <AddCarInSchedule />
+    <Schedule />
+  </v-dialog> -->
+
 </template>
 
 <style scoped>
@@ -464,10 +488,20 @@ import axios from "axios";
 import { onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import ModifyApptDialog from "@/components/ModifyApptDialog.vue";
+import { appointmentComposable } from '@/composables/appointmentComposable';
+import { vehicleComposable } from '@/composables/vehicleComposable';
+
+const { newAppointment } = appointmentComposable();
+const { selectedCar } = vehicleComposable();
 
 const activeTab = ref("tab-future");
 const route = useRoute();
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+// const modifyDialog = ref(false);
+// const handleModify = (apptID) => {
+//   modifyDialog.value = true;
+// };
 
 watch(
   () => route.query.tab,
@@ -522,15 +556,53 @@ const openDelete = (index) => {
 };
 
 const handleSubmit = async (updatedData) => {
+  console.log("siM: " + selectedIndex.value);
   if (selectedIndex.value !== null) {
     isLoading.value = true;
     try {
       const appointmentId =
-        appointments.value[selectedIndex.value].appointment_id;
+        appointments.value[selectedIndex.value].appointmentid;
 
+      //updatedData.appointment_id = appointmentId;
+      // updatedData = {
+      //   appointment_id: appointmentId,
+      //   appointment_date: newAppointment.value.dateTime
+      //     .toISOString()
+      //     .split("T")[0],
+      //     appointment_time: newAppointment.value.dateTime.toLocaleTimeString(),
+      //     car_id: selectedCar.value.carid,
+      // }
+      
+      const response = await axios.put(`${baseUrl}/update_appointment`, {
+          appointment_id: appointmentId,
+          appointment_date: newAppointment.value.dateTime
+          .toISOString()
+          .split("T")[0],
+          appointment_time: newAppointment.value.dateTime.toLocaleTimeString(),
+          car_id: selectedCar.value.carid,
+          //updatedData 
+      }, {
+          headers: {
+              'accept': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+              'Content-Type': 'application/json'
+          }
+      })
+
+      if (selectedIndex.value > -1) {
+        appointments.value.splice(selectedIndex.value, 1);
+      }
+      if (response.status === 200 || response.status === 204) {
+        console.log("Appointment updated successfully");
+        fetchAppointments();
+      } else {
+        throw new Error("Failed to updated appointment");
+      }
+
+      } 
       /* Temp */
-      appointments.value[selectedIndex.value].date = updatedData.date;
-      appointments.value[selectedIndex.value].time = updatedData.time;
+      // appointments.value[selectedIndex.value].date = updatedData.date;
+      // appointments.value[selectedIndex.value].time = updatedData.time;
 
       /* // Update the database using Axios
             const response = await api.put(`/appointments/${appointmentId}`, updatedData);
@@ -544,7 +616,7 @@ const handleSubmit = async (updatedData) => {
             } else {
               throw new Error('Failed to update appointment');
             } */
-    } catch (error) {
+     catch (error) {
       console.error("Error updating appointment:", error);
       // Handle error (e.g., show an error message to the user)
     } finally {
@@ -552,16 +624,35 @@ const handleSubmit = async (updatedData) => {
       isLoading.value = false;
       selectedIndex.value = null;
       dialogVisible.value = false;
+      selectedCar.value = {
+      carid: -1,
+      carbrand: "",
+      carmodel: "",
+      caryear:-1,
+      platenumber: "",
+      createdat: "",
+      tyresize: "",
+      cartype: "",
+      accountid: "",
+      }
+      newAppointment.value = {
+        id: -1,
+        dateTime: new Date(),
+        bay: -1,
+        carid: -1,
+      };
     }
   }
 };
 
 const handleCancel = async () => {
+  console.log("siD: " + selectedIndex.value);
   if (selectedIndex.value !== null) {
     isLoading.value = true;
     try {
       const appointmentId =
         appointments.value[selectedIndex.value].appointmentid;
+      console.log("appointmentId: " + appointmentId);
 
       const response = await axios.put(
         `${baseUrl}/cancel_appointment?appointment_id=${appointmentId}`,
@@ -604,8 +695,8 @@ const fetchAppointments = async () => {
       },
     });
     appointments.value = response.data;
-    console.log("Appointments fetched:", appointments.value);
-    console.log("Appointments data:", response.data);
+    // console.log("Appointments fetched:", appointments.value);
+    // console.log("Appointments data:", response.data);
     /* const response = await api.get('/appointments');
         appointments.value = response.data; */
   } catch (error) {

@@ -74,9 +74,9 @@
                       >Manage Appointments</v-list-item
                     >
                   </router-link>
-                  <v-list-item @click="pastAppointmentsDialog = true"
+                  <!-- <v-list-item @click="pastAppointmentsDialog = true"
                     >Past Appointments</v-list-item
-                  >
+                  > -->
                   <v-list-item @click="confirmLogout = true" style="color: red"
                     >Log Out</v-list-item
                   >
@@ -115,9 +115,9 @@
                           >Manage Appointments</v-list-item
                         >
                       </router-link>
-                      <v-list-item @click="pastAppointmentsDialog = true"
+                      <!-- <v-list-item @click="pastAppointmentsDialog = true"
                         >Past Appointments</v-list-item
-                      >
+                      > -->
                       <v-list-item
                         @click="
                           menu = false;
@@ -323,7 +323,7 @@
     </v-card>
   </v-dialog>
 
-  <v-dialog v-model="pastAppointmentsDialog" max-width="2000px">
+  <!-- <v-dialog v-model="pastAppointmentsDialog" max-width="2000px">
     <v-card>
       <v-card-title>Past Appointments</v-card-title>
       <v-card-text>
@@ -385,7 +385,8 @@
         <v-btn @click="pastAppointmentsDialog = false">Close</v-btn>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-dialog> -->
+
 </template>
 
 <script setup>
@@ -394,8 +395,8 @@ import { useRouter } from "vue-router";
 import { useDateFormatter } from "@/composables/useDateFormatter";
 import TextInput from "@/components/TextInputComponent.vue";
 import { useUserComposable } from "@/composables/userComposable";
-// import { vehicleComposable } from "@/composables/vehicleComposable";
-import { appointmentComposable } from "@/composables/appointmentComposable";
+ import { vehicleComposable } from "@/composables/vehicleComposable";
+// import { appointmentComposable } from "@/composables/appointmentComposable";
 import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
 
@@ -414,9 +415,9 @@ const {
   resetToStoreValues,
 } = useUserComposable();
 
-// const { accountid } = vehicleComposable();
+ const { accountid } = vehicleComposable();
 
-const { pastAppointments, fetchPastAppointments } = appointmentComposable();
+// const { pastAppointments } = appointmentComposable();
 
 // Refs
 const form = ref(null);
@@ -445,7 +446,7 @@ const newPassword = ref("");
 const confirmPassword = ref("");
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
-const pastAppointmentsDialog = ref(false);
+// const pastAppointmentsDialog = ref(false);
 const showAll = ref(false);
 // const vehicleDialog = ref(false);
 // const vehicleDialogAction = ref("");
@@ -681,51 +682,6 @@ const handleDeleteAccount = async () => {
   }
 };
 
-// Vehicle Methods
-// const handleVehicleDialog = (car, action, id) => {
-//   vehicleDialog.value = true;
-//   vehicleDialogAction.value = action;
-//   selectedVehicleId.value = id;
-
-//   if (action === "add") {
-//     plateNumberInput.value = "";
-//     brandInput.value = "";
-//     modelInput.value = "";
-//     yearInput.value = "";
-//     tyreSizeInput.value = "";
-//   } else {
-//     plateNumberInput.value = car.plateNumber;
-//     brandInput.value = car.brand;
-//     modelInput.value = car.model;
-//     yearInput.value = car.year;
-//     tyreSizeInput.value = car.tyreSize;
-//   }
-// };
-
-// const handleAddVehicleBtn = () => {
-//   if (isValidAddVehicle.value) {
-//     addVehicle();
-//     vehicleDialog.value = false;
-//     vehicleDialogAction.value = "";
-//   }
-// };
-
-// const handleEditVehicleBtn = () => {
-//   if (isValidAddVehicle.value) {
-//     editVehicle(selectedVehicleId.value);
-//     vehicleDialog.value = false;
-//     vehicleDialogAction.value = "";
-//     selectedVehicleId.value = null;
-//   }
-// };
-
-// const handleDeleteVehicleBtn = () => {
-//   deleteVehicle(selectedVehicleId.value);
-//   vehicleDialog.value = false;
-//   vehicleDialogAction.value = "";
-//   selectedVehicleId.value = null;
-// };
-
 const handleCancelBtn = () => {
   // Reset form values to original values
   email.value = originalValues.value.email;
@@ -751,7 +707,7 @@ onMounted(async () => {
   document.title = "Your Profile";
 
   resetToStoreValues();
-  fetchPastAppointments();
+  //fetchPastAppointments();
   window.addEventListener("resize", updateScreenSize);
   storeOriginalValues();
 });

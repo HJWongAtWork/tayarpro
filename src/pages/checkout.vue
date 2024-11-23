@@ -378,12 +378,16 @@ export default {
           .toISOString()
           .split("T")[0],
 
-        appointment_time: this.newAppointment.dateTime
-          .toISOString()
-          .split("T")[1]
-          .substring(0, 8),
+        // appointment_time: this.newAppointment.dateTime
+        //   .toISOString()
+        //   .split("T")[1]
+        //   .substring(0, 8),
+
+          apppointment_time: this.newAppointment.dateTime.toLocaleTimeString(),
 
         appointment_bay: this.newAppointment.bay,
+
+        payment_method: this.paymentType,
       };
       //console.log(checkoutData.appointment_bay);
       //console.log(checkoutData.appointment_date);

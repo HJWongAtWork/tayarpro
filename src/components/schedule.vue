@@ -5,9 +5,11 @@
       <v-col cols="12" sm="4" md="2" class="d-flex justify-center align-center">
         <v-btn 
           @click="previousDate()" 
-          :disabled="dateSelected.toDateString() === new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString() || newApptInScheduleFormat.id !== ''">
+          :disabled="dateSelected.toDateString() === new Date(Date.now() + 2*24 * 60 * 60 * 1000).toDateString() || newApptInScheduleFormat.id !== ''">
           <v-icon>mdi-chevron-left</v-icon>
-          previous date
+          <v-icon>mdi-chevron-left</v-icon>
+          <v-icon>mdi-chevron-left</v-icon>
+          <!-- previous date -->
         </v-btn>
       </v-col>
       <v-col cols="12" sm="4" md="8" class="d-flex justify-center align-center">
@@ -15,7 +17,9 @@
       </v-col>
       <v-col cols="12" sm="4" md="2" class="d-flex justify-center align-center">
         <v-btn @click="nextDate()" :disabled="newApptInScheduleFormat.id !== ''">
-          next date
+          <!-- next date -->
+          <v-icon>mdi-chevron-right</v-icon>
+          <v-icon>mdi-chevron-right</v-icon>
           <v-icon>mdi-chevron-right</v-icon>
         </v-btn>
       </v-col>
@@ -93,10 +97,13 @@
           <v-btn color="primary" class="mt-3" @click="addAppointment" :disabled="!addFormValid">Confirm Appointment</v-btn>
         </v-col>
         <v-col cols="12" v-if="newApptInScheduleFormat.id !== ''" align="center">
-          appointment slot is on hold, please proceed OR press
-          <a @click="resetApptSlot" style="color: blue;">here</a>
+          ppointment slot is on hold, please proceed OR press
+          <v-btn @click="resetApptSlot" style="color: blue;">here</v-btn>
           to reset.
         </v-col>
+        <v-col cols="12" v-else align="center">
+          Please be make sure to confirm appointment first to hold the slot.
+        </v-col>          
       </v-row>
     </v-form>
 
@@ -196,7 +203,7 @@
 
       const userType = ref("");
 
-      const dateSelected = ref(new Date(Date.now() + 1 * 24 * 60 * 60 * 1000));
+      const dateSelected = ref(new Date(Date.now() + 2 * 24 * 60 * 60 * 1000));
       const minDate = new Date(Date.now() + 0 * 24 * 60 * 60 * 1000);
 
       const newApptInScheduleFormat = ref({
