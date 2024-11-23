@@ -470,17 +470,10 @@ const route = useRoute();
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 watch(
-      () => route.query.tab,
-      (newTab) => {
-        if (newTab) {
-          activeTab.value = newTab;
-        }
-      },
-      { immediate: true }
-    );
-  () => activeTab.value,
+  () => route.query.tab,
   async (newTab) => {
     if (newTab) {
+      activeTab.value = newTab;
       isLoading.value = true;
       try {
         await fetchAppointments();
@@ -490,8 +483,10 @@ watch(
         isLoading.value = false;
       }
     }
-  }
+  },
+  { immediate: true }
 );
+
 
 /* // Create an Axios instance with a base URL
 const api = axios.create({
