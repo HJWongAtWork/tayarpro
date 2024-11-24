@@ -372,26 +372,24 @@ export default {
       const baseUrl = import.meta.env.VITE_API_BASE_URL;
       this.isLoading = true;
 
+      // Get hours, minutes, and seconds in local time
+      const hours = this.newAppointment.dateTime.getHours().toString().padStart(2, '0');
+      const minutes = this.newAppointment.dateTime.getMinutes().toString().padStart(2, '0');
+      const seconds = this.newAppointment.dateTime.getSeconds().toString().padStart(2, '0');
+      // Combine to get the time in "HH:MM:SS" format
+      const timeString = `${hours}:${minutes}:${seconds}`;
+
       const checkoutData = {
         car_id: this.selectedCar.carid.toString(),
         appointment_date: this.newAppointment.dateTime
           .toISOString()
           .split("T")[0],
 
-        // appointment_time: this.newAppointment.dateTime
-        //   .toISOString()
-        //   .split("T")[1]
-        //   .substring(0, 8),
-
-          apppointment_time: this.newAppointment.dateTime.toLocaleTimeString(),
-
+          appointment_time: timeString,
         appointment_bay: this.newAppointment.bay,
 
         payment_method: this.paymentType,
       };
-      //console.log(checkoutData.appointment_bay);
-      //console.log(checkoutData.appointment_date);
-      //console.log(checkoutData.appointment_time);
       //console.log(checkoutData);
 
       const response = await axios.post(

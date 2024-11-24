@@ -43,7 +43,7 @@
               </v-card-actions>
             </v-card>
           </v-col>
-          <v-col v-if="vehicles.length > 3" cols="12" class="text-center mt-4">
+          <v-col v-if="vehicles.length > 2" cols="12" class="text-center mt-4">
             <v-btn text @click="this.showAll = !this.showAll">
               {{ showAll ? 'Hide some...' : 'Show more...' }}
             </v-btn>
@@ -339,7 +339,7 @@
     },
     computed: {
       displayedVehicles() {
-        return this.showAll ? this.vehicles : this.vehicles.slice(0, 3);
+        return this.showAll ? this.vehicles : this.vehicles.slice(0, 2);
       },
       yearSelections() {
         const startYear = 1990;

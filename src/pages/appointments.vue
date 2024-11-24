@@ -556,7 +556,6 @@ const openDelete = (index) => {
 };
 
 const handleSubmit = async (updatedData) => {
-  console.log("siM: " + selectedIndex.value);
   if (selectedIndex.value !== null) {
     isLoading.value = true;
     try {
@@ -572,13 +571,23 @@ const handleSubmit = async (updatedData) => {
       //     appointment_time: newAppointment.value.dateTime.toLocaleTimeString(),
       //     car_id: selectedCar.value.carid,
       // }
+      //console.log("newAppointment.value: " + newAppointment.value.dateTime);
+      // Get hours, minutes, and seconds in local time
+      const hours = newAppointment.value.dateTime.getHours().toString().padStart(2, '0');
+      const minutes = newAppointment.value.dateTime.getMinutes().toString().padStart(2, '0');
+      const seconds = newAppointment.value.dateTime.getSeconds().toString().padStart(2, '0');
+      // Combine to get the time in "HH:MM:SS" format
+      const timeString = `${hours}:${minutes}:${seconds}Z`;
+      //console.log("timeString: " + timeString);
+
+      //console.log("selectedCar.value.carid: " + selectedCar.value.carid);
       
       const response = await axios.put(`${baseUrl}/update_appointment`, {
           appointment_id: appointmentId,
           appointment_date: newAppointment.value.dateTime
           .toISOString()
           .split("T")[0],
-          appointment_time: newAppointment.value.dateTime.toLocaleTimeString(),
+          appointment_time: timeString,
           car_id: selectedCar.value.carid,
           //updatedData 
       }, {
