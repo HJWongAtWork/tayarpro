@@ -589,6 +589,7 @@ const handleSubmit = async (updatedData) => {
           .split("T")[0],
           appointment_time: timeString,
           car_id: selectedCar.value.carid,
+          //appointment_bay: newAppointment.value.bay,
           //updatedData 
       }, {
           headers: {
