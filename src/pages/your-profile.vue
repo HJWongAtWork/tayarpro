@@ -6,7 +6,8 @@
     </h2>
     <div class="line"></div>
   </div>
-  <v-container max-width="1200">
+  <Loader v-if="loading" height="300px" width="300px"/>
+  <v-container v-else max-width="1200">
     <v-row>
       <v-col cols="12" sm="12" md="3">
         <v-card class="pa-4">
@@ -323,70 +324,6 @@
     </v-card>
   </v-dialog>
 
-  <!-- <v-dialog v-model="pastAppointmentsDialog" max-width="2000px">
-    <v-card>
-      <v-card-title>Past Appointments</v-card-title>
-      <v-card-text>
-        <v-row>
-          <v-col
-            v-for="appt in pastAppointments.slice(0, 3)"
-            :key="appt.id"
-            cols="12"
-            sm="12"
-            md="3"
-          >
-            <v-card>
-              <v-card-title>
-                <p>ID: {{ appt.id }}</p>
-              </v-card-title>
-              <v-card-subtitle>
-                <p>Date: {{ appt.dateTime.toLocaleDateString() }}</p>
-                <p>
-                  Time:
-                  {{
-                    appt.dateTime.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  }}
-                </p>
-              </v-card-subtitle>
-              <v-card-text>
-                <p>Service: {{ appt.service }}</p>
-                <p>Bay: {{ appt.bay }}</p>
-                <p>
-                  Vehicle: {{ appt.brand }} {{ appt.model }} ({{ appt.year }})
-                </p>
-                <p>Status: {{ appt.status }}</p>
-              </v-card-text>
-            </v-card>
-          </v-col>
-          <v-col cols="12" sm="12" md="3" v-if="pastAppointments.length > 3">
-            <v-card
-              outlined
-              class="d-flex align-center justify-center"
-              height="100%"
-            >
-              <v-card-title class="text-center">
-                <router-link
-                  :to="{
-                    path: '/appointments',
-                    query: { tab: 'tab-complete' },
-                  }"
-                >
-                  Show more...
-                </router-link>
-              </v-card-title>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn @click="pastAppointmentsDialog = false">Close</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog> -->
-
 </template>
 
 <script setup>
@@ -702,14 +639,33 @@ const handleCancelBtn = () => {
   }
 };
 
+const loading = ref(true);
+const initializeData = async () => {
+      loading.value = true;
+      const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+      try {
+        await Promise.all([
+          resetToStoreValues(),
+          storeOriginalValues(),
+          delay,
+        ]);
+      } catch (error) {
+        console.error("Error during initialization:", error);
+      } finally {
+        loading.value = false;
+      }
+    };
+
 // Lifecycle Hooks
 onMounted(async () => {
   document.title = "Your Profile";
 
-  resetToStoreValues();
+  //resetToStoreValues();
   //fetchPastAppointments();
   window.addEventListener("resize", updateScreenSize);
-  storeOriginalValues();
+  // storeOriginalValues();
+
+  await initializeData();
 });
 
 onBeforeUnmount(() => {
