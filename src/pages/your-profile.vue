@@ -299,7 +299,7 @@
             :type="showPassword ? 'text' : 'password'"
             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
             @click:append="showPassword = !showPassword"
-            :rules="[rules.required]"
+            :rules="[rules.required, rules.passwordStrength]"
             required
           ></v-text-field>
 
@@ -407,7 +407,8 @@ const inputs = reactive({
 const rules = {
   required: (v) => !!v || "This field is required",
   confirmPasswordRule: (value) =>
-    value === newPassword.value || "Password does not match",
+    (value === newPassword.value && rules.passwordStrength(v) === true) ||
+    "Passwords must match and meet the strength requirements",
   checkPwValid: (value) =>
     value === passwordInput.value || "Password is not correct",
   emailValid: (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
@@ -417,6 +418,14 @@ const rules = {
   year: (value) =>
     (value >= 1900 && value <= new Date().getFullYear()) || "Invalid year",
   bay: (value) => value > 0 || "Bay number must be greater than zero",
+  passwordStrength: (v) => {
+    const regex =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{10,}$/;
+    return (
+      regex.test(v) ||
+      "Password must be at least 10 characters long and include at least one capital letter, one number, and one symbol"
+    );
+  },
 };
 
 const confirmPasswordRule = (v) =>
