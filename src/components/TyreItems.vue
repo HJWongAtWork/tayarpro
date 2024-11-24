@@ -17,7 +17,7 @@
         <div class="card">
           <div class="front">
             <div class="image-container">
-              <v-img height="200" src="../assets/tyre.jpg" contain></v-img>
+              <v-img height="200" src="@/assets/tyre.jpg" contain></v-img>
             </div>
             <div class="content-container">
               <div class="description">{{ tyre.description }}</div>
