@@ -2,7 +2,7 @@
   <Loader v-if="loading" height="300px" width="300px"/>
   <v-card v-else class="pa-4">
     <v-col cols="12" sm="12" md="12">
-      <h1>Vehicles</h1>
+      <h2>VEHICLES</h2>
     </v-col>
     <v-col cols="12" sm="12" md="12">
       <v-btn class="save-btn" @click="handleVehicleDialog(newCar, 'add', null)">
