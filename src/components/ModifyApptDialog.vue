@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue';
+import { ref, reactive, computed, watch, onMounted, onBeforeMount } from 'vue';
 import { appointmentComposable } from '@/composables/appointmentComposable';
 import { vehicleComposable } from '@/composables/vehicleComposable';
 
@@ -86,6 +86,23 @@ watch(() => props.inputObject, (newValue) => {
 }, { immediate: true });
 
 const closeDialog = () => {
+    selectedCar.value = {
+      carid: -1,
+      carbrand: "",
+      carmodel: "",
+      caryear:-1,
+      platenumber: "",
+      createdat: "",
+      tyresize: "",
+      cartype: "",
+      accountid: "",
+      }
+      newAppointment.value = {
+        id: -1,
+        dateTime: new Date(),
+        bay: -1,
+        carid: -1,
+      };
     dialog.value = false;
 };
 
@@ -103,7 +120,7 @@ const saveChanges = () => {
 
         appointment_time: newAppointment.value.dateTime.toLocaleTimeString(),
         car_id: selectedCar.value.carid.toString(),
-        //appointment_bay: newAppointment.value.bay,
+        appointment_bay: newAppointment.value.bay,
     }
 
 
@@ -111,4 +128,24 @@ const saveChanges = () => {
     emit('submit', formData);
     closeDialog();
 };
+
+onBeforeMount(() => {
+    selectedCar.value = {
+      carid: -1,
+      carbrand: "",
+      carmodel: "",
+      caryear:-1,
+      platenumber: "",
+      createdat: "",
+      tyresize: "",
+      cartype: "",
+      accountid: "",
+      }
+      newAppointment.value = {
+        id: -1,
+        dateTime: new Date(),
+        bay: -1,
+        carid: -1,
+      };
+});
 </script>

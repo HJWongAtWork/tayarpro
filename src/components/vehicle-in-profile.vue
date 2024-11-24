@@ -146,26 +146,29 @@
           this.typeInput = car.type;
         }
       },
-      handleAddVehicleBtn() {
+      async handleAddVehicleBtn() {
         if (this.isValidAddVehicle) {
           this.addVehicle();
           this.vehicleDialog = false;
           this.vehicleDialogAction = "";
+          await this.initializeData();
         }
       },
-      handleEditVehicleBtn() {
+      async handleEditVehicleBtn() {
         if (this.isValidAddVehicle) {
           this.editVehicle(this.selectedVehicleId);
           this.vehicleDialog = false;
           this.vehicleDialogAction = "";
           this.selectedVehicleId = null;
+          await this.initializeData();
         }
       },
-      handleDeleteVehicleBtn() {
+      async handleDeleteVehicleBtn() {
         this.deleteVehicle(this.selectedVehicleId);
         this.vehicleDialog = false;
         this.vehicleDialogAction = "";
         this.selectedVehicleId = null;
+        await this.initializeData();
       },
       async getBrandSelections() {
         try {
