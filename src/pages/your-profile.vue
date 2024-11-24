@@ -6,7 +6,7 @@
     </h2>
     <div class="line"></div>
   </div>
-  <Loader v-if="loading" height="300px" width="300px"/>
+  <Loader v-if="loading" height="300px" width="300px" />
   <v-container v-else max-width="1200">
     <v-row>
       <v-col cols="12" sm="12" md="3">
@@ -25,7 +25,10 @@
               </div>
             </v-col>
             <v-col cols="12" class="text-center">
-              <h6>User ID: {{ accountid }}</h6>
+              <div class="d-flex flex-column align-center">
+                <h5>User ID:</h5>
+                <h5>{{ accountId }}</h5>
+              </div>
             </v-col>
             <v-col cols="12" class="text-center">
               <v-file-input
@@ -248,11 +251,17 @@
       <v-card-text>
         <p class="f24-b20">Are you sure you want to logout?</p>
       </v-card-text>
-      <v-card-actions class="d-flex justify-center align-center">
-        <v-btn class="save-btn" @click="handleLogout" :loading="isLoggingOut">
+      <v-card-actions class="justify-center">
+        <v-btn
+          class="save-btn border-thin"
+          @click="handleLogout"
+          :loading="isLoggingOut"
+        >
           Confirm
         </v-btn>
-        <v-btn class="save-btn" @click="confirmLogout = false"> Cancel </v-btn>
+        <v-btn class="save-btn border-thin" @click="confirmLogout = false">
+          Cancel
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -262,12 +271,11 @@
       <v-card-title>Account Deletion Confirmation</v-card-title>
       <v-card-text>
         <p class="f24-b20">Are you sure you want to delete your account?</p>
-        <p class="text-red">This action cannot be undone.</p>
+        <strong><p class="text-red">This action cannot be undone.</p></strong>
       </v-card-text>
       <v-card-actions class="d-flex justify-center align-center">
         <v-btn
           class="save-btn"
-          color="error"
           @click="handleDeleteAccount"
           :loading="isDeleting"
         >
@@ -296,7 +304,7 @@
             :type="showPassword ? 'text' : 'password'"
             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
             @click:append="showPassword = !showPassword"
-            :rules="[rules.required]"
+            :rules="[rules.required, rules.passwordStrength]"
             required
           ></v-text-field>
 
@@ -323,7 +331,6 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-
 </template>
 
 <script setup>
@@ -332,7 +339,7 @@ import { useRouter } from "vue-router";
 import { useDateFormatter } from "@/composables/useDateFormatter";
 import TextInput from "@/components/TextInputComponent.vue";
 import { useUserComposable } from "@/composables/userComposable";
- import { vehicleComposable } from "@/composables/vehicleComposable";
+import { vehicleComposable } from "@/composables/vehicleComposable";
 // import { appointmentComposable } from "@/composables/appointmentComposable";
 import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
@@ -352,7 +359,7 @@ const {
   resetToStoreValues,
 } = useUserComposable();
 
- const { accountid } = vehicleComposable();
+const { accountid } = vehicleComposable();
 
 // const { pastAppointments } = appointmentComposable();
 
@@ -391,6 +398,7 @@ const showAll = ref(false);
 const passwordInput = ref("");
 const isLoggingOut = ref(false);
 const isDeleting = ref(false);
+const accountId = computed(() => userStore.currentUser.accountid);
 
 const inputs = reactive({
   email: { hasChanged: false },
@@ -404,7 +412,8 @@ const inputs = reactive({
 const rules = {
   required: (v) => !!v || "This field is required",
   confirmPasswordRule: (value) =>
-    value === newPassword.value || "Password does not match",
+    (value === newPassword.value && rules.passwordStrength(v) === true) ||
+    "Passwords must match and meet the strength requirements",
   checkPwValid: (value) =>
     value === passwordInput.value || "Password is not correct",
   emailValid: (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
@@ -414,6 +423,14 @@ const rules = {
   year: (value) =>
     (value >= 1900 && value <= new Date().getFullYear()) || "Invalid year",
   bay: (value) => value > 0 || "Bay number must be greater than zero",
+  passwordStrength: (v) => {
+    const regex =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{10,}$/;
+    return (
+      regex.test(v) ||
+      "Password must be at least 10 characters long and include at least one capital letter, one number, and one symbol"
+    );
+  },
 };
 
 const confirmPasswordRule = (v) =>
@@ -578,8 +595,7 @@ const handleSaveBtn = async () => {
     } finally {
       await initializeData();
     }
-  }
-  else if (isValidEdit.value) {
+  } else if (isValidEdit.value) {
     isEdit.value = false;
     storeOriginalValues();
     isChanged.value = false;
@@ -651,20 +667,16 @@ const handleCancelBtn = () => {
 
 const loading = ref(true);
 const initializeData = async () => {
-      loading.value = true;
-      const delay = new Promise((resolve) => setTimeout(resolve, 1000));
-      try {
-        await Promise.all([
-          resetToStoreValues(),
-          storeOriginalValues(),
-          delay,
-        ]);
-      } catch (error) {
-        console.error("Error during initialization:", error);
-      } finally {
-        loading.value = false;
-      }
-    };
+  loading.value = true;
+  const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+  try {
+    await Promise.all([resetToStoreValues(), storeOriginalValues(), delay]);
+  } catch (error) {
+    console.error("Error during initialization:", error);
+  } finally {
+    loading.value = false;
+  }
+};
 
 // Lifecycle Hooks
 onMounted(async () => {
@@ -689,7 +701,6 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .save-btn {
-  margin-right: 50px;
   background-color: red;
   color: white;
 }
