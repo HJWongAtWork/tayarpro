@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export const useVehicleStore = defineStore("vehicleStore", {
   state: () => ({
     vehicles: [] as {
@@ -59,7 +61,7 @@ export const useVehicleStore = defineStore("vehicleStore", {
       //console.log("token from car store: " + (token !== null));
       try {
         const response = await axios.post(
-          "/api/view_car",
+          `${baseUrl}/view_car`,
           "", // Empty string as data
           {
             headers: {

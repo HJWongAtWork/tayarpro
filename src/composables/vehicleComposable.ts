@@ -1,6 +1,8 @@
 import { useVehicleStore } from "@/stores/vehicleStore";
 import axios from "axios";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export const vehicleComposable = () => {
   const vehicle_store = useVehicleStore();
   const { vehicles } = toRefs(vehicle_store);
@@ -38,7 +40,7 @@ export const vehicleComposable = () => {
     const token = localStorage.getItem("jwt");
 
     try {
-      const response = await axios.post("/api/add_new_car", newVehicle, {
+      const response = await axios.post(`${baseUrl}/add_new_car`, newVehicle, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -80,7 +82,7 @@ export const vehicleComposable = () => {
 
     try {
       const response = await axios.put(
-        "/api/update_car",
+        `${baseUrl}/update_car`,
         carData, // Data to be sent with the request
         {
           headers: {
@@ -102,7 +104,7 @@ export const vehicleComposable = () => {
     const token = localStorage.getItem("jwt");
     try {
       const response = await axios.post(
-        "/api/change_car_status",
+        `${baseUrl}/change_car_status`,
         {
           car_id: id, // Data to be sent with the request
         },

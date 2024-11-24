@@ -157,6 +157,8 @@
   import { vehicleComposable } from '@/composables/vehicleComposable';
   import axios from "axios";
 
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
   export default {
     data() {
       return {
@@ -257,7 +259,7 @@
       async getBrandSelections() {
         try {
           const response = await axios.get(
-            "/api/car_brands",
+            `${baseUrl}/car_brands`,
             {
               headers: {
                 Accept: "application/json",
@@ -281,7 +283,7 @@
       async getModelSelections() {
         try {
           const response = await axios.get(
-            `/api/car_models/${this.brandInput.toLowerCase()}`,
+            `${baseUrl}/car_models/${this.brandInput.toLowerCase()}`,
             {
               headers: {
                 Accept: "application/json",
@@ -305,7 +307,7 @@
       async getTyreSizeSelections() {
         try {
           const response = await axios.get(
-            `/api/tyre_sizes`,
+            `${baseUrl}/tyre_sizes`,
             {
               headers: {
                 Accept: "application/json",
