@@ -1,8 +1,8 @@
 <template>
   <v-container class="mt-10" max-width="1200">
-    <v-card v-if="serviceData.length">
+    <v-card v-if="serviceData.length" align="center">
       <v-row>
-        <v-col cols="4">
+        <v-col cols="12" sm="4">
           <v-img
             src="@/assets/change-brake-fluid.webp"
             height="300"
@@ -10,11 +10,11 @@
             class="ma-6"
           ></v-img>
         </v-col>
-        <v-col cols="8">
-          <v-card-title class="text-h4 mt-2 pl-0">{{
+        <v-col cols="12" sm="8">
+          <v-card-title class="text-h4 mt-2 pl-0 text-wrap">{{
             serviceData[0].description
           }}</v-card-title>
-          <v-card-subtitle class="pl-0"> Services </v-card-subtitle>
+          <v-card-subtitle class="pl-0 ma-auto"> Services </v-card-subtitle>
           <v-divider class="my-5"></v-divider>
           <div class="car-types">
             <v-btn
@@ -35,7 +35,7 @@
           </div>
 
           <v-row>
-            <v-col cols="12">
+            <v-col cols="12" class="mb-5">
               <v-btn @click="addToCart" color="black" class="add-to-cart-button"
                 >ADD TO CART</v-btn
               >

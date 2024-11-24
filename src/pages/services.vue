@@ -6,13 +6,15 @@
     </h2>
     <div class="line"></div>
   </div>
-  <v-container class="mt-2" max-width="1200">
+
+  <v-container class="mt-2" max-width="1200" min-width="350">
     <v-row>
-      <v-col cols="3">
+      <v-col cols="12" md="3" class="px-5">
         <div class="ma-2 pa-0">
           <h3><strong>SERVICES CATEGORIES</strong></h3>
         </div>
         <v-divider thickness="2"></v-divider>
+
         <v-list class="service-list">
           <v-list-item
             class="pa-0"
@@ -29,7 +31,7 @@
           </v-list-item>
         </v-list>
       </v-col>
-      <v-col cols="9" class="content-column">
+      <v-col cols="12" md="9" class="content-column px-10">
         <div ref="searchWrapper" class="search-wrapper">
           <div
             ref="searchContainer"

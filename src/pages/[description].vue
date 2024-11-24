@@ -1,30 +1,30 @@
 <template>
   <v-container class="mt-10" max-width="1200">
-    <v-card v-if="tyre">
+    <v-card v-if="tyre" align="center">
       <v-row>
-        <v-col cols="4">
+        <v-col cols="12" sm="4">
           <v-img
-            src="../assets/tyre.jpg"
+            src="@/assets/tyre.jpg"
             height="300"
             width="300"
             class="ma-6"
           ></v-img>
         </v-col>
-        <v-col cols="8">
-          <v-card-title class="text-h4 mt-2 pl-0">{{
+        <v-col cols="12" sm="8">
+          <v-card-title class="text-h4 mt-2 pl-0 text wrap">{{
             tyre.description
           }}</v-card-title>
           <div class="d-flex pl-0">
-            <v-card-subtitle class="pl-0"
+            <v-card-subtitle class="pl-0 ma-auto"
               >Brand: {{ tyre.brand_name }}</v-card-subtitle
             >
             <v-divider vertical class="mx-2"></v-divider>
-            <v-card-subtitle>Type: {{ tyre.cartype }}</v-card-subtitle>
+            <v-card-subtitle class="ma-auto">Type: {{ tyre.cartype }}</v-card-subtitle>
           </div>
           <v-divider class="my-5"></v-divider>
           <h2>RM {{ tyre.unitprice }}</h2>
           <v-row class="mt-4 ml-1 align-center">
-            <div class="quantity">
+            <div class="quantity ma-auto">
               <v-col cols="auto" class="pa-0">
                 <button
                   @click="decreaseQuantity"
@@ -58,13 +58,13 @@
               </v-col>
               <v-col>
                 <v-card-subtitle>
-                  {{ tyre.stockunit }} peices available
+                  {{ tyre.stockunit }} pieces available
                 </v-card-subtitle>
               </v-col>
             </div>
           </v-row>
           <v-row>
-            <v-col cols="12">
+            <v-col cols="12" class="mb-5">
               <v-btn @click="addToCart" color="black">ADD TO CART</v-btn>
             </v-col>
           </v-row>
