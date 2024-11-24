@@ -15,7 +15,7 @@
               ></v-img>
             </div>
             <div class="content-container">
-              <div class="description">{{ service.description }}</div>
+              <div class="description text-wrap">{{ service.description }}</div>
               <div class="details">
                 <span v-if="service.minPrice === service.maxPrice">
                   RM {{ service.minPrice.toFixed(2) }}

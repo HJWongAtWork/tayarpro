@@ -20,7 +20,7 @@
               <v-img height="200" src="@/assets/tyre.jpg" contain></v-img>
             </div>
             <div class="content-container">
-              <div class="description">{{ tyre.description }}</div>
+              <div class="description text-wrap">{{ tyre.description }}</div>
               <div class="details">
                 <span>RM {{ tyre.unitprice.toFixed(2) }}</span>
                 <span class="ml-2 car-type">{{ tyre.cartype }}</span>
