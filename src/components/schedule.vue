@@ -1,5 +1,6 @@
 <template>
-  <v-container>
+  <Loader v-if="loading" height="300px" width="300px"/>
+  <v-container v-else>
     <h2>Tire Shop Schedule</h2>
     <v-row>
       <v-col cols="12" sm="4" md="2" class="d-flex justify-center align-center">
@@ -216,7 +217,7 @@
       const toast = ref(null);
 
       onMounted( async () => {
-        await fetchAllAppointments();
+        await initializeData();
         transformToSchedule();
         isBaysfull();
 
@@ -228,6 +229,22 @@
           userType.value = "admin";
         }
       });
+
+      const loading = ref(true);
+      const initializeData = async () => {
+        loading.value = true;
+        const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+        try {
+          await Promise.all([
+          fetchAllAppointments(),
+            delay,
+          ]);
+        } catch (error) {
+          console.error("Error during initialization:", error);
+        } finally {
+          loading.value = false;
+        }
+    };
 
       const transformToSchedule = () => {
         initializeSchedule();
@@ -322,7 +339,6 @@
           newStartHour.value = "";
           newEndHour.value = "";
         }
-        //fetchAllAppointments();
         transformToSchedule();
         isBaysfull();
       };
@@ -420,6 +436,7 @@
         newAppointment,
         minDate,
         toast,
+        loading,
       };
     },
     watch: {

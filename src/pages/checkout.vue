@@ -161,9 +161,9 @@
                         <tr>
                           <td class="table-cell-small">Car Details</td>
                           <td class="table-cell-small">
-                            Car ID: {{ selectedCar.carid }}
-                            <!-- {{ newAppointment.brand }}
-                            {{ newAppointment.model }} {{ newAppointment.year }} -->
+                            <!-- Car ID: {{ selectedCar.carid }}
+                            {{ selectedCar }} -->
+                            {{ selectedCar.carbrand.toUpperCase() }} {{ selectedCar.carmodel.toUpperCase() }} {{ selectedCar.caryear }} ({{ selectedCar.platenumber.toUpperCase() }})
                           </td>
                         </tr>
                       </tbody>
@@ -321,15 +321,22 @@ export default {
         this.paymentType = null;
         this.step = 0;
         this.resetForm();
-        this.newAppointment = {
+        this.selectedCar.value = {
+          carid: -1,
+          carbrand: "",
+          carmodel: "",
+          caryear:-1,
+          platenumber: "",
+          createdat: "",
+          tyresize: "",
+          cartype: "",
+          accountid: "",
+        }
+        this.newAppointment.value = {
           id: -1,
           dateTime: new Date(),
-          service: "",
           bay: -1,
-          brand: "",
-          model: "",
-          year: -1,
-          status: "",
+          carid: -1,
         };
         this.checkoutStore.hasService = false;
         this.checkoutStore.hasProduct = false;

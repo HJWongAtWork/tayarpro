@@ -186,6 +186,8 @@ import placeholderImage from "@/assets/tyre.jpg";
 import { ref, onMounted, onUnmounted } from "vue";
 import { useCheckoutStore } from "@/stores/checkout";
 import ToastNotification from "@/components/ToastNotification.vue"; 
+import { appointmentComposable } from "@/composables/appointmentComposable";
+import { vehicleComposable } from "@/composables/vehicleComposable";
 
 const isLoading = ref(true);
 const handleImageError = () => {
@@ -202,12 +204,14 @@ export default {
     const router = useRouter();
     const checkoutStore = useCheckoutStore();
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const { newAppointment } = appointmentComposable();
+    const { selectedCar } = vehicleComposable();
 
     onMounted(() => {
       document.title = "Cart";
     });
 
-    return { router, checkoutStore, baseUrl };
+    return { router, checkoutStore, baseUrl, newAppointment, selectedCar,};
   },
   data() {
     return {
@@ -268,6 +272,24 @@ export default {
       });
       this.checkoutStore.hasProduct = false;
       this.checkoutStore.hasService = false;
+
+      this.selectedCar.value = {
+          carid: -1,
+          carbrand: "",
+          carmodel: "",
+          caryear:-1,
+          platenumber: "",
+          createdat: "",
+          tyresize: "",
+          cartype: "",
+          accountid: "",
+        }
+        this.newAppointment.value = {
+          id: -1,
+          dateTime: new Date(),
+          bay: -1,
+          carid: -1,
+        };
 
       this.router.push("/checkout"); }
     },

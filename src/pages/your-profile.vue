@@ -516,6 +516,8 @@ const handleSubmitBtn = async () => {
       alert(
         "Error changing password. Please check your current password and try again."
       );
+    } finally {
+      await initializeData();
     }
   }
 };
@@ -533,9 +535,9 @@ const changePasswordClicked = () => {
 };
 
 const handleSaveBtn = async () => {
-  console.log("Saving...");
-  console.log(isChanged.value);
-  console.log(isValidEdit.value);
+  // console.log("Saving...");
+  // console.log(isChanged.value);
+  // console.log(isValidEdit.value);
   if (isChanged.value && isValidEdit.value) {
     try {
       const token = localStorage.getItem("jwt");
@@ -573,7 +575,15 @@ const handleSaveBtn = async () => {
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Error updating profile");
+    } finally {
+      await initializeData();
     }
+  }
+  else if (isValidEdit.value) {
+    isEdit.value = false;
+    storeOriginalValues();
+    isChanged.value = false;
+    removeCssClasses();
   }
 };
 

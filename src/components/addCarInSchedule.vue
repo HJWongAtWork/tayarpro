@@ -22,8 +22,8 @@
       const { vehicles, selectedCar, fetchVehicles } = vehicleComposable();
       const selectedCarStr = ref("");
 
-      onMounted(() => {
-        fetchVehicles();
+      onMounted( async () => {
+        await fetchVehicles();
       });
 
       const plateNumberOfSelectedCar = (str) => {

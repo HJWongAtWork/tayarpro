@@ -11,7 +11,8 @@
             </v-col>
           </v-row>
           <v-divider class="ma-3 mb-0" thickness="2" opacity="0.3" />
-          <v-row>
+          <Loader v-if="loading" height="300px" width="300px"/>
+          <v-row v-else>
             <v-col cols="12">
               <v-tabs
                 v-model="activeTab"
@@ -503,8 +504,10 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL;
 //   modifyDialog.value = true;
 // };
 
-onMounted(() => {
+onMounted(async () => {
   document.title = "Appointments";
+
+  await initializeData();
 });
 
 watch(
@@ -512,13 +515,14 @@ watch(
   async (newTab) => {
     if (newTab) {
       activeTab.value = newTab;
-      isLoading.value = true;
+      loading.value = true;
       try {
         await fetchAppointments();
       } catch (error) {
         console.error("Error fetching appointments:", error);
       } finally {
-        isLoading.value = false;
+        loading.value = false;
+        await initializeData();
       }
     }
   },
@@ -541,7 +545,7 @@ const appointments = ref([]);
 const dialogVisible = ref(false);
 const deleteVisible = ref(false);
 const selectedIndex = ref(null);
-const isLoading = ref(false);
+// const isLoading = ref(false);
 
 const selectedItem = computed(() => {
   return selectedIndex.value !== null
@@ -561,7 +565,7 @@ const openDelete = (index) => {
 
 const handleSubmit = async (updatedData) => {
   if (selectedIndex.value !== null) {
-    isLoading.value = true;
+    loading.value = true;
     try {
       const appointmentId =
         appointments.value[selectedIndex.value].appointmentid;
@@ -635,7 +639,7 @@ const handleSubmit = async (updatedData) => {
       // Handle error (e.g., show an error message to the user)
     } finally {
       // Reset selection and close dialog
-      isLoading.value = false;
+      loading.value = false;
       selectedIndex.value = null;
       dialogVisible.value = false;
       selectedCar.value = {
@@ -655,6 +659,7 @@ const handleSubmit = async (updatedData) => {
         bay: -1,
         carid: -1,
       };
+      await initializeData();
     }
   }
 };
@@ -662,7 +667,7 @@ const handleSubmit = async (updatedData) => {
 const handleCancel = async () => {
   console.log("siD: " + selectedIndex.value);
   if (selectedIndex.value !== null) {
-    isLoading.value = true;
+    loading.value = true;
     try {
       const appointmentId =
         appointments.value[selectedIndex.value].appointmentid;
@@ -691,16 +696,17 @@ const handleCancel = async () => {
     } catch (error) {
       console.error("Error deleting appointment:", error);
     } finally {
-      isLoading.value = false;
+      loading.value = false;
       selectedIndex.value = null;
       deleteVisible.value = false;
+      await initializeData();
     }
   }
 };
 
 // Function to fetch appointments from the server
 const fetchAppointments = async () => {
-  isLoading.value = true;
+  loading.value = true;
   try {
     const response = await axios.post(`${baseUrl}/get_appointment`, "", {
       headers: {
@@ -717,10 +723,26 @@ const fetchAppointments = async () => {
     console.error("Error fetching appointments:", error);
     // Handle error (e.g., show an error message to the user)
   } finally {
-    isLoading.value = false;
+    loading.value = false;
   }
 };
 
+const loading = ref(true);
+const initializeData = async () => {
+      loading.value = true;
+      const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+      try {
+        await Promise.all([
+        fetchAppointments(),
+          delay,
+        ]);
+      } catch (error) {
+        console.error("Error during initialization:", error);
+      } finally {
+        loading.value = false;
+      }
+    };
+
 // Call fetchAppointments when the component is created
-fetchAppointments();
+//fetchAppointments();
 </script>
