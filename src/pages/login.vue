@@ -213,6 +213,7 @@ const fetchPassword = async () => {
 
 // Lifecycle Hooks
 onMounted(() => {
+  document.title = 'Login'
   checkLoginStatus()
 })
 </script>

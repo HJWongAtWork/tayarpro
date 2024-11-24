@@ -47,7 +47,7 @@
       selectedCarStr() {
         let car = null;
         car = this.vehicles.find((vehicle) => vehicle.plateNumber === this.plateNumberOfSelectedCar(this.selectedCarStr));
-        this.selectedCar.carid = car.id;
+        this.selectedCar.carid = car.id || null;
         this.selectedCar.platenumber = car.plateNumber;
         this.selectedCar.carbrand = car.brand;
         this.selectedCar.carmodel = car.model;

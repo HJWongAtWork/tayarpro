@@ -563,6 +563,7 @@ const toggleAdditionalText = (index: number) => {
 
 // Lifecycle Hooks
 onMounted(async () => {
+  document.title = "TayarPro";
   await fetchRandomTyres();
   await nextTick();
 

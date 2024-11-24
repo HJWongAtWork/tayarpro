@@ -304,7 +304,11 @@ export default {
     };
   },
   mounted() {
+    document.title = "Checkout";
     this.checkLoginStatus();
+  },
+  beforeMount() {
+    document.title = "Checkout";
   },
   methods: {
     displayError(message) {
@@ -442,7 +446,7 @@ export default {
           return false;
 
         case 1: // Payment Details
-          if (this.newAppointment.id === -1 || this.selectedCar.carid === -1) {
+          if (this.newAppointment.id === -1 || this.selectedCar.carid === -1 || this.selectedCar.carid === null) {
             return true;
           }
           return false;

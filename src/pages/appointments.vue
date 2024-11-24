@@ -503,6 +503,10 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL;
 //   modifyDialog.value = true;
 // };
 
+onMounted(() => {
+  document.title = "Appointments";
+});
+
 watch(
   () => route.query.tab,
   async (newTab) => {
