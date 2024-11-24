@@ -6,7 +6,7 @@
     </h2>
     <div class="line"></div>
   </div>
-  <Loader v-if="loading" height="300px" width="300px"/>
+  <Loader v-if="loading" height="300px" width="300px" />
   <v-container v-else max-width="1200">
     <v-row>
       <v-col cols="12" sm="12" md="3">
@@ -25,7 +25,10 @@
               </div>
             </v-col>
             <v-col cols="12" class="text-center">
-              <h6>User ID: {{ accountid }}</h6>
+              <div class="d-flex flex-column align-center">
+                <h5>User ID:</h5>
+                <h5>{{ accountId }}</h5>
+              </div>
             </v-col>
             <v-col cols="12" class="text-center">
               <v-file-input
@@ -323,7 +326,6 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-
 </template>
 
 <script setup>
@@ -332,7 +334,7 @@ import { useRouter } from "vue-router";
 import { useDateFormatter } from "@/composables/useDateFormatter";
 import TextInput from "@/components/TextInputComponent.vue";
 import { useUserComposable } from "@/composables/userComposable";
- import { vehicleComposable } from "@/composables/vehicleComposable";
+import { vehicleComposable } from "@/composables/vehicleComposable";
 // import { appointmentComposable } from "@/composables/appointmentComposable";
 import { useUserStore } from "@/stores/userStore";
 import axios from "axios";
@@ -352,7 +354,7 @@ const {
   resetToStoreValues,
 } = useUserComposable();
 
- const { accountid } = vehicleComposable();
+const { accountid } = vehicleComposable();
 
 // const { pastAppointments } = appointmentComposable();
 
@@ -391,6 +393,7 @@ const showAll = ref(false);
 const passwordInput = ref("");
 const isLoggingOut = ref(false);
 const isDeleting = ref(false);
+const accountId = computed(() => userStore.currentUser.accountid);
 
 const inputs = reactive({
   email: { hasChanged: false },
@@ -578,8 +581,7 @@ const handleSaveBtn = async () => {
     } finally {
       await initializeData();
     }
-  }
-  else if (isValidEdit.value) {
+  } else if (isValidEdit.value) {
     isEdit.value = false;
     storeOriginalValues();
     isChanged.value = false;
@@ -651,20 +653,16 @@ const handleCancelBtn = () => {
 
 const loading = ref(true);
 const initializeData = async () => {
-      loading.value = true;
-      const delay = new Promise((resolve) => setTimeout(resolve, 1000));
-      try {
-        await Promise.all([
-          resetToStoreValues(),
-          storeOriginalValues(),
-          delay,
-        ]);
-      } catch (error) {
-        console.error("Error during initialization:", error);
-      } finally {
-        loading.value = false;
-      }
-    };
+  loading.value = true;
+  const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+  try {
+    await Promise.all([resetToStoreValues(), storeOriginalValues(), delay]);
+  } catch (error) {
+    console.error("Error during initialization:", error);
+  } finally {
+    loading.value = false;
+  }
+};
 
 // Lifecycle Hooks
 onMounted(async () => {
