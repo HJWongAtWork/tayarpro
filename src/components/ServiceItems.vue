@@ -1,13 +1,16 @@
 <template>
   <v-row>
-    <v-col cols="3" v-for="service in serviceItems" :key="service.serviceid">
+    <v-col cols="12"
+      sm="6"
+      md="4"
+      lg="3" v-for="service in serviceItems" :key="service.serviceid">
       <v-card height="400" class="container">
         <div class="card">
           <div class="front">
             <div class="image-container">
               <v-img
                 height="200"
-                src="../assets/change-brake-fluid.webp"
+                src="@/assets/change-brake-fluid.webp"
                 cover
               ></v-img>
             </div>
