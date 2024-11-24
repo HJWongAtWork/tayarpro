@@ -251,11 +251,17 @@
       <v-card-text>
         <p class="f24-b20">Are you sure you want to logout?</p>
       </v-card-text>
-      <v-card-actions class="d-flex justify-center align-center">
-        <v-btn class="save-btn" @click="handleLogout" :loading="isLoggingOut">
+      <v-card-actions class="justify-center">
+        <v-btn
+          class="save-btn border-thin"
+          @click="handleLogout"
+          :loading="isLoggingOut"
+        >
           Confirm
         </v-btn>
-        <v-btn class="save-btn" @click="confirmLogout = false"> Cancel </v-btn>
+        <v-btn class="save-btn border-thin" @click="confirmLogout = false">
+          Cancel
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -265,12 +271,11 @@
       <v-card-title>Account Deletion Confirmation</v-card-title>
       <v-card-text>
         <p class="f24-b20">Are you sure you want to delete your account?</p>
-        <p class="text-red">This action cannot be undone.</p>
+        <strong><p class="text-red">This action cannot be undone.</p></strong>
       </v-card-text>
       <v-card-actions class="d-flex justify-center align-center">
         <v-btn
           class="save-btn"
-          color="error"
           @click="handleDeleteAccount"
           :loading="isDeleting"
         >
@@ -696,7 +701,6 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .save-btn {
-  margin-right: 50px;
   background-color: red;
   color: white;
 }
