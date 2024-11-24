@@ -19,7 +19,9 @@
               >Brand: {{ tyre.brand_name }}</v-card-subtitle
             >
             <v-divider vertical class="mx-2"></v-divider>
-            <v-card-subtitle class="ma-auto">Type: {{ tyre.cartype }}</v-card-subtitle>
+            <v-card-subtitle class="ma-auto"
+              >Type: {{ tyre.cartype }}</v-card-subtitle
+            >
           </div>
           <v-divider class="my-5"></v-divider>
           <h2>RM {{ tyre.unitprice }}</h2>
@@ -79,9 +81,9 @@
       <v-card-title> Product Description</v-card-title>
       <div class="product-description">
         <ul>
-          <li>{{ tyre.details }}</li>
-          <li>{{ tyre.details2 }}</li>
-          <li>{{ tyre.details3 }}</li>
+          <li v-for="(detail, index) in parsedDetails" :key="index">
+            {{ detail }}
+          </li>
         </ul>
         <div class="product-spec">
           <span>Load index: {{ tyre.loadindex }}</span>
@@ -243,6 +245,29 @@ export default defineComponent({
     const loading = ref(false);
     const recommendedTyres = ref<RecommendedTyre[]>([]);
 
+    const parsedDetails = computed(() => {
+      if (tyre.value && tyre.value.details) {
+        try {
+          // Use regex to extract the details
+          const detailsRegex = /'([^']+)'/g;
+          const matches = tyre.value.details.match(detailsRegex);
+
+          if (matches) {
+            return matches.map(
+              (match: string): string =>
+                match
+                  .replace(/^'|'$/g, "") // Remove single quotes at start and end
+                  .replace(/\\"/g, "") // Remove remaining \"
+                  .trim() // Remove any leading/trailing whitespace
+            );
+          }
+        } catch (error) {
+          console.error("Error parsing details:", error);
+          return [];
+        }
+      }
+      return [];
+    });
     const fetchTyre = async () => {
       const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
@@ -401,6 +426,7 @@ export default defineComponent({
       increaseQuantity,
       recommendedTyres,
       goToTyreDetails,
+      parsedDetails,
     };
   },
 });
