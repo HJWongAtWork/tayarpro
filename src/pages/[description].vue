@@ -284,6 +284,33 @@ export default defineComponent({
             },
           }
         );
+
+        // Fetch the entire cart
+        const cartResponse2 = await axios.post(
+          `${baseUrl}/get_cart`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log("Cart Response 2", cartResponse2.data);
+
+        // Count products with IDs starting with "T" in the entire cart
+        const tProductCount = cartResponse2.data.filter((item: any) =>
+          item.productid.startsWith("T")
+        ).length;
+
+        console.log("T Product Count", tProductCount);
+        // Check if adding this product would exceed the limit
+        if (tProductCount >= 2) {
+          alert(
+            "You cannot have more than two type of tyre products in your cart."
+          );
+          return;
+        }
+
         // calculate the total quantity (cart + new quantity)
         const currentCartQuantity =
           cartResponse.data.length > 0 ? cartResponse.data[0].quantity : 0;
