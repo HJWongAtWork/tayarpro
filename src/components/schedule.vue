@@ -155,10 +155,6 @@
       DatePicker,
     },
     setup() {
-
-      onMounted(() => {
-        fetchAllAppointments();
-      })
       const hours = ["9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM"];
       const hours2 = ref([
         { text: "9 AM", value: "9 AM", disabled: false },
@@ -219,7 +215,8 @@
 
       const toast = ref(null);
 
-      onMounted(() => {
+      onMounted( async () => {
+        await fetchAllAppointments();
         transformToSchedule();
         isBaysfull();
 
@@ -325,6 +322,7 @@
           newStartHour.value = "";
           newEndHour.value = "";
         }
+        //fetchAllAppointments();
         transformToSchedule();
         isBaysfull();
       };
