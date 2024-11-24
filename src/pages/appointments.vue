@@ -556,6 +556,23 @@ const selectedItem = computed(() => {
 const openDialog = (index) => {
   selectedIndex.value = index;
   dialogVisible.value = true;
+  selectedCar.value = {
+          carid: -1,
+          carbrand: "",
+          carmodel: "",
+          caryear:-1,
+          platenumber: "",
+          createdat: "",
+          tyresize: "",
+          cartype: "",
+          accountid: "",
+  }
+  newAppointment.value = {
+          id: -1,
+          dateTime: new Date(),
+          bay: -1,
+          carid: -1,
+  };
 };
 
 const openDelete = (index) => {

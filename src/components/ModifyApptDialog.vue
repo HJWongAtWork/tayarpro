@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" max-width="700px" min-width="400px">
+    <v-dialog v-model="dialog" persistent max-width="700px" min-width="400px">
         <v-card class="pa-auto py-5">
             <v-row>
                 <v-col cols="12">

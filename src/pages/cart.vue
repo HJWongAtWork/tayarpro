@@ -273,7 +273,7 @@ export default {
         this.checkoutStore.hasProduct = false;
         this.checkoutStore.hasService = false;
 
-      this.selectedCar.value = {
+      this.selectedCar = {
           carid: -1,
           carbrand: "",
           carmodel: "",
@@ -284,7 +284,7 @@ export default {
           cartype: "",
           accountid: "",
         }
-        this.newAppointment.value = {
+        this.newAppointment = {
           id: -1,
           dateTime: new Date(),
           bay: -1,
