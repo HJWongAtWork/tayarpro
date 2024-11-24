@@ -1,5 +1,5 @@
 <template>
-    <div class="title-page">
+  <div class="title-page">
     <div class="line"></div>
     <h2 class="no-background text-center">
       <span><strong>MY CART</strong></span>
@@ -257,21 +257,21 @@ export default {
       if (!this.checkoutStore.hasProduct && !this.checkoutStore.hasService) {
         this.$refs.toast.addToast("Cart is empty!", 2000);
       }
-      else if (!this.checkoutStore.hasProduct && this.checkoutStore.hasService) {
-        this.$refs.toast.addToast("No product in cart!", 2000);
-      }
-      else if (this.checkoutStore.hasProduct && !this.checkoutStore.hasService) {
-        this.$refs.toast.addToast("No service in cart!", 2000);
-      }
+      // else if (!this.checkoutStore.hasProduct && this.checkoutStore.hasService) {
+      //   this.$refs.toast.addToast("No product in cart!", 2000);
+      // }
+      // else if (this.checkoutStore.hasProduct && !this.checkoutStore.hasService) {
+      //   this.$refs.toast.addToast("No service in cart!", 2000);
+      // }
       else {
-
-      this.checkoutStore.setCheckoutData({
-        Subtotal: this.Subtotal,
-        SST: this.SST,
-        Total: this.Total,
-      });
-      this.checkoutStore.hasProduct = false;
-      this.checkoutStore.hasService = false;
+      
+        this.checkoutStore.setCheckoutData({
+          Subtotal: this.Subtotal,
+          SST: this.SST,
+          Total: this.Total,
+        });
+        this.checkoutStore.hasProduct = false;
+        this.checkoutStore.hasService = false;
 
       this.selectedCar.value = {
           carid: -1,
@@ -291,7 +291,8 @@ export default {
           carid: -1,
         };
 
-      this.router.push("/checkout"); }
+      this.router.push("/checkout"); 
+      }
     },
     async fetchCartItems() {
       try {
