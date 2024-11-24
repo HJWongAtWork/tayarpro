@@ -382,16 +382,16 @@ export default {
         console.log("Sending checkout data:", checkoutData);
 
         // Send to checkout endpoint
-        const response = await axios.post(
-          `${this.baseUrl}/checkout`,
-          checkoutData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // const response = await axios.post(
+        //   `${this.baseUrl}/checkout`,
+        //   checkoutData,
+        //   {
+        //     headers: {
+        //       Authorization: `Bearer ${token}`,
+        //       "Content-Type": "application/json",
+        //     },
+        //   }
+        // );
 
         console.log("Checkout response:", response.data);
 
