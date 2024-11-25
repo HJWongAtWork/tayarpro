@@ -17,7 +17,7 @@
       md="12"
     >
       <v-card class="pa-4">
-        <v-card-title>{{ car.plateNumber }}</v-card-title>
+        <v-card-title class="plateNumber">{{ car.plateNumber }}</v-card-title>
         <v-card-subtitle
           >{{ car.brand }} {{ car.model }} ({{ car.year }})</v-card-subtitle
         >
@@ -358,15 +358,7 @@ export default {
   },
   computed: {
     displayedVehicles() {
-      const vehicles = this.showAll ? this.vehicles : this.vehicles.slice(0, 2);
-      return vehicles.map((car) => ({
-        ...car,
-        plateNumber: car.plateNumber.toUpperCase(),
-        brand: car.brand.toUpperCase(),
-        model: car.model.toUpperCase(),
-        tyreSize: car.tyreSize.toUpperCase(),
-        type: car.type.toUpperCase(),
-      }));
+      return this.showAll ? this.vehicles : this.vehicles.slice(0, 2);
     },
     yearSelections() {
       const startYear = 1990;
@@ -382,6 +374,9 @@ export default {
 </script>
 
 <style scoped>
+.plateNumber {
+  text-transform: uppercase;
+}
 .save-btn {
   margin-right: 50px;
   background-color: red;
