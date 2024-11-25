@@ -1,5 +1,6 @@
 <template>
-  <v-container class="justify-center d-flex" max-width="1200">
+  <Loader v-if="loading" height="300px" width="300px" />
+  <v-container v-else class="justify-center d-flex" max-width="1200">
     <v-stepper v-model="step">
       <v-stepper-header>
         <v-stepper-item value="1">Select Payment Method</v-stepper-item>
@@ -223,6 +224,7 @@ export default {
     const { formatDateToReadable } = useDateFormatter();
     const checkoutStore = useCheckoutStore();
     const { selectedCar } = vehicleComposable();
+    const loading = ref(false);
 
     return {
       router,
@@ -230,6 +232,7 @@ export default {
       formatDateToReadable,
       checkoutStore,
       selectedCar,
+      loading,
     };
   },
   components: { cartButton },
@@ -306,6 +309,7 @@ export default {
   mounted() {
     document.title = "Checkout";
     this.checkLoginStatus();
+    this.step = 0;
   },
   beforeMount() {
     document.title = "Checkout";
@@ -316,10 +320,12 @@ export default {
       this.showError = true;
     },
     handleClose() {
+      this.loading = true;
+      setTimeout(() => {
       this.$nextTick(() => {
         //this.showOrderDialog = false;
         this.paymentType = null;
-        this.step = 0;
+        //this.step = 0;
         this.resetForm();
         this.selectedCar.value = {
           carid: -1,
@@ -340,11 +346,14 @@ export default {
         };
         this.checkoutStore.hasService = false;
         this.checkoutStore.hasProduct = false;
-        this.router.push("/appointments");
+        this.loading = false;
+        //this.router.push("/appointments");
       });
+    }, 1000);
+    this.router.push("/appointments");
     },
     resetForm() {
-      this.step = 0;
+      //this.step = 0;
       this.paymentType = null;
       this.cardNumber = "";
       this.cardExpiry = "";
@@ -421,9 +430,10 @@ export default {
       if (data.message) {
         //console.log("Order placed successfully!");
         this.displayError("Order placed successfully!"); // Show success message
-        setTimeout(() => {
-          this.handleClose(); // Close dialog after success
-        }, 1000);
+        // setTimeout(() => {
+        //   this.handleClose(); // Close dialog after success
+        // }, 1000);
+        this.handleClose();
       } else {
         this.displayError("Error placing order: " + data.message);
       }
