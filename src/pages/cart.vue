@@ -6,7 +6,8 @@
     </h2>
     <div class="line"></div>
   </div>
-  <v-container max-width="1200">
+  <Loader v-if="loading" height="300px" width="300px" />
+  <v-container v-else max-width="1200">
     <!-- <h2
       class="text-h3 text-center weight-bold sticky responsive-title"
       style="padding: 10px"
@@ -207,11 +208,13 @@ export default {
     const { newAppointment } = appointmentComposable();
     const { selectedCar } = vehicleComposable();
 
+    const loading = ref(true);
+
     onMounted(() => {
       document.title = "Cart";
     });
 
-    return { router, checkoutStore, baseUrl, newAppointment, selectedCar,};
+    return { router, checkoutStore, baseUrl, newAppointment, selectedCar, loading };
   },
   data() {
     return {
@@ -293,6 +296,21 @@ export default {
 
       this.router.push("/checkout"); 
       }
+    },
+    async initializeData() {
+        this.loading = true; // Start the loader immediately
+
+        const delay = new Promise((resolve) => setTimeout(resolve, 1000)); 
+        try {
+          await Promise.all([
+            this.fetchCartItems(),
+            delay
+          ]); // Wait for both the data fetching and delay
+        } catch (error) {
+          console.error("Error during initialization: ", error);
+        } finally {
+          this.loading = false; // Hide the loader after the delay and data fetching
+        }
     },
     async fetchCartItems() {
       try {
@@ -379,7 +397,8 @@ export default {
             this.carts.splice(index, 1);
           }
           // Optional: Refresh cart data
-          await this.fetchCartItems();
+          //await this.fetchCartItems();
+          await this.initializeData();
         }
       } catch (error) {
         console.error("Error removing item:", error);
@@ -389,7 +408,8 @@ export default {
           console.error("Item not found in cart");
         }
       }
-      await this.fetchCartItems();
+      //await this.fetchCartItems();
+      await this.initializeData();
     },
     async increaseQuantity(cart) {
       try {
@@ -405,12 +425,14 @@ export default {
         );
 
         if (response.data.message) {
-          await this.fetchCartItems();
+          //await this.fetchCartItems();
+          await this.initializeData();
         }
       } catch (error) {
         console.error("Error increasing quantity:", error);
       }
-      await this.fetchCartItems();
+      //await this.fetchCartItems();
+      await this.initializeData();
     },
     async decreaseQuantity(cart) {
       try {
@@ -427,13 +449,15 @@ export default {
           );
 
           if (response.data.message) {
-            await this.fetchCartItems();
+            //await this.fetchCartItems();
+            await this.initializeData();
           }
         }
       } catch (error) {
         console.error("Error decreasing quantity:", error);
       }
-      await this.fetchCartItems();
+      //await this.fetchCartItems();
+      await this.initializeData();
     },
     submitCode() {
       const validCode = this.ValidRedeemCode.find(
@@ -460,7 +484,8 @@ export default {
       this.router.push("/login");
       return;
     }
-    await this.fetchCartItems();
+    //await this.fetchCartItems();
+    await this.initializeData();
     this.checkLoginStatus();
   },
   computed: {
