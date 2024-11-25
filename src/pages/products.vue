@@ -76,16 +76,25 @@
           <h3><strong>CAR FILTER</strong></h3>
         </div>
         <v-divider thickness="2"></v-divider>
-
-        <v-select
-          v-model="selectedCarId"
-          :items="carOptionsWithAll"
-          item-title="text"
-          item-value="value"
-          label="Select a car"
-          @update:model-value="onCarSelect"
+        <v-tooltip
+          :disabled="!isCarFilteredDisabled"
+          text="Car filter is disabled when there is a tyre in your car"
         >
-        </v-select>
+          <template v-slot:activator="{ props }">
+            <div v-bind="props">
+              <v-select
+                v-model="selectedCarId"
+                :items="carOptionsWithAll"
+                item-title="text"
+                item-value="value"
+                label="Select a car"
+                @update:model-value="onCarSelect"
+                :disabled="isCarFilteredDisabled"
+              >
+              </v-select>
+            </div>
+          </template>
+        </v-tooltip>
       </v-col>
       <v-col cols="12" md="9" class="content-column px-10">
         <div ref="searchWrapper" class="search-wrapper">
@@ -197,6 +206,7 @@ import TyreItems from "../components/TyreItems.vue";
 import { useVehicleStore } from "../stores/vehicleStore";
 import { ref, computed, onMounted, watch } from "vue";
 import { storeToRefs } from "pinia";
+import { useCartStore } from "../stores/cartStore";
 
 export default {
   components: {
@@ -217,6 +227,10 @@ export default {
       priceDesc: false,
     });
 
+    const cartStore = useCartStore();
+    const isCarFilteredDisabled = computed(() => {
+      return cartStore.cartItems.some((item) => item.productid.startsWith("T"));
+    });
     const carOptionsWithAll = computed(() => [
       { text: "ALL CAR", value: "all" },
       ...cars.value.map((car) => ({
@@ -301,6 +315,7 @@ export default {
       selectedFilter,
       tyreList,
       fetchTyreList,
+      isCarFilteredDisabled,
     };
   },
   methods: {
