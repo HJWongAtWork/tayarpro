@@ -169,7 +169,7 @@
                 >
                 <v-card-text class="text-center text-body-2 pt-0"
                   >Already registered?
-                  <RouterLink to="/login"> Sign In Here </RouterLink>
+                  <RouterLink to="/login" style="color: #FF3131 !important">Sign In Here</RouterLink>
                 </v-card-text>
               </v-col>
             </v-row>
