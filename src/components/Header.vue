@@ -176,53 +176,53 @@
   </div>
 </template>
 
-<script>
-import { is } from "@babel/types";
+<script setup>
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useCartStore } from "../stores/cartStore";
-import { mapState } from "pinia";
+import { storeToRefs } from "pinia";
 
-export default {
-  data() {
-    return {
-      isLargeScreen: window.innerWidth >= 1000,
-      drawer: false,
-      tab: 0,
-      isLoggedIn: localStorage.getItem("isLoggedIn") === "true",
-    };
-  },
-  computed: {
-    ...mapState(useCartStore, ["cartItemCount"]),
-  },
-  mounted() {
-    this.tab = 0;
-    window.addEventListener("resize", this.updateScreenSize);
+const isLargeScreen = ref(window.innerWidth >= 1000);
+const drawer = ref(false);
+const tab = ref(0);
+const isLoggedIn = ref(localStorage.getItem("isLoggedIn") === "true");
 
-    if (localStorage.getItem("isLoggedIn") !== null) {
-      this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    } else {
-      localStorage.setItem("isLoggedIn", "false");
-      this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true"; // or any default behavior you want
-    }
-    if (this.isLoggedIn) {
-      const cartStore = useCartStore();
-      cartStore.fetchCartItems();
-    }
-  },
-  beforeDestroy() {
-    window.removeEventListener("resize", this.updateScreenSize);
-  },
-  methods: {
-    updateScreenSize() {
-      //this.isLargeScreen = window.innerWidth >= 1000;
-      const newScreenSize = window.innerWidth >= 1000;
-      // Only update if there's a change to prevent unnecessary re-renders
-      if (this.isLargeScreen !== newScreenSize) {
-        this.isLargeScreen = newScreenSize;
-      }
-    },
-  },
+const cartStore = useCartStore();
+const { cartItemCount } = storeToRefs(cartStore);
+
+const updateScreenSize = () => {
+  const newScreenSize = window.innerWidth >= 1000;
+  if (isLargeScreen.value !== newScreenSize) {
+    isLargeScreen.value = newScreenSize;
+  }
 };
+
+onMounted(() => {
+  tab.value = 0;
+  window.addEventListener("resize", updateScreenSize);
+
+  if (localStorage.getItem("isLoggedIn") !== null) {
+    isLoggedIn.value = localStorage.getItem("isLoggedIn") === "true";
+  } else {
+    localStorage.setItem("isLoggedIn", "false");
+    isLoggedIn.value = false;
+  }
+
+  if (isLoggedIn.value) {
+    cartStore.fetchCartItems();
+  }
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", updateScreenSize);
+});
 </script>
+
+<style scoped>
+.link {
+  color: white;
+  text-decoration: none;
+}
+</style>
 
 <style scoped>
 .link {

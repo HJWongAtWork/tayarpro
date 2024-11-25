@@ -233,7 +233,7 @@ import { defineComponent, ref, onMounted } from "vue";
 import { useUserStore } from "../stores/userStore";
 import { useRouter } from "vue-router";
 import { useVehicleStore } from "@/stores/vehicleStore";
-import { use } from "marked";
+import { useCartStore } from "@/stores/cartStore";
 
 export default defineComponent({
   props: {
@@ -248,6 +248,7 @@ export default defineComponent({
     const recommendedTyres = ref<RecommendedTyre[]>([]);
 
     const vehicleStore = useVehicleStore();
+    const cartStore = useCartStore();
     const parsedDetails = computed(() => {
       if (tyre.value && tyre.value.details) {
         try {
@@ -301,6 +302,20 @@ export default defineComponent({
 
         if (!vehicleStore.selectedCar) {
           alert("Please select a car before adding items to cart.");
+          return;
+        }
+
+        // Check if the cart already contains items for a different car
+        const existingCarIds = new Set(
+          cartStore.cartItems.map((item) => item.carid)
+        );
+        if (
+          existingCarIds.size > 0 &&
+          !existingCarIds.has(vehicleStore.selectedCar.carid)
+        ) {
+          alert(
+            "You can only add tyres for one car at a time. Please complete or clear your current order before adding tyres for a different car."
+          );
           return;
         }
 
@@ -377,6 +392,16 @@ export default defineComponent({
             },
           }
         );
+
+        //add to cartStore as special case
+        cartStore.addCartItem({
+          quantity: quantity.value,
+          productid: tyre.value.itemid,
+          description: tyre.value.description,
+          unitprice: parseFloat(tyre.value.unitprice),
+          accountid: userStore.currentUser.accountid,
+          carid: vehicleStore.selectedCar.carid,
+        });
         alert("Items added to cart successfully !");
       } catch (error) {
         console.error("Error adding item to cart:", error);
