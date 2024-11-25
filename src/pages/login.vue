@@ -6,7 +6,7 @@
     transform: translate(-50%, -50%);
   ">
     <!-- Logged Out State -->
-    <v-card class="elevation-12" v-if="!isLoggedIn">
+    <v-card class="elevation-12" min-width="325" v-if="!isLoggedIn">
       <div class="text-h5 my-3 text-center" width="auto">
         <strong>Log In</strong>
       </div>
@@ -14,34 +14,32 @@
       <v-form class="ma-auto" ref="form" v-model="valid" :class="{ headShake: shakeForm }"
         @submit.prevent="handleLogin">
         <v-card-title class="mt-5" align="center">
-          <v-text-field width="400" label="Username" prepend-inner-icon="mdi-account" type="text"
-            :rules="[rules.required]" required v-model="username" :disabled="isLoading"></v-text-field>
+          <v-text-field label="Username" prepend-inner-icon="mdi-account" type="text" :rules="[rules.required]" required
+            v-model="username" :disabled="isLoading"></v-text-field>
 
-          <v-text-field autocomplete width="400" v-model="password" label="Password" prepend-inner-icon="mdi-lock"
+          <v-text-field autocomplete v-model="password" label="Password" prepend-inner-icon="mdi-lock"
             :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :type="showPassword ? 'text' : 'password'"
             :rules="[rules.required]" required @click:append-inner="showPassword = !showPassword"
             :disabled="isLoading"></v-text-field>
-            <div class="text-right"><a @click="showPassword = !showPassword">
-          <span style="font-size: 10px;" v-if="!showPassword">Show Password</span>
-          <span style="font-size: 10px;" v-else>Hide Password</span>
-        </a></div>
+          <div class="text-right"><a @click="showPassword = !showPassword">
+            </a></div>
         </v-card-title>
 
         <v-card-text v-if="errorMessage">
           <v-alert type="error" variant="tonal" closable>{{ errorMessage }}</v-alert>
         </v-card-text>
 
-        <v-card-actions class="justify-center">
-          <v-btn width="400" color="white" style="background-color: #FF3131" type="submit"
+        <v-card-actions class="justify-center px-8">
+          <v-btn class="flex-grow-1" color="white" style="background-color: #FF3131" type="submit"
             :disabled="!isValidLogin || isLoading">
             {{ isLoading ? "Logging in..." : "Log In" }}
           </v-btn>
         </v-card-actions>
 
-        <v-card-text class="text-right mr-3">
+        <v-card-text class="text-center py-2">
           <v-dialog width="500">
             <template v-slot:activator="{ props: activatorProps }">
-              <v-btn color="primary" v-bind="activatorProps" style="text-transform: none">
+              <v-btn class="ma-0" variant="outlined" color="#FF3131" v-bind="activatorProps" style="text-transform: none">
                 Forgot Password
               </v-btn>
             </template>
@@ -166,7 +164,7 @@ const handleLogout = () => {
   isLoggedIn.value = false
   storedUsername.value = ''
 
-  window.location.reload()
+  // window.location.reload()
 }
 
 const handleLogin = async () => {
@@ -250,5 +248,4 @@ onMounted(() => {
   animation-duration: 1s;
   animation-timing-function: ease-in-out;
 }
-
 </style>
