@@ -7,6 +7,7 @@ export const messageComposable = () => {
   const emailInput = ref("");
   const subjectInput = ref("");
   const contentInput = ref("");
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const fetchMessage = async () => {
     await message_store.fetchMessage();
@@ -19,19 +20,22 @@ export const messageComposable = () => {
       contentInput.value.trim() !== ""
     ) {
       try {
-        const token = localStorage.getItem("jwt");
         console.log(emailInput);
         console.log(subjectInput);
         console.log(contentInput);
         await axios.post(
-          "https://tayar.pro/send_feedback",
+          `${baseUrl}/send_feedback`,
           {
             email: emailInput.value,
             subject: subjectInput.value,
             content: contentInput.value,
           },
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+              accept: "application/json",
+              "Content-Type": "application/json",
+            },
+
           }
         );
         return true;
