@@ -1,7 +1,10 @@
 <template>
-  <Vue3Lottie :animationData="loader1" 
-  :style="{ height, width }"
-     />
+  <div class="center-container">
+    <Vue3Lottie 
+      :animationData="loader1" 
+      :style="{ height, width }" 
+    />
+  </div>
 </template>
 
 <script>
@@ -30,3 +33,13 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  width: 100%; /* Full width */
+}
+</style>

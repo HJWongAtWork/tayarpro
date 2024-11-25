@@ -1,5 +1,6 @@
 <template>
-  <v-container fluid class="ma-auto pa-5" max-width="1200">
+  <Loader v-if="loading" height="300px" width="300px" />
+  <v-container v-else fluid class="ma-auto pa-5" max-width="1200">
     <v-row max-width="600">
       <v-col cols="12" class="ma-0 px-0">
         <Carousel :images="homeImages" />
@@ -552,6 +553,22 @@ const fetchRandomTyres = async () => {
   }
 };
 
+const loading = ref(true);
+const initializeData = async () => {
+      loading.value = true;
+      const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+      try {
+        await Promise.all([
+        fetchRandomTyres(),
+          delay,
+        ]);
+      } catch (error) {
+        console.error("Error during initialization:", error);
+      } finally {
+        loading.value = false;
+      }
+};
+
 // Utility Functions
 const preventParentScroll = (event: TouchEvent) => {
   event.stopPropagation();
@@ -564,6 +581,7 @@ const toggleAdditionalText = (index: number) => {
 // Lifecycle Hooks
 onMounted(async () => {
   document.title = "TayarPro";
+  await initializeData();
   await fetchRandomTyres();
   await nextTick();
 
