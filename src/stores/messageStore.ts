@@ -1,13 +1,15 @@
 import { defineStore } from 'pinia';
 
+interface Message {
+  id: number;
+  email: string;
+  subject: string;
+  content: string;
+}
+
 export const messageStore = defineStore('messageStore', {
   state: () => ({
-    messages: [] as {
-      id: number,
-      email: string,
-      subject: string,
-      content: string
-    }[]
+    messages: [] as Message[]
   }),
 
   getters: {
@@ -16,15 +18,7 @@ export const messageStore = defineStore('messageStore', {
 
   actions: {
     async fetchMessage() {
-      //dummy data
-      // const messageData = {
-      //   id: -1,
-      //   email: '',
-      //   subject: '',
-      //   content: ''
-      // }
-      // this.messages.push(messageData)
+      // Implement actual fetch logic when needed
     },
   },
-
 });
