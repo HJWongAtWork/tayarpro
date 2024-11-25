@@ -6,8 +6,9 @@
     </h2>
     <div class="line"></div>
   </div>
-
-  <v-container class="mt-2" max-width="1200" min-width="350">
+  
+  <Loader v-if="loading" height="300px" width="300px" />
+  <v-container v-else class="mt-2" max-width="1200" min-width="350">
     <v-row>
       <v-col cols="12" md="3" class="px-5">
         <div class="ma-2 pa-0">
@@ -245,9 +246,8 @@ export default defineComponent({
       return filteredServiceList.value.slice(start, end);
     });
 
-    onMounted(() => {
-      fetchServiceList();
-      fetchServiceTypeList();
+    onMounted( async () => {
+      await initializeData();
 
       window.addEventListener("scroll", handleScroll);
       window.addEventListener("resize", handleScroll);
@@ -257,6 +257,23 @@ export default defineComponent({
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
     });
+
+    const loading = ref(true);
+    const initializeData = async () => {
+      loading.value = true;
+      const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+      try {
+        await Promise.all([
+          fetchServiceList(),
+          fetchServiceTypeList(),
+          delay
+        ]);
+      } catch (error) {
+        console.error("Error during initialization:", error);
+      } finally {
+        loading.value = false;
+      }
+    };
 
     return {
       searchWrapper,
@@ -272,6 +289,8 @@ export default defineComponent({
       pageCount,
       paginatedServiceList,
       servicePic,
+      loading,
+      initializeData,
     };
   },
 });
