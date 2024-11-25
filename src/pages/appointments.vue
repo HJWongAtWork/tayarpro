@@ -11,7 +11,7 @@
             </v-col>
           </v-row>
           <v-divider class="ma-3 mb-0" thickness="2" opacity="0.3" />
-          <Loader v-if="loading" height="300px" width="300px"/>
+          <Loader v-if="loading" height="300px" width="300px" />
           <v-row v-else>
             <v-col cols="12">
               <v-tabs
@@ -34,9 +34,12 @@
                   <v-tabs-window-item value="tab-future">
                     <template
                       v-for="(appt, i) in appointments"
-                      :key="appt.appointmentid"
+                      :key="appt.appointment.appointmentid"
                     >
-                      <v-card v-if="appt.status == 'Future'" class="ma-3 pa-3">
+                      <v-card
+                        v-if="appt.appointment.status == 'Future'"
+                        class="ma-3 pa-3"
+                      >
                         <v-row>
                           <v-col cols="12" sm="5">
                             <v-card max-width="300" min-height="225">
@@ -65,15 +68,15 @@
                                     <br />
                                     {{
                                       new Date(
-                                        appt.appointmentdate
+                                        appt.appointment.appointmentdate
                                       ).toLocaleDateString()
                                     }}<br />
                                     {{
                                       new Date(
-                                        appt.appointmentdate
+                                        appt.appointment.appointmentdate
                                       ).toLocaleTimeString()
                                     }}<br />
-                                    {{ appt.appointment_bay }}<br />
+                                    {{ appt.appointment.appointment_bay }}<br />
                                   </v-card-text>
                                 </v-col>
                                 <v-col
@@ -120,7 +123,7 @@
                               <v-row class="ma-0 pa-0">
                                 <v-list>
                                   <div
-                                    v-for="(item, index) in appt.order_detail"
+                                    v-for="(item, index) in appt.order_details"
                                     :key="item.productid"
                                   >
                                     <v-list-item>
@@ -130,16 +133,19 @@
                                         </v-avatar>
                                       </template>
 
-                                      <v-list-item-title
+                                      <v-list-item-text
                                         class="font-weight-medium"
                                       >
-                                        {{ item.productid }}
-                                      </v-list-item-title>
+                                        {{ getItemDescription(item) }}
+                                      </v-list-item-text>
 
                                       <v-list-item-subtitle>
                                         <v-row no-gutters>
-                                          <v-col cols="12">
-                                            Car ID: {{ item.carid }}
+                                          <v-col cols="12" class="plateNumber">
+                                            Car: {{ item.car.carbrand }}
+                                            {{ item.car.carmodel }} ({{
+                                              item.car.platenumber
+                                            }})
                                           </v-col>
                                           <v-col cols="12" class="mt-1">
                                             <v-chip
@@ -214,127 +220,7 @@
                       :key="appt.appointmentid"
                     >
                       <v-card
-                        v-if="appt.status == 'Completed'"
-                        class="ma-3 pa-3"
-                      >
-                        <v-row>
-                          <v-col cols="12" sm="5">
-                            <v-card max-width="300" min-height="225">
-                              <v-card-subtitle
-                                class="mt-3 mb-0 font-weight-medium text-subtitle-1"
-                              >
-                                Appointment
-                              </v-card-subtitle>
-
-                              <v-divider
-                                class="mx-3"
-                                thickness="2"
-                                opacity="0.3"
-                              />
-                              <v-row class="ma-0 pa-0">
-                                <v-col cols="6" class="pr-0 pb-0">
-                                  <v-card-text class="pt-0 pr-0 text-left">
-                                    <br />
-                                    Date:<br />
-                                    Time:<br />
-                                  </v-card-text>
-                                </v-col>
-                                <v-col cols="6" class="pl-0 pb-0">
-                                  <v-card-text class="pt-0 pl-0 text-right">
-                                    <br />
-                                    {{
-                                      new Date(
-                                        appt.appointmentdate
-                                      ).toLocaleDateString()
-                                    }}<br />
-                                    {{
-                                      new Date(
-                                        appt.appointmentdate
-                                      ).toLocaleTimeString()
-                                    }}<br />
-                                  </v-card-text>
-                                </v-col>
-                              </v-row>
-                            </v-card>
-                          </v-col>
-                          <v-col cols="12" sm="7">
-                            <v-card max-width="300" min-height="225">
-                              <v-card-subtitle
-                                class="mt-3 mb-0 font-weight-medium text-subtitle-1"
-                                >Order Detial
-                              </v-card-subtitle>
-                              <v-divider
-                                class="mx-3"
-                                thickness="2"
-                                opacity="0.3"
-                              />
-                              <v-row class="ma-0 pa-0">
-                                <v-list>
-                                  <div
-                                    v-for="(item, index) in appt.order_detail"
-                                    :key="item.productid"
-                                  >
-                                    <v-list-item>
-                                      <template v-slot:prepend>
-                                        <v-avatar color="#FFE2E5" size="40">
-                                          {{ index + 1 }}
-                                        </v-avatar>
-                                      </template>
-
-                                      <v-list-item-title
-                                        class="font-weight-medium"
-                                      >
-                                        {{ item.productid }}
-                                      </v-list-item-title>
-
-                                      <v-list-item-subtitle>
-                                        <v-row no-gutters>
-                                          <v-col cols="12">
-                                            Car ID: {{ item.carid }}
-                                          </v-col>
-                                          <v-col cols="12" class="mt-1">
-                                            <v-chip
-                                              size="small"
-                                              color="#FFE2E5"
-                                              class="mr-2"
-                                            >
-                                              Qty: {{ item.quantity }}
-                                            </v-chip>
-                                            <v-chip
-                                              size="small"
-                                              color="#FFE2E5"
-                                              class="mr-2"
-                                            >
-                                              Unit: RM {{ item.unitprice }}
-                                            </v-chip>
-                                            <v-chip
-                                              size="small"
-                                              color="#FF3131"
-                                              class="white--text"
-                                            >
-                                              Total: RM {{ item.totalprice }}
-                                            </v-chip>
-                                          </v-col>
-                                        </v-row>
-                                      </v-list-item-subtitle>
-                                    </v-list-item>
-                                  </div>
-                                </v-list>
-                              </v-row>
-                            </v-card>
-                          </v-col>
-                        </v-row>
-                      </v-card>
-                    </template>
-                    <v-card-text>End of list.</v-card-text>
-                  </v-tabs-window-item>
-                  <v-tabs-window-item value="tab-cancelled">
-                    <template
-                      v-for="(appt, i) in appointments"
-                      :key="appt.appointmentid"
-                    >
-                      <v-card
-                        v-if="appt.status == 'Cancelled'"
+                        v-if="appt.appointment.status == 'Completed'"
                         class="ma-3 pa-3"
                       >
                         <v-row>
@@ -365,15 +251,140 @@
                                     <br />
                                     {{
                                       new Date(
-                                        appt.appointmentdate
+                                        appt.appointment.appointmentdate
                                       ).toLocaleDateString()
                                     }}<br />
                                     {{
                                       new Date(
-                                        appt.appointmentdate
+                                        appt.appointment.appointmentdate
                                       ).toLocaleTimeString()
                                     }}<br />
-                                    {{ appt.appointment_bay }}<br />
+                                    {{ appt.appointment.appointment_bay }}<br />
+                                  </v-card-text>
+                                </v-col>
+                              </v-row>
+                            </v-card>
+                          </v-col>
+                          <v-col cols="12" sm="7">
+                            <v-card max-width="300" min-height="225">
+                              <v-card-subtitle
+                                class="mt-3 mb-0 font-weight-medium text-subtitle-1"
+                                >Order Detial
+                              </v-card-subtitle>
+                              <v-divider
+                                class="mx-3"
+                                thickness="2"
+                                opacity="0.3"
+                              />
+                              <v-row class="ma-0 pa-0">
+                                <v-list>
+                                  <div
+                                    v-for="(item, index) in appt.order_details"
+                                    :key="item.productid"
+                                  >
+                                    <v-list-item>
+                                      <template v-slot:prepend>
+                                        <v-avatar color="#FFE2E5" size="40">
+                                          {{ index + 1 }}
+                                        </v-avatar>
+                                      </template>
+
+                                      <v-list-item-title
+                                        class="font-weight-medium"
+                                      >
+                                        {{ getItemDescription(item) }}
+                                      </v-list-item-title>
+
+                                      <v-list-item-subtitle>
+                                        <v-row no-gutters>
+                                          <v-col cols="12" class="plateNumber">
+                                            Car: {{ item.car.carbrand }}
+                                            {{ item.car.carmodel }} ({{
+                                              item.car.platenumber
+                                            }})
+                                          </v-col>
+                                          <v-col cols="12" class="mt-1">
+                                            <v-chip
+                                              size="small"
+                                              color="#FFD1D1"
+                                              class="mr-2 text-black"
+                                            >
+                                              Qty: {{ item.quantity }}
+                                            </v-chip>
+                                            <v-chip
+                                              size="small"
+                                              color="#FFE2E5"
+                                              class="mr-2 text-black"
+                                            >
+                                              Unit: RM {{ item.unitprice }}
+                                            </v-chip>
+                                            <v-chip
+                                              size="small"
+                                              color="#FF3131"
+                                              class="white--text"
+                                            >
+                                              Total: RM {{ item.totalprice }}
+                                            </v-chip>
+                                          </v-col>
+                                        </v-row>
+                                      </v-list-item-subtitle>
+                                    </v-list-item>
+                                  </div>
+                                </v-list>
+                              </v-row>
+                            </v-card>
+                          </v-col>
+                        </v-row>
+                      </v-card>
+                    </template>
+                    <v-card-text>End of list.</v-card-text>
+                  </v-tabs-window-item>
+                  <v-tabs-window-item value="tab-cancelled">
+                    <template
+                      v-for="(appt, i) in appointments"
+                      :key="appt.appointment.appointmentid"
+                    >
+                      <v-card
+                        v-if="appt.appointment.status == 'Cancelled'"
+                        class="ma-3 pa-3"
+                      >
+                        <v-row>
+                          <v-col cols="12" sm="5">
+                            <v-card max-width="300" min-height="225">
+                              <v-card-subtitle
+                                class="mt-3 mb-0 font-weight-medium text-subtitle-1"
+                              >
+                                Appointment
+                              </v-card-subtitle>
+
+                              <v-divider
+                                class="mx-3"
+                                thickness="2"
+                                opacity="0.3"
+                              />
+                              <v-row class="ma-0 pa-0">
+                                <v-col cols="6" class="pr-0 pb-0">
+                                  <v-card-text class="pt-0 pr-0 text-left">
+                                    <br />
+                                    Date:<br />
+                                    Time:<br />
+                                    Bay:<br />
+                                  </v-card-text>
+                                </v-col>
+                                <v-col cols="6" class="pl-0 pb-0">
+                                  <v-card-text class="pt-0 pl-0 text-right">
+                                    <br />
+                                    {{
+                                      new Date(
+                                        appt.appointment.appointmentdate
+                                      ).toLocaleDateString()
+                                    }}<br />
+                                    {{
+                                      new Date(
+                                        appt.appointment.appointmentdate
+                                      ).toLocaleTimeString()
+                                    }}<br />
+                                    {{ appt.appointment.appointment_bay }}<br />
                                   </v-card-text>
                                 </v-col>
                               </v-row>
@@ -393,7 +404,7 @@
                               <v-row class="ma-0 pa-0">
                                 <v-list>
                                   <div
-                                    v-for="(item, index) in appt.order_detail"
+                                    v-for="(item, index) in appt.order_details"
                                     :key="item.productid"
                                   >
                                     <v-list-item>
@@ -406,26 +417,29 @@
                                       <v-list-item-title
                                         class="font-weight-medium"
                                       >
-                                        {{ item.productid }}
+                                        {{ getItemDescription(item) }}
                                       </v-list-item-title>
 
                                       <v-list-item-subtitle>
                                         <v-row no-gutters>
-                                          <v-col cols="12">
-                                            Car ID: {{ item.carid }}
+                                          <v-col cols="12" class="plateNumber">
+                                            Car: {{ item.car.carbrand }}
+                                            {{ item.car.carmodel }} ({{
+                                              item.car.platenumber
+                                            }})
                                           </v-col>
                                           <v-col cols="12" class="mt-1">
                                             <v-chip
                                               size="small"
                                               color="#FFE2E5"
-                                              class="mr-2"
+                                              class="mr-2 text-black"
                                             >
                                               Qty: {{ item.quantity }}
                                             </v-chip>
                                             <v-chip
                                               size="small"
                                               color="#FFE2E5"
-                                              class="mr-2"
+                                              class="mr-2 text-black"
                                             >
                                               Unit: RM {{ item.unitprice }}
                                             </v-chip>
@@ -474,12 +488,14 @@
     <AddCarInSchedule />
     <Schedule />
   </v-dialog> -->
-
 </template>
 
 <style scoped>
 v-card {
   box-sizing: border-box !important;
+}
+.plateNumber {
+  text-transform: uppercase;
 }
 </style>
 
@@ -489,8 +505,8 @@ import axios from "axios";
 import { onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import ModifyApptDialog from "@/components/ModifyApptDialog.vue";
-import { appointmentComposable } from '@/composables/appointmentComposable';
-import { vehicleComposable } from '@/composables/vehicleComposable';
+import { appointmentComposable } from "@/composables/appointmentComposable";
+import { vehicleComposable } from "@/composables/vehicleComposable";
 
 const { newAppointment } = appointmentComposable();
 const { selectedCar } = vehicleComposable();
@@ -498,6 +514,16 @@ const { selectedCar } = vehicleComposable();
 const activeTab = ref("tab-future");
 const route = useRoute();
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+const getItemDescription = (item) => {
+  if (item.service && item.service.description) {
+    return item.service.description;
+  } else if (item.tyre && item.tyre.description) {
+    return item.tyre.description;
+  } else {
+    return "Unknown Item";
+  }
+};
 
 // const modifyDialog = ref(false);
 // const handleModify = (apptID) => {
@@ -529,7 +555,6 @@ watch(
   { immediate: true }
 );
 
-
 /* // Create an Axios instance with a base URL
 const api = axios.create({
   baseURL: 'http://your-api-base-url.com/api', // Replace with your actual API base URL
@@ -557,21 +582,21 @@ const openDialog = (index) => {
   selectedIndex.value = index;
   dialogVisible.value = true;
   selectedCar.value = {
-          carid: -1,
-          carbrand: "",
-          carmodel: "",
-          caryear:-1,
-          platenumber: "",
-          createdat: "",
-          tyresize: "",
-          cartype: "",
-          accountid: "",
-  }
+    carid: -1,
+    carbrand: "",
+    carmodel: "",
+    caryear: -1,
+    platenumber: "",
+    createdat: "",
+    tyresize: "",
+    cartype: "",
+    accountid: "",
+  };
   newAppointment.value = {
-          id: -1,
-          dateTime: new Date(),
-          bay: -1,
-          carid: -1,
+    id: -1,
+    dateTime: new Date(),
+    bay: -1,
+    carid: -1,
   };
 };
 
@@ -598,31 +623,44 @@ const handleSubmit = async (updatedData) => {
       // }
       //console.log("newAppointment.value: " + newAppointment.value.dateTime);
       // Get hours, minutes, and seconds in local time
-      const hours = newAppointment.value.dateTime.getHours().toString().padStart(2, '0');
-      const minutes = newAppointment.value.dateTime.getMinutes().toString().padStart(2, '0');
-      const seconds = newAppointment.value.dateTime.getSeconds().toString().padStart(2, '0');
+      const hours = newAppointment.value.dateTime
+        .getHours()
+        .toString()
+        .padStart(2, "0");
+      const minutes = newAppointment.value.dateTime
+        .getMinutes()
+        .toString()
+        .padStart(2, "0");
+      const seconds = newAppointment.value.dateTime
+        .getSeconds()
+        .toString()
+        .padStart(2, "0");
       // Combine to get the time in "HH:MM:SS" format
       const timeString = `${hours}:${minutes}:${seconds}Z`;
       //console.log("timeString: " + timeString);
 
       //console.log("selectedCar.value.carid: " + selectedCar.value.carid);
-      
-      const response = await axios.put(`${baseUrl}/update_appointment`, {
+
+      const response = await axios.put(
+        `${baseUrl}/update_appointment`,
+        {
           appointment_id: appointmentId,
           appointment_date: newAppointment.value.dateTime
-          .toISOString()
-          .split("T")[0],
+            .toISOString()
+            .split("T")[0],
           appointment_time: timeString,
           car_id: selectedCar.value.carid,
           appointment_bay: newAppointment.value.bay,
-          //updatedData 
-      }, {
+          //updatedData
+        },
+        {
           headers: {
-              'accept': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-              'Content-Type': 'application/json'
-          }
-      })
+            accept: "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (selectedIndex.value > -1) {
         appointments.value.splice(selectedIndex.value, 1);
@@ -633,8 +671,7 @@ const handleSubmit = async (updatedData) => {
       } else {
         throw new Error("Failed to updated appointment");
       }
-
-      } 
+    } catch (error) {
       /* Temp */
       // appointments.value[selectedIndex.value].date = updatedData.date;
       // appointments.value[selectedIndex.value].time = updatedData.time;
@@ -651,7 +688,6 @@ const handleSubmit = async (updatedData) => {
             } else {
               throw new Error('Failed to update appointment');
             } */
-     catch (error) {
       console.error("Error updating appointment:", error);
       // Handle error (e.g., show an error message to the user)
     } finally {
@@ -660,16 +696,16 @@ const handleSubmit = async (updatedData) => {
       selectedIndex.value = null;
       dialogVisible.value = false;
       selectedCar.value = {
-      carid: -1,
-      carbrand: "",
-      carmodel: "",
-      caryear:-1,
-      platenumber: "",
-      createdat: "",
-      tyresize: "",
-      cartype: "",
-      accountid: "",
-      }
+        carid: -1,
+        carbrand: "",
+        carmodel: "",
+        caryear: -1,
+        platenumber: "",
+        createdat: "",
+        tyresize: "",
+        cartype: "",
+        accountid: "",
+      };
       newAppointment.value = {
         id: -1,
         dateTime: new Date(),
@@ -725,13 +761,18 @@ const handleCancel = async () => {
 const fetchAppointments = async () => {
   loading.value = true;
   try {
-    const response = await axios.post(`${baseUrl}/get_appointment`, "", {
-      headers: {
-        accept: "application/json",
-        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-      },
-    });
+    const response = await axios.post(
+      "http://localhost:8000/get_appointment_details",
+      "",
+      {
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+      }
+    );
     appointments.value = response.data;
+    console.log("Appointments fetched:", appointments.value);
     // console.log("Appointments fetched:", appointments.value);
     // console.log("Appointments data:", response.data);
     /* const response = await api.get('/appointments');
@@ -746,19 +787,16 @@ const fetchAppointments = async () => {
 
 const loading = ref(true);
 const initializeData = async () => {
-      loading.value = true;
-      const delay = new Promise((resolve) => setTimeout(resolve, 1000));
-      try {
-        await Promise.all([
-        fetchAppointments(),
-          delay,
-        ]);
-      } catch (error) {
-        console.error("Error during initialization:", error);
-      } finally {
-        loading.value = false;
-      }
-    };
+  loading.value = true;
+  const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+  try {
+    await Promise.all([fetchAppointments(), delay]);
+  } catch (error) {
+    console.error("Error during initialization:", error);
+  } finally {
+    loading.value = false;
+  }
+};
 
 // Call fetchAppointments when the component is created
 //fetchAppointments();
