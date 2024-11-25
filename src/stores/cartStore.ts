@@ -2,19 +2,20 @@ import { defineStore } from "pinia";
 import axios from "axios";
 
 interface CartItem {
-  id: string;
-  name: string;
-  price: number;
   quantity: number;
-  // Add other properties of cart items as needed
+  productid: string;
+  description: string;
+  unitprice: number;
+  accountid: string;
+  carid: number;
 }
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
-    cartItems: [] as CartItem[], // Define the type of cartItems
+    cartItems: [] as CartItem[],
   }),
   getters: {
-    cartItemCount: (state) => state.cartItems.length, // Number of items in cart
+    cartItemCount: (state) => state.cartItems.length,
   },
   actions: {
     // Fetch cart items from the API
@@ -33,6 +34,10 @@ export const useCartStore = defineStore("cart", {
       } catch (error) {
         console.error("Error fetching cart items:", error);
       }
+    },
+    addCartItem(item: CartItem): void {
+      this.cartItems.push(item);
+      console.log(this.cartItems);
     },
     clearCart(): void {
       this.cartItems = [];

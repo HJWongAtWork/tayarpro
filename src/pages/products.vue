@@ -220,7 +220,7 @@ export default {
     const carOptionsWithAll = computed(() => [
       { text: "ALL CAR", value: "all" },
       ...cars.value.map((car) => ({
-        text: `${car.carbrand} ${car.carmodel} ${car.platenumber}`,
+        text: `${car.carbrand.toUpperCase()} ${car.carmodel.toUpperCase()} ${car.platenumber.toUpperCase()}`,
         value: car.carid,
       })),
     ]);
