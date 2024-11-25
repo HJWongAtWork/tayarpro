@@ -232,6 +232,8 @@ import axios from "axios";
 import { defineComponent, ref, onMounted } from "vue";
 import { useUserStore } from "../stores/userStore";
 import { useRouter } from "vue-router";
+import { useVehicleStore } from "@/stores/vehicleStore";
+import { use } from "marked";
 
 export default defineComponent({
   props: {
@@ -245,6 +247,7 @@ export default defineComponent({
     const loading = ref(false);
     const recommendedTyres = ref<RecommendedTyre[]>([]);
 
+    const vehicleStore = useVehicleStore();
     const parsedDetails = computed(() => {
       if (tyre.value && tyre.value.details) {
         try {
@@ -295,6 +298,12 @@ export default defineComponent({
           alert("You need to be logged in to add items to cart.");
           return;
         }
+
+        if (!vehicleStore.selectedCar) {
+          alert("Please select a car before adding items to cart.");
+          return;
+        }
+
         // get cart quantity for this tyre
         const params = new URLSearchParams({
           accountid: userStore.currentUser.accountid.toString(),
