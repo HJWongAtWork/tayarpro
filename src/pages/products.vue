@@ -7,7 +7,8 @@
     <div class="line"></div>
   </div>
 
-  <v-container class="mt-2" max-width="1200" min-width="350">
+  <Loader v-if="loading" height="300px" width="300px" />
+  <v-container v-else class="mt-2" max-width="1200" min-width="350">
     <v-row>
       <v-col cols="12" md="3" class="px-5">
         <div class="ma-2 pa-0">
@@ -292,15 +293,16 @@ export default {
       }
     };
 
-    onMounted(() => {
-      vehicleStore.fetchVehicles();
-      fetchTyreList();
-    });
+    // onMounted(() => {
+    //   vehicleStore.fetchVehicles();
+    //   fetchTyreList();
+    // });
 
     watch(filteredTyreItems, () => {
       page.value = 1;
     });
 
+    const loading = ref(false);
     return {
       selectedCarId,
       carOptionsWithAll,
@@ -315,6 +317,8 @@ export default {
       selectedFilter,
       tyreList,
       fetchTyreList,
+      vehicleStore,
+      loading,
       isCarFilteredDisabled,
     };
   },
@@ -353,10 +357,28 @@ export default {
         this.selectedFilter.priceDesc = true;
       }
     },
+    async initializeData() {
+      this.loading = true; // Start the loader immediately
+
+      const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+      try {
+        await Promise.all([
+        this.fetchAllProduct(),
+        this.fetchTyreList(),
+        this.vehicleStore.fetchVehicles(),
+          delay,
+        ]); // Wait for both the data fetching and delay
+      } catch (error) {
+        console.error("Error during initialization: ", error);
+      } finally {
+        this.loading = false; // Hide the loader after the delay and data fetching
+      }
+    },
   },
   mounted() {
-    this.fetchAllProduct();
-    this.fetchTyreList();
+    // this.fetchAllProduct();
+    // this.fetchTyreList();
+    this.initializeData();
     document.title = "Tyres";
   },
   data() {

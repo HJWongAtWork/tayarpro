@@ -1,4 +1,6 @@
 <template>
+  <loader v-if="loading" height="300px" width="300px" />
+  <v-container v-else>
   <v-container class="mt-10" max-width="1200">
     <v-card v-if="tyre" align="center">
       <v-row>
@@ -128,6 +130,7 @@
       </v-slide-group>
     </v-card>
   </v-container>
+</v-container>
 </template>
 <style scoped>
 .product-spec span {
@@ -405,6 +408,8 @@ export default defineComponent({
         alert("Items added to cart successfully !");
       } catch (error) {
         console.error("Error adding item to cart:", error);
+      } finally {
+        initializeData();
       }
     };
 
@@ -447,9 +452,27 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      await fetchTyre();
-      await fetchRecommendedTyres();
+      // await fetchTyre();
+      // await fetchRecommendedTyres();
+      await initializeData();
     });
+
+    //const loading = ref(true);
+    const initializeData = async () => {
+      loading.value = true;
+      const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+      try {
+        await Promise.all([
+          fetchTyre(),
+          fetchRecommendedTyres(),
+          delay
+        ]);
+      } catch (error) {
+        console.error("Error during initialization:", error);
+      } finally {
+        loading.value = false;
+      }
+    };
 
     return {
       tyre,
@@ -461,6 +484,7 @@ export default defineComponent({
       recommendedTyres,
       goToTyreDetails,
       parsedDetails,
+      initializeData,
     };
   },
 });

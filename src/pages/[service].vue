@@ -1,5 +1,6 @@
 <template>
-  <v-container class="mt-10" max-width="1200">
+  <loader v-if="loading" height="300px" width="300px" />
+  <v-container v-else class="mt-10" max-width="1200">
     <v-card v-if="serviceData.length" align="center">
       <v-row>
         <v-col cols="12" sm="4">
@@ -162,6 +163,8 @@ export default defineComponent({
         console.log("Adding to cart:", newCartItem);
       } catch (error) {
         console.error("Error adding to cart:", error);
+      } finally {
+        await initializeData();
       }
     };
 
@@ -174,13 +177,29 @@ export default defineComponent({
       selectedType.value = type;
     };
 
-    onMounted(() => {
+    onMounted( async () => {
       if (props.service.length === 0) {
-        fetchService();
+        await initializeData();
       } else {
         loading.value = false;
       }
     });
+
+    //const loading = ref(true);
+    const initializeData = async () => {
+      loading.value = true;
+      const delay = new Promise((resolve) => setTimeout(resolve, 1000));
+      try {
+        await Promise.all([
+          fetchService(),
+          delay
+        ]);
+      } catch (error) {
+        console.error("Error during initialization:", error);
+      } finally {
+        loading.value = false;
+      }
+    };
 
     return {
       serviceData,
@@ -190,6 +209,7 @@ export default defineComponent({
       addToCart,
       getPrice,
       updateSelectedType,
+      initializeData,
     };
   },
 });
