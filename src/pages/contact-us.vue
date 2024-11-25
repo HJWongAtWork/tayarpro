@@ -17,6 +17,7 @@
 
       <v-col cols="12" md="6">
         <v-card class="pa-6 elevation-3">
+          <v-card-title class="mb-3">Currently for registered users only:</v-card-title>
           <v-form ref="form" v-model="valid" @submit.prevent="handleSendBtn">
             <v-text-field
               v-model="emailInput"
@@ -131,9 +132,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue"; // Added watch import
 import { messageComposable } from "@/composables/messageComposable";
-import { errorMessages } from "vue/compiler-sfc";
 
 const { messages, addMessage, emailInput, subjectInput, contentInput } =
   messageComposable();
@@ -143,6 +143,7 @@ const valid = ref(false);
 const contentValid = ref(false);
 const sendConfirm = ref(false);
 const loading = ref(false);
+const errorMessage = ref(""); // Proper error message handling
 
 const rules = {
   required: (v) => !!v || "This field is required",
@@ -183,14 +184,10 @@ const formValid = computed(() => {
 
 const handleSendBtn = async () => {
   loading.value = true;
-  if (form.value) {
-    console.log("Success form.value");
-  }
   const success = await addMessage();
 
   loading.value = false;
   if (success) {
-    console.log("Success");
     emailInput.value = "";
     subjectInput.value = "";
     contentInput.value = "";
@@ -200,10 +197,8 @@ const handleSendBtn = async () => {
     }
     valid.value = false;
     contentValid.value = false;
-    console.log("Message sent successfully");
-    sendConfirm.value = true;
   } else {
-    errorMessages.value = "Failed to send message. Please try again.";
+    errorMessage.value = "Failed to send message. Please try again.";
   }
 };
 
