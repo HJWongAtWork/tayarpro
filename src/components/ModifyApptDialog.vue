@@ -23,7 +23,7 @@
                 </v-container>
             </v-card-text> -->
             <v-container>
-              <AddCarInSchedule />
+              <!-- <AddCarInSchedule /> -->
               <v-row>
                 <v-col cols="12">
                   <Schedule />
@@ -36,7 +36,7 @@
                 <v-btn width="100" color="#FF3131" variant="outlined" @click="closeDialog">
                     Cancel
                 </v-btn>
-                <v-btn width="100" color="#FF3131" variant="elevated" @click="saveChanges" :disabled="newAppointment.id === -1 || selectedCar.carid === -1">
+                <v-btn width="100" color="#FF3131" variant="elevated" @click="saveChanges" :disabled="newAppointment.id === -1">
                     Save
                 </v-btn>
             </v-card-actions>
@@ -86,17 +86,17 @@ watch(() => props.inputObject, (newValue) => {
 }, { immediate: true });
 
 const closeDialog = () => {
-    selectedCar.value = {
-      carid: -1,
-      carbrand: "",
-      carmodel: "",
-      caryear:-1,
-      platenumber: "",
-      createdat: "",
-      tyresize: "",
-      cartype: "",
-      accountid: "",
-      }
+    // selectedCar.value = {
+    //   carid: -1,
+    //   carbrand: "",
+    //   carmodel: "",
+    //   caryear:-1,
+    //   platenumber: "",
+    //   createdat: "",
+    //   tyresize: "",
+    //   cartype: "",
+    //   accountid: "",
+    //   }
       newAppointment.value = {
         id: -1,
         dateTime: new Date(),
@@ -119,7 +119,7 @@ const saveChanges = () => {
           .split("T")[0],
 
         appointment_time: newAppointment.value.dateTime.toLocaleTimeString(),
-        car_id: selectedCar.value.carid.toString(),
+        //car_id: selectedCar.value.carid.toString(),
         appointment_bay: newAppointment.value.bay,
     }
 
@@ -130,17 +130,17 @@ const saveChanges = () => {
 };
 
 onBeforeMount(() => {
-    selectedCar.value = {
-      carid: -1,
-      carbrand: "",
-      carmodel: "",
-      caryear:-1,
-      platenumber: "",
-      createdat: "",
-      tyresize: "",
-      cartype: "",
-      accountid: "",
-      }
+    // selectedCar.value = {
+    //   carid: -1,
+    //   carbrand: "",
+    //   carmodel: "",
+    //   caryear:-1,
+    //   platenumber: "",
+    //   createdat: "",
+    //   tyresize: "",
+    //   cartype: "",
+    //   accountid: "",
+    //   }
       newAppointment.value = {
         id: -1,
         dateTime: new Date(),

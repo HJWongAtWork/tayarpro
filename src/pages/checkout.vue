@@ -73,7 +73,7 @@
         <v-stepper-window-item value="2">
           <v-card title="Set Appointment" flat>
             <v-container>
-              <AddCarInSchedule />
+              <!-- <AddCarInSchedule /> -->
               <v-row>
                 <v-col cols="12">
                   <Schedule />
@@ -164,7 +164,7 @@
                           <td class="table-cell-small">
                             <!-- Car ID: {{ selectedCar.carid }}
                             {{ selectedCar }} -->
-                            {{ selectedCar.carbrand.toUpperCase() }} {{ selectedCar.carmodel.toUpperCase() }} {{ selectedCar.caryear }} ({{ selectedCar.platenumber.toUpperCase() }})
+                            <!-- {{ selectedCar.carbrand.toUpperCase() }} {{ selectedCar.carmodel.toUpperCase() }} {{ selectedCar.caryear }} ({{ selectedCar.platenumber.toUpperCase() }}) -->
                           </td>
                         </tr>
                       </tbody>
@@ -400,7 +400,10 @@ export default {
       const timeString = `${hours}:${minutes}:${seconds}`;
 
       const checkoutData = {
-        car_id: this.selectedCar.carid.toString(),
+        //testing only
+        car_id: 516,
+
+        // car_id: this.selectedCar.carid.toString(),
         appointment_date: this.newAppointment.dateTime
           .toISOString()
           .split("T")[0],
@@ -463,7 +466,8 @@ export default {
           return false;
 
         case 1: // Payment Details
-          if (this.newAppointment.id === -1 || this.selectedCar.carid === -1 || this.selectedCar.carid === null) {
+          // if (this.newAppointment.id === -1 || this.selectedCar.carid === -1 || this.selectedCar.carid === null) {
+          if (this.newAppointment.id === -1) {
             return true;
           }
           return false;
