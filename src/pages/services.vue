@@ -202,6 +202,7 @@ export default defineComponent({
     const searchWrapper = ref(null);
     const searchContainer = ref(null);
     const isSticky = ref(false);
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
     const isCarFilteredDisabled = computed(() => {
       return cartStore.cartItems.some(
@@ -234,7 +235,7 @@ export default defineComponent({
     const fetchServiceTypeList = async () => {
       try {
         const response = await axios.get<ServiceType[]>(
-          "https://tayar.pro/get_all_service_types"
+          `${baseUrl}/get_all_service_types`
         );
         ServiceTypeList.value = response.data;
       } catch (error) {
@@ -245,7 +246,7 @@ export default defineComponent({
     const fetchServiceList = async () => {
       try {
         const response = await axios.get<Service[]>(
-          "https://tayar.pro/get_all_services"
+          `${baseUrl}/get_all_services`
         );
 
         const groupedServices = response.data.reduce((acc, service) => {
