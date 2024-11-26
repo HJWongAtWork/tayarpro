@@ -162,9 +162,11 @@
                         <tr>
                           <td class="table-cell-small">Car Details</td>
                           <td class="table-cell-small">
-                            <!-- Car ID: {{ selectedCar.carid }}
-                            {{ selectedCar }} -->
-                            <!-- {{ selectedCar.carbrand.toUpperCase() }} {{ selectedCar.carmodel.toUpperCase() }} {{ selectedCar.caryear }} ({{ selectedCar.platenumber.toUpperCase() }}) -->
+                            <!-- {{ selectedCar.carbrand }} -->
+                            <!-- Car ID: {{ selectedCar.carid }} -->
+                            <!-- {{ vehicleStore.selectedCar }}  -->
+                            {{ selectedCar.carbrand.toUpperCase() }} {{ selectedCar.carmodel.toUpperCase() }} {{ selectedCar.caryear }} ({{ selectedCar.platenumber.toUpperCase() }})
+                            <!-- {{ vehicleStore.selectedCar.carbrand.toUpperCase() }} {{ vehicleStore.selectedCar.carmodel.toUpperCase() }} ({{ vehicleStore.selectedCar.platenumber.toUpperCase() }}) -->
                           </td>
                         </tr>
                       </tbody>
@@ -216,6 +218,7 @@ import { useDateFormatter } from "@/composables/useDateFormatter";
 import axios from "axios";
 import { useCheckoutStore } from "@/stores/checkout";
 import { vehicleComposable } from "@/composables/vehicleComposable";
+import { useVehicleStore } from "../stores/vehicleStore";
 
 export default {
   setup() {
@@ -223,8 +226,10 @@ export default {
     const { newAppointment } = appointmentComposable();
     const { formatDateToReadable } = useDateFormatter();
     const checkoutStore = useCheckoutStore();
-    const { selectedCar } = vehicleComposable();
+    // const { selectedCar } = vehicleComposable();
     const loading = ref(false);
+    const vehicleStore = useVehicleStore();
+    const selectedCar = computed(()=> vehicleStore.selectedCar);
 
     return {
       router,
@@ -233,10 +238,14 @@ export default {
       checkoutStore,
       selectedCar,
       loading,
+      vehicleStore,
     };
   },
   components: { cartButton },
   computed: {
+    // testing() {
+    //   return this.vehicleStore.selectedCar.carbrand
+    // },
     //Get this from Pinia Store
     Subtotal() {
       return this.checkoutStore.checkoutData.Subtotal;
@@ -327,17 +336,20 @@ export default {
         this.paymentType = null;
         //this.step = 0;
         this.resetForm();
-        this.selectedCar.value = {
-          carid: -1,
-          carbrand: "",
-          carmodel: "",
-          caryear:-1,
-          platenumber: "",
-          createdat: "",
-          tyresize: "",
-          cartype: "",
-          accountid: "",
-        }
+        // console.log(this.vehicleStore.selectedCar);
+        // this.vehicleStore.selectedCar = {
+        //   carid: -1,
+        //   carbrand: "",
+        //   carmodel: "",
+        //   caryear:-1,
+        //   platenumber: "",
+        //   createdat: "",
+        //   tyresize: "",
+        //   cartype: "",
+        //   accountid: "",
+        // }
+        // console.log(this.vehicleStore.selectedCar);
+        this.vehicleStore.setSelectedCar(null);
         this.newAppointment.value = {
           id: -1,
           dateTime: new Date(),
@@ -400,10 +412,10 @@ export default {
       const timeString = `${hours}:${minutes}:${seconds}`;
 
       const checkoutData = {
-        //testing only
-        car_id: 516,
+        // //testing only
+        // car_id: 516,
 
-        // car_id: this.selectedCar.carid.toString(),
+        car_id: this.selectedCar.carid,
         appointment_date: this.newAppointment.dateTime
           .toISOString()
           .split("T")[0],

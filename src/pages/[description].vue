@@ -305,22 +305,23 @@ export default defineComponent({
 
         if (!vehicleStore.selectedCar) {
           alert("Please select a car before adding items to cart.");
+          cartStore.clearCart();
           return;
         }
 
         // Check if the cart already contains items for a different car
-        const existingCarIds = new Set(
-          cartStore.cartItems.map((item) => item.carid)
-        );
-        if (
-          existingCarIds.size > 0 &&
-          !existingCarIds.has(vehicleStore.selectedCar.carid)
-        ) {
-          alert(
-            "You can only add tyres for one car at a time. Please complete or clear your current order before adding tyres for a different car."
-          );
-          return;
-        }
+        // const existingCarIds = new Set(
+        //   cartStore.cartItems.map((item) => item.carid)
+        // );
+        // if (
+        //   existingCarIds.size > 0 &&
+        //   !existingCarIds.has(vehicleStore.selectedCar.carid)
+        // ) {
+        //   alert(
+        //     "You can only add tyres for one car at a time. Please complete or clear your current order before adding tyres for a different car."
+        //   );
+        //   return;
+        // }
 
         // get cart quantity for this tyre
         const params = new URLSearchParams({
