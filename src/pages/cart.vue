@@ -20,6 +20,19 @@
     >
       Ready to complete your order? Check Out Now!
     </h4>
+    <!-- <h5>Selected Car is {{ vehicleStore.selectedCar }}</h5> -->
+    <div class="center-content" style="padding-bottom: 40px" v-if="vehicleStore.selectedCar !== null">
+      <h4 class="text-h6 text-center">
+        Selected Car: {{ vehicleStore.selectedCar.carbrand.toUpperCase() }} 
+        {{ vehicleStore.selectedCar.carmodel.toUpperCase() }} 
+        {{ vehicleStore.selectedCar.platenumber.toUpperCase() }}
+      </h4>
+      <v-btn class="mt-2" style="background-color: #FF6875" @click="changeCarDialog = true">
+        Change Car
+      </v-btn>
+    </div>
+
+    <v-card>
     <div class="cart-container">
       <v-table>
         <thead>
@@ -91,7 +104,9 @@
         </tbody>
       </v-table>
     </div>
+  </v-card>
     <v-container>
+    
       <v-row>
         <!-- <v-col cols="12" md="4">
           <div class="voucher-section">
@@ -121,9 +136,12 @@
         </v-col> -->
 
         <v-col cols="12">
+  
           <v-container class="summary-container">
+            
             <v-row justify="center">
               <v-col cols="6">
+                <v-card>
                 <v-table density="comfortable">
                   <tbody>
                     <tr>
@@ -163,13 +181,33 @@
                     </tr>
                   </tbody>
                 </v-table>
+              </v-card>
               </v-col>
             </v-row>
+          
           </v-container>
+        
         </v-col>
       </v-row>
     </v-container>
   </v-container>
+
+  <v-dialog v-model="changeCarDialog" width="500">
+    <v-card>
+      <v-container class="center-content">
+      <v-card-title>Change Car Confirmation</v-card-title>
+      <v-card-subtitle>If you execute this action, your cart width will be emptied.</v-card-subtitle>
+      <v-card-text>
+        <p class="f24-b20">Are you sure you want to change your car?</p>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn @click="changeCarDialog = false">Cancel</v-btn>
+        <v-btn @click="handleCarChange">Yes</v-btn>
+      </v-card-actions>
+      </v-container>
+    </v-card>
+  </v-dialog>
 
   <ToastNotification
     ref="toast"
@@ -191,12 +229,16 @@ import { useCheckoutStore } from "@/stores/checkout";
 import ToastNotification from "@/components/ToastNotification.vue"; 
 import { appointmentComposable } from "@/composables/appointmentComposable";
 import { vehicleComposable } from "@/composables/vehicleComposable";
+import { useVehicleStore } from "../stores/vehicleStore";
+import { useCartStore } from "@/stores/cartStore";
 
 const isLoading = ref(true);
 const handleImageError = () => {
   console.log("Image failed to load");
   isLoading.value = false;
 };
+
+const cartStore = useCartStore();
 
 export default {
   components: {
@@ -209,14 +251,16 @@ export default {
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
     const { newAppointment } = appointmentComposable();
     const { selectedCar } = vehicleComposable();
+    const vehicleStore = useVehicleStore();
 
     const loading = ref(true);
+    
 
     onMounted(() => {
       document.title = "Cart";
     });
 
-    return { router, checkoutStore, baseUrl, newAppointment, selectedCar, loading };
+    return { router, checkoutStore, baseUrl, newAppointment, selectedCar, loading, vehicleStore };
   },
   data() {
     return {
@@ -241,9 +285,17 @@ export default {
       isLoading: true,
       placeholderImage,
       hasFreeService: false,
+      changeCarDialog: false,
     };
   },
   methods: {
+    // emptyCart() {
+      
+    // },
+    handleCarChange() {
+      this.changeCarDialog = false;  
+      this.vehicleStore.setSelectedCar(null);
+    },
     checkLoginStatus() {
       this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     },
@@ -269,6 +321,9 @@ export default {
       // else if (this.checkoutStore.hasProduct && !this.checkoutStore.hasService) {
       //   this.$refs.toast.addToast("No service in cart!", 2000);
       // }
+      else if (this.vehicleStore.selectedCar === null) {
+        this.$refs.toast.addToast("No car selected!", 2000);
+      }
       else {
       
         this.checkoutStore.setCheckoutData({
@@ -279,17 +334,17 @@ export default {
         this.checkoutStore.hasProduct = false;
         this.checkoutStore.hasService = false;
 
-      this.selectedCar = {
-          carid: -1,
-          carbrand: "",
-          carmodel: "",
-          caryear:-1,
-          platenumber: "",
-          createdat: "",
-          tyresize: "",
-          cartype: "",
-          accountid: "",
-        }
+      // this.selectedCar = {
+      //     carid: -1,
+      //     carbrand: "",
+      //     carmodel: "",
+      //     caryear:-1,
+      //     platenumber: "",
+      //     createdat: "",
+      //     tyresize: "",
+      //     cartype: "",
+      //     accountid: "",
+      //   }
         this.newAppointment = {
           id: -1,
           dateTime: new Date(),
@@ -381,6 +436,9 @@ export default {
           };
           this.carts.push(newService);
           this.hasFreeService = true;
+        }
+        if (this.checkoutStore.hasService === false && this.checkoutStore.hasProduct === false) {
+          cartStore.clearCart();
         }
 
       } catch (error) {
@@ -672,4 +730,12 @@ td {
 .title-page h2 {
   padding: 0 2rem;
 }
+
+.center-content {
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  justify-content: center; /* Center vertically */
+  align-items: center; /* Center horizontally */
+}
+
 </style>

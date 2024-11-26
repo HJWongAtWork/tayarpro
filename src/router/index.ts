@@ -125,6 +125,22 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
+<<<<<<< HEAD
+=======
+  if (
+    to.path === "/login" ||
+    to.path === "/register" ||
+    to.path === "/checkout" ||
+    to.path === "/signin" ||
+    to.path === "/dashboard"
+  ) {
+    to.meta.layoutComponent = NoHeaderLayout;
+  }
+  if (to.path === "/admin-dashboard") {
+    to.meta.layoutComponent = AdminLayout;
+  }
+
+>>>>>>> f8024548aa90cd980f96c35149d2431642773ee6
   next();
 });
 
