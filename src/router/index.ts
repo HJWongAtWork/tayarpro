@@ -4,7 +4,7 @@ import { routes as autoRoutes } from "vue-router/auto-routes";
 import axios from "axios";
 
 // Import your layouts
-import DefaultLayout from "@/layouts/DefaultLayout.vue";
+//import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import NoHeaderLayout from "@/layouts/NoHeaderLayout.vue";
 import AdminLayout from "@/layouts/AdminLayout.vue";
 
