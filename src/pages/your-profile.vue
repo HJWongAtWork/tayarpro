@@ -26,8 +26,10 @@
             </v-col>
             <v-col cols="12" class="text-center">
               <div class="d-flex flex-column align-center">
-                <h5>User ID:</h5>
-                <h5>{{ accountId }}</h5>
+                <!-- <h5>User ID:</h5>
+                <h5>{{ accountId }}</h5> -->
+                <h5>Username: </h5>
+                <h5>{{ email }}</h5>
               </div>
             </v-col>
             <v-col cols="12" class="text-center">
