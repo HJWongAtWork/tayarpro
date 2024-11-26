@@ -6,7 +6,7 @@
     </h2>
     <div class="line"></div>
   </div>
-  
+
   <Loader v-if="loading" height="300px" width="300px" />
   <v-container v-else class="mt-2" max-width="1200" min-width="350">
     <v-row>
@@ -31,6 +31,30 @@
             </v-checkbox>
           </v-list-item>
         </v-list>
+
+        <div class="filter-section ma-2">
+          <h3><strong>CAR FILTER</strong></h3>
+        </div>
+        <v-divider thickness="2"></v-divider>
+        <v-tooltip
+          :disabled="!isCarFilteredDisabled"
+          text="Car filter is disabled when there is a tyre in your cart"
+        >
+          <template v-slot:activator="{ props }">
+            <div v-bind="props">
+              <v-select
+                v-model="selectedCarId"
+                :items="carOptionsWithAll"
+                item-title="text"
+                item-value="value"
+                :label="selectedCarText"
+                @update:model-value="onCarSelect"
+                :disabled="isCarFilteredDisabled"
+              >
+              </v-select>
+            </div>
+          </template>
+        </v-tooltip>
       </v-col>
       <v-col cols="12" md="9" class="content-column px-10">
         <div ref="searchWrapper" class="search-wrapper">
@@ -129,12 +153,19 @@
 </style>
 
 <script lang="ts">
-//import servicepic from '@/assets/service.jpg';
 import servicepic from "@/assets/tyre-install-01.jpg";
-import { defineComponent, ref, computed, onMounted } from "vue";
-// import { useUserStore } from "../stores/userStore";
+import {
+  defineComponent,
+  ref,
+  computed,
+  onMounted,
+  onUnmounted,
+  watch,
+} from "vue";
 import axios from "axios";
-// import ServiceItems from "@/components/ServiceItems.vue";
+import { useVehicleStore } from "../stores/vehicleStore";
+import { useCartStore } from "../stores/cartStore";
+import { storeToRefs } from "pinia";
 
 interface ServiceType {
   typeid: number;
@@ -155,6 +186,11 @@ export default defineComponent({
     // ServiceItems,
   },
   setup() {
+    const vehicleStore = useVehicleStore();
+    const cartStore = useCartStore();
+    const { cars, selectedCar } = storeToRefs(vehicleStore);
+    const selectedCarId = ref<number | string | null>(null);
+
     const ServiceList = ref<Service[]>([]);
     const ServiceTypeList = ref<ServiceType[]>([]);
     const selectedServiceTypes = ref<number[]>([]);
@@ -166,23 +202,40 @@ export default defineComponent({
     const searchWrapper = ref(null);
     const searchContainer = ref(null);
     const isSticky = ref(false);
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+    const isCarFilteredDisabled = computed(() => {
+      return cartStore.cartItems.some(
+        (item) =>
+          item.productid.startsWith("T") || item.productid.startsWith("S")
+      );
+    });
+
+    const carOptionsWithAll = computed(() => [
+      { text: "ALL CAR", value: "all" },
+      ...cars.value.map((car) => ({
+        text: `${car.carbrand.toUpperCase()} ${car.carmodel.toUpperCase()} ${car.platenumber.toUpperCase()}`,
+        value: car.carid,
+      })),
+    ]);
+
+    const selectedCarText = computed(() => {
+      if (selectedCar.value) {
+        return `${selectedCar.value.carbrand.toUpperCase()} ${selectedCar.value.carmodel.toUpperCase()} ${selectedCar.value.platenumber.toUpperCase()}`;
+      }
+      return "Select a car";
+    });
 
     const handleScroll = () => {
       if (searchWrapper.value && searchContainer.value) {
-        // const rect = searchWrapper.value.getBoundingClientRect();
-        // isSticky.value = rect.top <= 64;
-        // if (isSticky.value) {
-        //   const parentWidth = searchWrapper.value.offsetWidth;
-        //   searchContainer.value.style.width = `${parentWidth}px`;
-        // } else {
-        //   searchContainer.value.style.width = "100%";
-        // }
+        // ... (keep your existing handleScroll logic) ...
       }
     };
+
     const fetchServiceTypeList = async () => {
       try {
         const response = await axios.get<ServiceType[]>(
-          "https://tayar.pro/get_all_service_types"
+          `${baseUrl}/get_all_service_types`
         );
         ServiceTypeList.value = response.data;
       } catch (error) {
@@ -193,7 +246,7 @@ export default defineComponent({
     const fetchServiceList = async () => {
       try {
         const response = await axios.get<Service[]>(
-          "https://tayar.pro/get_all_services"
+          `${baseUrl}/get_all_services`
         );
 
         const groupedServices = response.data.reduce((acc, service) => {
@@ -246,9 +299,37 @@ export default defineComponent({
       return filteredServiceList.value.slice(start, end);
     });
 
-    onMounted( async () => {
-      await initializeData();
+    const onCarSelect = (value: number | string | null) => {
+      if (!isCarFilteredDisabled.value) {
+        selectedCarId.value = value;
+        vehicleStore.setSelectedCar(value);
+      }
+    };
+    watch(
+      () => cartStore.cartItems,
+      (newItems) => {
+        const tyreinCart = newItems.find((item) =>
+          item.productid.startsWith("T")
+        );
+        const serviceinCart = newItems.find((item) =>
+          item.productid.startsWith("S")
+        );
+        if (tyreinCart && tyreinCart.carid) {
+          selectedCarId.value = tyreinCart.carid;
+          vehicleStore.setSelectedCar(tyreinCart.carid);
+        } else if (serviceinCart && serviceinCart.carid) {
+          selectedCarId.value = serviceinCart.carid;
+          vehicleStore.setSelectedCar(serviceinCart.carid);
+        } else if (!tyreinCart && !serviceinCart) {
+          selectedCarId.value = "all";
+          vehicleStore.setSelectedCar("all");
+        }
+      },
+      { deep: true }
+    );
 
+    onMounted(async () => {
+      await initializeData();
       window.addEventListener("scroll", handleScroll);
       window.addEventListener("resize", handleScroll);
     });
@@ -266,7 +347,8 @@ export default defineComponent({
         await Promise.all([
           fetchServiceList(),
           fetchServiceTypeList(),
-          delay
+          vehicleStore.fetchVehicles(),
+          delay,
         ]);
       } catch (error) {
         console.error("Error during initialization:", error);
@@ -291,6 +373,11 @@ export default defineComponent({
       servicePic,
       loading,
       initializeData,
+      selectedCarId,
+      selectedCarText,
+      onCarSelect,
+      isCarFilteredDisabled,
+      carOptionsWithAll,
     };
   },
 });

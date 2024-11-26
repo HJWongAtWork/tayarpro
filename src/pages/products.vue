@@ -232,7 +232,10 @@ export default {
 
     const cartStore = useCartStore();
     const isCarFilteredDisabled = computed(() => {
-      return cartStore.cartItems.some((item) => item.productid.startsWith("T"));
+      return cartStore.cartItems.some(
+        (item) =>
+          item.productid.startsWith("T") || item.productid.startsWith("S")
+      );
     });
     const carOptionsWithAll = computed(() => [
       { text: "ALL CAR", value: "all" },
@@ -272,7 +275,7 @@ export default {
       } else if (selectedFilter.value.priceDesc) {
         filtered.sort((a, b) => b.unitprice - a.unitprice);
       }
-
+      // If no sorting is selected, return the filtered list without sorting
       return filtered;
     });
 
@@ -288,6 +291,7 @@ export default {
         vehicleStore.setSelectedCar(value);
       }
     };
+
     const fetchTyreList = async () => {
       const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
@@ -316,10 +320,16 @@ export default {
         const tyreinCart = newItems.find((item) =>
           item.productid.startsWith("T")
         );
+        const serviceinCart = newItems.find((item) =>
+          item.productid.startsWith("S")
+        );
         if (tyreinCart && tyreinCart.carid) {
           selectedCarId.value = tyreinCart.carid;
           vehicleStore.setSelectedCar(tyreinCart.carid);
-        } else if (!tyreinCart) {
+        } else if (serviceinCart && serviceinCart.carid) {
+          selectedCarId.value = serviceinCart.carid;
+          vehicleStore.setSelectedCar(serviceinCart.carid);
+        } else if (!tyreinCart && !serviceinCart) {
           selectedCarId.value = null;
           vehicleStore.setSelectedCar(null);
         }
@@ -375,11 +385,23 @@ export default {
     },
     handleSortingChange(sort) {
       if (sort === "priceAsc") {
-        this.selectedFilter.priceDesc = false;
-        this.selectedFilter.priceAsc = true;
+        if (this.selectedFilter.priceAsc) {
+          // If it's already selected, unselect it
+          this.selectedFilter.priceAsc = false;
+        } else {
+          // If it's not selected, select it and unselect the other
+          this.selectedFilter.priceDesc = false;
+          this.selectedFilter.priceAsc = true;
+        }
       } else if (sort === "priceDesc") {
-        this.selectedFilter.priceAsc = false;
-        this.selectedFilter.priceDesc = true;
+        if (this.selectedFilter.priceDesc) {
+          // If it's already selected, unselect it
+          this.selectedFilter.priceDesc = false;
+        } else {
+          // If it's not selected, select it and unselect the other
+          this.selectedFilter.priceAsc = false;
+          this.selectedFilter.priceDesc = true;
+        }
       }
     },
     async initializeData() {

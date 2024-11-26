@@ -55,6 +55,11 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      external: ['vue-chartjs', 'chart.js']
+    }
+  },
   define: { "process.env": {} },
   resolve: {
     alias: {
@@ -67,7 +72,7 @@ export default defineConfig({
     // API proxy pathing
     proxy: {
       "/api": {
-        target: "https://tayar.pro/",
+        target: "${baseUrl}/",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

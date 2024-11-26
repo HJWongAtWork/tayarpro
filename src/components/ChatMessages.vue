@@ -243,4 +243,26 @@ onMounted(() => {
 .message-card-user .message-content :deep(pre) {
     background-color: rgba(255, 255, 255, 0.1);
 }
+
+.message-content :deep(blockquote) {
+    border-left: 3px solid #ccc;
+    margin: 0.5em 0;
+    padding-left: 1em;
+    color: #666;
+}
+
+.message-card-user .message-content :deep(blockquote) {
+    border-left: 3px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.message-content :deep(code) {
+    font-size: 0.9em;
+}
+
+.message-content :deep(pre code) {
+    display: block;
+    padding: 0.5em;
+    overflow-x: auto;
+}
 </style>

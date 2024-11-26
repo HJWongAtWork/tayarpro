@@ -57,11 +57,11 @@ export const useChatStore = defineStore({
         this.saveMessagesToLocalStorage();
 
         // Get context from previous messages
-        const context = this.getMessageContext();
+        //const context = this.getMessageContext();
 
         // Send message with context to the chatbot
         const response: ChatResponse = await chatService.sendMessage(
-          messageText, context
+          messageText
           //`Context: ${context} \n\nQuestion: ${messageText}`
           //context
         );
