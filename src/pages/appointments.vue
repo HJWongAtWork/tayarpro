@@ -103,7 +103,7 @@
                                     class="ml-2 my-1"
                                     color="#FF3131"
                                     @click="openDelete(i)"
-                                    >Delete</v-btn
+                                    >Cancel</v-btn
                                   >
                                 </v-col>
                               </v-row>
@@ -133,11 +133,11 @@
                                         </v-avatar>
                                       </template>
 
-                                      <v-list-item-text
+                                      <v-list-item-title
                                         class="font-weight-medium"
                                       >
                                         {{ getItemDescription(item) }}
-                                      </v-list-item-text>
+                                      </v-list-item-title>
 
                                       <v-list-item-subtitle>
                                         <v-row no-gutters>
@@ -610,7 +610,7 @@ const handleSubmit = async (updatedData) => {
     loading.value = true;
     try {
       const appointmentId =
-        appointments.value[selectedIndex.value].appointmentid;
+        appointments.value[selectedIndex.value].appointment.appointmentid;
 
       //updatedData.appointment_id = appointmentId;
       // updatedData = {
@@ -636,20 +636,22 @@ const handleSubmit = async (updatedData) => {
         .toString()
         .padStart(2, "0");
       // Combine to get the time in "HH:MM:SS" format
-      const timeString = `${hours}:${minutes}:${seconds}Z`;
-      //console.log("timeString: " + timeString);
+      const timeString = `${hours}:${minutes}:${seconds}.00Z`;
 
-      //console.log("selectedCar.value.carid: " + selectedCar.value.carid);
+      // console.log("selectedIndex: " + selectedIndex.value);
+      // console.log("appointment: " + appointments.value);
+      // console.log("appointmentId: " + appointmentId);
+      // console.log("timeString: " + timeString);
+      // console.log("date" + newAppointment.value.dateTime.toISOString().split("T")[0]);
+      // console.log("bay: " + newAppointment.value.bay);
 
       const response = await axios.put(
         `${baseUrl}/update_appointment`,
         {
           appointment_id: appointmentId,
-          appointment_date: newAppointment.value.dateTime
-            .toISOString()
-            .split("T")[0],
+          appointment_date: newAppointment.value.dateTime.toISOString().split("T")[0],
           appointment_time: timeString,
-          car_id: selectedCar.value.carid,
+          //car_id: selectedCar.value.carid,
           appointment_bay: newAppointment.value.bay,
           //updatedData
         },
@@ -695,17 +697,17 @@ const handleSubmit = async (updatedData) => {
       loading.value = false;
       selectedIndex.value = null;
       dialogVisible.value = false;
-      selectedCar.value = {
-        carid: -1,
-        carbrand: "",
-        carmodel: "",
-        caryear: -1,
-        platenumber: "",
-        createdat: "",
-        tyresize: "",
-        cartype: "",
-        accountid: "",
-      };
+      // selectedCar.value = {
+      //   carid: -1,
+      //   carbrand: "",
+      //   carmodel: "",
+      //   caryear: -1,
+      //   platenumber: "",
+      //   createdat: "",
+      //   tyresize: "",
+      //   cartype: "",
+      //   accountid: "",
+      // };
       newAppointment.value = {
         id: -1,
         dateTime: new Date(),
@@ -723,7 +725,7 @@ const handleCancel = async () => {
     loading.value = true;
     try {
       const appointmentId =
-        appointments.value[selectedIndex.value].appointmentid;
+        appointments.value[selectedIndex.value].appointment.appointmentid;
       console.log("appointmentId: " + appointmentId);
 
       const response = await axios.put(
@@ -762,7 +764,7 @@ const fetchAppointments = async () => {
   loading.value = true;
   try {
     const response = await axios.post(
-      "http://localhost:8000/get_appointment_details",
+      `${baseUrl}/get_appointment_details`,
       "",
       {
         headers: {

@@ -39,6 +39,7 @@
                 @click="remove(cart.productid)"
                 icon="mdi-close"
                 rounded
+                :disabled="cart.isFreeService"
               ></cartButton>
             </td>
             <td class="text-center">
@@ -69,7 +70,7 @@
                 <cartButton
                   @click="decreaseQuantity(cart)"
                   icon="mdi-minus"
-                  :disabled="cart.quantity <= 1"
+                  :disabled="cart.quantity <= 1 || cart.isFreeService"
                   density="comfortable"
                   size="small"
                 ></cartButton>
@@ -79,6 +80,7 @@
                   icon="mdi-plus"
                   density="comfortable"
                   size="small"
+                  :disabled="cart.isFreeService"
                 ></cartButton>
               </div>
             </td>
@@ -238,6 +240,7 @@ export default {
       paymentType: null,
       isLoading: true,
       placeholderImage,
+      hasFreeService: false,
     };
   },
   methods: {
@@ -313,6 +316,7 @@ export default {
         }
     },
     async fetchCartItems() {
+      this.hasFreeService = false;
       try {
         const token = localStorage.getItem("jwt");
         const isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -347,6 +351,7 @@ export default {
           description: item.description,
           price: item.unitprice,
           quantity: item.quantity,
+          isFreeService: false,
           image_link: item.productid.startsWith("SVR")
             ? new URL("@/assets/tyre-install-01.jpg", import.meta.url).href
             : new URL("@/assets/tyre.jpg", import.meta.url).href,
@@ -362,6 +367,22 @@ export default {
             this.checkoutStore.hasProduct = true;
           }
         });
+
+        if (this.checkoutStore.hasProduct === true) {
+          const newService = {
+            productid: "SVR000",
+            title: "Tyre Installation Service",
+            description: "Free Tyre Installation Service",
+            price: 0,
+            unitprice: 0,
+            quantity: 1,
+            isFreeService: true,
+            image_link: new URL("@/assets/tyre-install-01.jpg", import.meta.url).href,
+          };
+          this.carts.push(newService);
+          this.hasFreeService = true;
+        }
+
       } catch (error) {
         console.error("Cart error details:", {
           status: error.response?.status,
@@ -493,6 +514,7 @@ export default {
       let subtotal = 0;
       this.carts.forEach((cart) => {
         const price = parseFloat(cart.price || cart.unitprice);
+        //console.log("Price: ", price);
         const quantity = parseInt(cart.quantity);
         subtotal += price * quantity;
         // subtotal = subtotal.toFixed(2);

@@ -98,7 +98,7 @@
           <v-btn color="primary" class="mt-3" @click="addAppointment" :disabled="!addFormValid">Confirm Appointment</v-btn>
         </v-col>
         <v-col cols="12" v-if="newApptInScheduleFormat.id !== ''" align="center">
-          ppointment slot is on hold, please proceed OR press
+          Appointment slot is on hold, please proceed OR press
           <v-btn @click="resetApptSlot" style="color: blue;">here</v-btn>
           to reset.
         </v-col>
