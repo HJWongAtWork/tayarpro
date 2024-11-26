@@ -1,102 +1,102 @@
 <template>
   <loader v-if="loading" height="300px" width="300px" />
   <v-container v-else>
-  <v-container class="mt-10" max-width="1200">
-    <v-card v-if="tyre" align="center">
-      <v-row>
-        <v-col cols="12" sm="4">
-          <v-img
-            src="@/assets/tyre.jpg"
-            height="300"
-            width="300"
-            class="ma-6"
-          ></v-img>
-        </v-col>
-        <v-col cols="12" sm="8">
-          <v-card-title class="text-h4 mt-2 pl-0 text wrap">{{
-            tyre.description
-          }}</v-card-title>
-          <div class="d-flex pl-0">
-            <v-card-subtitle class="pl-0 ma-auto"
-              >Brand: {{ tyre.brand_name }}</v-card-subtitle
-            >
-            <v-divider vertical class="mx-2"></v-divider>
-            <v-card-subtitle class="ma-auto"
-              >Type: {{ tyre.cartype }}</v-card-subtitle
-            >
-          </div>
-          <v-divider class="my-5"></v-divider>
-          <h2>RM {{ tyre.unitprice }}</h2>
-          <v-row class="mt-4 ml-1 align-center">
-            <div class="quantity ma-auto">
-              <v-col cols="auto" class="pa-0">
-                <button
-                  @click="decreaseQuantity"
-                  :disabled="quantity <= 1"
-                  class="minus-button"
-                  variant="outlined"
-                >
-                  -
-                </button>
-              </v-col>
-
-              <v-col cols="auto" class="pa-0">
-                <input
-                  v-model.number="quantity"
-                  type="number"
-                  min="1"
-                  class="quantity"
-                  hide-spin-buttons
-                />
-              </v-col>
-
-              <v-col cols="auto" class="pa-0">
-                <button
-                  variant="outlined"
-                  class="add-button"
-                  :disabled="quantity >= tyre.stockunit"
-                  @click="increaseQuantity"
-                >
-                  +
-                </button>
-              </v-col>
-              <v-col>
-                <v-card-subtitle>
-                  {{ tyre.stockunit }} pieces available
-                </v-card-subtitle>
-              </v-col>
+    <v-container class="mt-10" max-width="1200">
+      <v-card v-if="tyre" align="center">
+        <v-row>
+          <v-col cols="12" sm="4">
+            <v-img
+              src="@/assets/tyre.jpg"
+              height="300"
+              width="300"
+              class="ma-6"
+            ></v-img>
+          </v-col>
+          <v-col cols="12" sm="8">
+            <v-card-title class="text-h4 mt-2 pl-0 text wrap">{{
+              tyre.description
+            }}</v-card-title>
+            <div class="d-flex pl-0">
+              <v-card-subtitle class="pl-0 ma-auto"
+                >Brand: {{ tyre.brand_name }}</v-card-subtitle
+              >
+              <v-divider vertical class="mx-2"></v-divider>
+              <v-card-subtitle class="ma-auto"
+                >Type: {{ tyre.cartype }}</v-card-subtitle
+              >
             </div>
-          </v-row>
-          <v-row>
-            <v-col cols="12" class="mb-5">
-              <v-btn @click="addToCart" color="black">ADD TO CART</v-btn>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-    </v-card>
-  </v-container>
-  <v-divider :thickness="2" class="mt-5 mx-auto" width="1200"></v-divider>
+            <v-divider class="my-5"></v-divider>
+            <h2>RM {{ tyre.unitprice }}</h2>
+            <v-row class="mt-4 ml-1 align-center">
+              <div class="quantity ma-auto">
+                <v-col cols="auto" class="pa-0">
+                  <button
+                    @click="decreaseQuantity"
+                    :disabled="quantity <= 1"
+                    class="minus-button"
+                    variant="outlined"
+                  >
+                    -
+                  </button>
+                </v-col>
 
-  <v-container max-width="1200">
-    <v-card v-if="tyre">
-      <v-card-title> Product Description</v-card-title>
-      <div class="product-description">
-        <ul>
-          <li v-for="(detail, index) in parsedDetails" :key="index">
-            {{ detail }}
-          </li>
-        </ul>
-        <div class="product-spec">
-          <span>Load index: {{ tyre.loadindex }}</span>
-          <span>Speed index: {{ tyre.speedindex }}</span>
-          <span>Tyre Size: {{ tyre.tyresize }}</span>
+                <v-col cols="auto" class="pa-0">
+                  <input
+                    v-model.number="quantity"
+                    type="number"
+                    min="1"
+                    class="quantity"
+                    hide-spin-buttons
+                  />
+                </v-col>
+
+                <v-col cols="auto" class="pa-0">
+                  <button
+                    variant="outlined"
+                    class="add-button"
+                    :disabled="quantity >= tyre.stockunit"
+                    @click="increaseQuantity"
+                  >
+                    +
+                  </button>
+                </v-col>
+                <v-col>
+                  <v-card-subtitle>
+                    {{ tyre.stockunit }} pieces available
+                  </v-card-subtitle>
+                </v-col>
+              </div>
+            </v-row>
+            <v-row>
+              <v-col cols="12" class="mb-5">
+                <v-btn @click="addToCart" color="black">ADD TO CART</v-btn>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-container>
+    <v-divider :thickness="2" class="mt-5 mx-auto" width="1200"></v-divider>
+
+    <v-container max-width="1200">
+      <v-card v-if="tyre">
+        <v-card-title> Product Description</v-card-title>
+        <div class="product-description">
+          <ul>
+            <li v-for="(detail, index) in parsedDetails" :key="index">
+              {{ detail }}
+            </li>
+          </ul>
+          <div class="product-spec">
+            <span>Load index: {{ tyre.loadindex }}</span>
+            <span>Speed index: {{ tyre.speedindex }}</span>
+            <span>Tyre Size: {{ tyre.tyresize }}</span>
+          </div>
         </div>
-      </div>
-    </v-card>
-  </v-container>
-  <v-divider :thickness="2" class="mt-5 mx-auto" width="1200"></v-divider>
-  <v-container max-width="1200">
+      </v-card>
+    </v-container>
+    <v-divider :thickness="2" class="mt-5 mx-auto" width="1200"></v-divider>
+    <!-- <v-container max-width="1200">
     <v-card v-if="tyre">
       <v-card-title> Recommendation</v-card-title>
       <v-slide-group class="pa-4" selected-class="bg-primary" show-arrows>
@@ -129,8 +129,8 @@
         </v-slide-group-item>
       </v-slide-group>
     </v-card>
+  </v-container> -->
   </v-container>
-</v-container>
 </template>
 <style scoped>
 .product-spec span {
@@ -462,11 +462,7 @@ export default defineComponent({
       loading.value = true;
       const delay = new Promise((resolve) => setTimeout(resolve, 1000));
       try {
-        await Promise.all([
-          fetchTyre(),
-          fetchRecommendedTyres(),
-          delay
-        ]);
+        await Promise.all([fetchTyre(), fetchRecommendedTyres(), delay]);
       } catch (error) {
         console.error("Error during initialization:", error);
       } finally {
