@@ -55,6 +55,11 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      external: ['vue-chartjs', 'chart.js']
+    }
+  },
   define: { "process.env": {} },
   resolve: {
     alias: {
