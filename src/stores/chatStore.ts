@@ -61,7 +61,7 @@ export const useChatStore = defineStore({
 
         // Send message with context to the chatbot
         const response: ChatResponse = await chatService.sendMessage(
-          messageText, context
+          messageText
           //`Context: ${context} \n\nQuestion: ${messageText}`
           //context
         );
