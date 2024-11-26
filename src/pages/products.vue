@@ -88,9 +88,10 @@
                 :items="carOptionsWithAll"
                 item-title="text"
                 item-value="value"
-                label="Select a car"
+                :label="selectedCarText"
                 @update:model-value="onCarSelect"
                 :disabled="isCarFilteredDisabled"
+                :readonly="isCarFilteredDisabled"
               >
               </v-select>
             </div>
@@ -216,7 +217,7 @@ export default {
   setup() {
     const vehicleStore = useVehicleStore();
     const { cars, selectedCar } = storeToRefs(vehicleStore);
-    const selectedCarId = ref("all");
+    const selectedCarId = ref(null);
     const tyreList = ref([]);
     const page = ref(1);
     const itemsPerPage = ref(12);
@@ -239,6 +240,12 @@ export default {
         value: car.carid,
       })),
     ]);
+    const selectedCarText = computed(() => {
+      if (selectedCar.value) {
+        return `${selectedCar.value.carbrand.toUpperCase()} ${selectedCar.value.carmodel.toUpperCase()} ${selectedCar.value.platenumber.toUpperCase()}`;
+      }
+      return "Select a car";
+    });
 
     const filteredTyreItems = computed(() => {
       let filtered = tyreList.value.filter((tyre) => {
@@ -254,7 +261,6 @@ export default {
             .toLowerCase()
             .includes(searchText.value.toLowerCase());
         const carMatch =
-          selectedCarId.value === "all" ||
           !selectedCar.value ||
           (selectedCar.value && selectedCar.value.tyresize === tyre.tyresize);
         return productMatch && brandMatch && searchMatch && carMatch;
@@ -276,10 +282,11 @@ export default {
     });
 
     const onCarSelect = (value) => {
-      selectedCarId.value = value;
-      vehicleStore.setSelectedCar(value);
+      if (!isCarFilteredDisabled.value) {
+        selectedCarId.value = value;
+        vehicleStore.setSelectedCar(value);
+      }
     };
-
     const fetchTyreList = async () => {
       const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
@@ -302,8 +309,25 @@ export default {
       page.value = 1;
     });
 
+    watch(
+      () => cartStore.cartItems,
+      (newItems) => {
+        const tyreinCart = newItems.find((item) =>
+          item.productid.startsWith("T")
+        );
+        if (tyreinCart && tyreinCart.carid) {
+          selectedCarId.value = tyreinCart.carid;
+          vehicleStore.setSelectedCar(tyreinCart.carid);
+        } else if (!tyreinCart) {
+          selectedCarId.value = null;
+          vehicleStore.setSelectedCar(null);
+        }
+      },
+      { deep: true }
+    );
     const loading = ref(false);
     return {
+      selectedCarText,
       selectedCarId,
       carOptionsWithAll,
       onCarSelect,
@@ -363,9 +387,9 @@ export default {
       const delay = new Promise((resolve) => setTimeout(resolve, 1000));
       try {
         await Promise.all([
-        this.fetchAllProduct(),
-        this.fetchTyreList(),
-        this.vehicleStore.fetchVehicles(),
+          this.fetchAllProduct(),
+          this.fetchTyreList(),
+          this.vehicleStore.fetchVehicles(),
           delay,
         ]); // Wait for both the data fetching and delay
       } catch (error) {

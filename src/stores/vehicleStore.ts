@@ -87,7 +87,7 @@ export const useVehicleStore = defineStore("vehicleStore", {
       }
     },
     setSelectedCar(carId: number | string) {
-      if (carId === "all") {
+      if (carId === null) {
         this.selectedCar = null;
       } else {
         const foundCar = this.cars.find((car) => car.carid === carId);
