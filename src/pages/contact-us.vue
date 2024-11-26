@@ -19,42 +19,16 @@
         <v-card class="pa-6 elevation-3">
           <v-card-title class="mb-3">Currently for registered users only:</v-card-title>
           <v-form ref="form" v-model="valid" @submit.prevent="handleSendBtn">
-            <v-text-field
-              v-model="emailInput"
-              label="Email"
-              variant="outlined"
-              :rules="[rules.emailValid, rules.required]"
-              prepend-inner-icon="mdi-email"
-              class="mb-4"
-            ></v-text-field>
+            <v-text-field v-model="emailInput" label="Email" variant="outlined"
+              :rules="[rules.emailValid, rules.required]" prepend-inner-icon="mdi-email" class="mb-4"></v-text-field>
 
-            <v-text-field
-              v-model="subjectInput"
-              label="Subject"
-              variant="outlined"
-              :rules="[rules.required]"
-              prepend-inner-icon="mdi-format-title"
-              class="mb-4"
-            ></v-text-field>
+            <v-text-field v-model="subjectInput" label="Subject" variant="outlined" :rules="[rules.required]"
+              prepend-inner-icon="mdi-format-title" class="mb-4"></v-text-field>
 
-            <v-textarea
-              v-model="contentInput"
-              label="Message"
-              variant="outlined"
-              :rules="[rules.required]"
-              prepend-inner-icon="mdi-message-text"
-              rows="5"
-              class="mb-6"
-            ></v-textarea>
+            <v-textarea v-model="contentInput" label="Message" variant="outlined" :rules="[rules.required]"
+              prepend-inner-icon="mdi-message-text" rows="5" class="mb-6"></v-textarea>
 
-            <v-btn
-              type="submit"
-              color="red"
-              size="large"
-              block
-              :disabled="!formValid"
-              :loading="loading"
-            >
+            <v-btn type="submit" color="red" size="large" block :disabled="!formValid" :loading="loading">
               Send Message
               <v-icon end icon="mdi-send" class="ml-2"></v-icon>
             </v-btn>
@@ -70,12 +44,7 @@
             </v-card-title>
 
             <v-card class="mb-6 pa-4 bg-grey-lighten-4 w-100">
-              <v-icon
-                icon="mdi-phone"
-                size="large"
-                color="red"
-                class="mb-2"
-              ></v-icon>
+              <v-icon icon="mdi-phone" size="large" color="red" class="mb-2"></v-icon>
               <div class="text-body-1">General Tel No.</div>
               <div class="text-h6">+60123456789</div>
             </v-card>
@@ -83,14 +52,7 @@
             <v-card-title class="text-h6 mb-4">Follow Us</v-card-title>
             <v-row justify="center" class="mx-auto">
               <v-col v-for="item in items" :key="item.title" cols="auto">
-                <v-btn
-                  :href="item.href"
-                  :title="item.title"
-                  icon
-                  variant="text"
-                  size="x-large"
-                  color="red"
-                >
+                <v-btn :href="item.href" :title="item.title" icon variant="text" size="x-large" color="red">
                   <v-icon :icon="item.icon" size="32"></v-icon>
                 </v-btn>
               </v-col>
@@ -102,28 +64,45 @@
   </v-container>
 
   <!-- Success Dialog -->
-  <v-dialog v-model="sendConfirm" max-width="500" persistent>
+  <v-dialog align="center" v-model="showErrorDialog" max-width="500" persistent>
+    <v-card>
+      <v-card-title class="text-h5 pa-6 bg-red text-white">
+        Message Failed to Send.
+      </v-card-title>
+
+      <v-card-text class="pa-6">
+        <v-icon icon="mdi-close-circle" color="error" size="64" class="mb-4"></v-icon>
+        <p class="text-body-1">
+          Please ensure your email is registered before submission.
+        </p>
+      </v-card-text>
+
+      <v-card-actions class="pa-6">
+        <v-spacer></v-spacer>
+        <v-btn color="red" variant="elevated" @click="showErrorDialog = false">
+          Close
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Success Dialog -->
+  <v-dialog v-model="showSuccessDialog" max-width="500" persistent>
     <v-card>
       <v-card-title class="text-h5 pa-6 bg-red text-white">
         Message Sent Successfully!
       </v-card-title>
 
       <v-card-text class="pa-6">
-        <v-icon
-          icon="mdi-check-circle"
-          color="success"
-          size="64"
-          class="mb-4"
-        ></v-icon>
+        <v-icon icon="mdi-check-circle" color="success" size="64" class="mb-4"></v-icon>
         <p class="text-body-1">
-          Thank you for your message. We will get back to you as soon as
-          possible.
+          Thank you for your message. We will get back to you as soon as possible.
         </p>
       </v-card-text>
 
       <v-card-actions class="pa-6">
         <v-spacer></v-spacer>
-        <v-btn color="red" variant="elevated" @click="sendConfirm = false">
+        <v-btn color="red" variant="elevated" @click="showSuccessDialog = false">
           Close
         </v-btn>
       </v-card-actions>
@@ -132,18 +111,18 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue"; // Added watch import
+import { ref, computed, onMounted, watch } from "vue";
 import { messageComposable } from "@/composables/messageComposable";
 
-const { messages, addMessage, emailInput, subjectInput, contentInput } =
-  messageComposable();
+const { messages, addMessage, emailInput, subjectInput, contentInput } = messageComposable();
 
 const form = ref(null);
 const valid = ref(false);
 const contentValid = ref(false);
-const sendConfirm = ref(false);
 const loading = ref(false);
-const errorMessage = ref(""); // Proper error message handling
+const showErrorDialog = ref(false);
+const showSuccessDialog = ref(false);
+const errorMessage = ref("");
 
 const rules = {
   required: (v) => !!v || "This field is required",
@@ -191,15 +170,17 @@ const handleSendBtn = async () => {
     emailInput.value = "";
     subjectInput.value = "";
     contentInput.value = "";
-    sendConfirm.value = true;
-    if (form.value) {
-      form.value.reset();
-    }
-    valid.value = false;
-    contentValid.value = false;
+    showSuccessDialog.value = true;
   } else {
     errorMessage.value = "Failed to send message. Please try again.";
+    showErrorDialog.value = true;
   }
+
+  if (form.value) {
+    form.value.reset();
+  }
+  valid.value = false;
+  contentValid.value = false;
 };
 
 watch(contentInput, (newValue) => {
@@ -228,6 +209,7 @@ onMounted(() => {
 .title-page h2 {
   padding: 0 2rem;
 }
+
 .v-overlay__content {
   align-items: center;
 }

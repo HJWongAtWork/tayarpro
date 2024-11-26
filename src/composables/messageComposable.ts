@@ -108,6 +108,7 @@ export const messageComposable = () => {
         } else {
           console.log("Non-Axios error:", error);
         }
+        return false;
       }
     }
   };
