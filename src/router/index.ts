@@ -125,8 +125,6 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-<<<<<<< HEAD
-=======
   if (
     to.path === "/login" ||
     to.path === "/register" ||
@@ -140,7 +138,6 @@ router.beforeEach(async (to, from, next) => {
     to.meta.layoutComponent = AdminLayout;
   }
 
->>>>>>> f8024548aa90cd980f96c35149d2431642773ee6
   next();
 });
 
