@@ -21,6 +21,7 @@
     "roboto-fontface": "*",
     "vue": "^3.4.31",
     "vue-carousel-3d": "^0.2.0",
+    "vue-chartjs": "^5.3.2",
     "vue3-carousel": "^0.3.4",
     "vue3-carousel-3d": "^1.0.4",
     "vue3-lottie": "^3.3.1",
