@@ -3,7 +3,7 @@
     <v-card-title class="chat-header">
       <v-row>
         <v-col cols="6" class="d-flex align-center">
-          <span>Chat Support</span>
+          <span>Tyre Bot</span>
           <v-btn
             icon="mdi-arrow-left-right"
             variant="text"
