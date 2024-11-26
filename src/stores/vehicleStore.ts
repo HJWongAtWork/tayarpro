@@ -86,8 +86,8 @@ export const useVehicleStore = defineStore("vehicleStore", {
         console.error("Error fetching vehicles:", error);
       }
     },
-    setSelectedCar(carId: number | string) {
-      if (carId === null) {
+    setSelectedCar(carId: number | string | null) {
+      if (carId === null || carId === "all") {
         this.selectedCar = null;
       } else {
         const foundCar = this.cars.find((car) => car.carid === carId);

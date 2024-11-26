@@ -30,9 +30,7 @@
             </v-btn>
           </div>
           <div v-if="selectedType" class="price-display">
-            <h2 class="text-h5">
-              Price: ${{ getPrice(selectedType).toFixed(2) }}
-            </h2>
+            <h2 class="text-h5">RM {{ getPrice(selectedType).toFixed(2) }}</h2>
           </div>
 
           <v-row>
@@ -177,7 +175,7 @@ export default defineComponent({
       selectedType.value = type;
     };
 
-    onMounted( async () => {
+    onMounted(async () => {
       if (props.service.length === 0) {
         await initializeData();
       } else {
@@ -190,10 +188,7 @@ export default defineComponent({
       loading.value = true;
       const delay = new Promise((resolve) => setTimeout(resolve, 1000));
       try {
-        await Promise.all([
-          fetchService(),
-          delay
-        ]);
+        await Promise.all([fetchService(), delay]);
       } catch (error) {
         console.error("Error during initialization:", error);
       } finally {
