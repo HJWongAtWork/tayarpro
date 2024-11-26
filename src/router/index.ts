@@ -140,7 +140,8 @@ router.beforeEach(async (to, from, next) => {
     to.path === "/login" ||
     to.path === "/register" ||
     to.path === "/checkout" ||
-    to.path === "/signin"
+    to.path === "/signin" ||
+    to.path === "/dashboard"
   ) {
     to.meta.layoutComponent = NoHeaderLayout;
   }

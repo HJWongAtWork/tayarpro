@@ -79,7 +79,7 @@
         <v-divider thickness="2"></v-divider>
         <v-tooltip
           :disabled="!isCarFilteredDisabled"
-          text="Car filter is disabled when there is a tyre in your car"
+          text="Car filter is disabled when there is a tyre or a service in your cart. Please remove them first."
         >
           <template v-slot:activator="{ props }">
             <div v-bind="props">
@@ -94,6 +94,7 @@
                 :readonly="isCarFilteredDisabled"
               >
               </v-select>
+              <!-- {{ vehicleStore.selectedCar }} -->
             </div>
           </template>
         </v-tooltip>
