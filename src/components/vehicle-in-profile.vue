@@ -145,6 +145,13 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <ToastNotification
+    ref="toast"
+    :default-color="'info'"
+    :default-timeout="2000"
+    :max-toasts="5"
+  />
 </template>
 
 <script>
@@ -256,6 +263,7 @@ export default {
         this.vehicleDialog = false;
         this.vehicleDialogAction = "";
         await this.initializeData();
+        this.$refs.toast.addToast("New vehicle has been added", 2000, "red");
       }
     },
     async handleEditVehicleBtn() {
@@ -265,6 +273,7 @@ export default {
         this.vehicleDialogAction = "";
         this.selectedVehicleId = null;
         await this.initializeData();
+        this.$refs.toast.addToast("Vehicle has been updated", 2000, "red");
       }
     },
     async handleDeleteVehicleBtn() {
@@ -273,6 +282,7 @@ export default {
       this.vehicleDialogAction = "";
       this.selectedVehicleId = null;
       await this.initializeData();
+      this.$refs.toast.addToast("Vehicle has been deleted", 2000, "red");
     },
     async getBrandSelections() {
       try {

@@ -384,24 +384,38 @@ export default {
       }
     },
     handleSortingChange(sort) {
+      //console.log("sort: " + sort);
+      // console.log( "Before: \n" +
+      //   "selectedFilter.priceAsc: " + this.selectedFilter.priceAsc + 
+      //   "\nselectedFilter.priceDesc: " + this.selectedFilter.priceDesc
+      // );
+      // if (sort === "priceAsc") {
+      //   if (this.selectedFilter.priceAsc) {
+      //     // If it's already selected, unselect it
+      //     this.selectedFilter.priceAsc = false;
+      //   } else {
+      //     // If it's not selected, select it and unselect the other
+      //     this.selectedFilter.priceDesc = false;
+      //     this.selectedFilter.priceAsc = true;
+      //   }
+      // } else if (sort === "priceDesc") {
+      //   if (this.selectedFilter.priceDesc) {
+      //     // If it's already selected, unselect it
+      //     this.selectedFilter.priceDesc = false;
+      //   } else {
+      //     // If it's not selected, select it and unselect the other
+      //     this.selectedFilter.priceAsc = false;
+      //     this.selectedFilter.priceDesc = true;
+      //   }
+      // }
       if (sort === "priceAsc") {
-        if (this.selectedFilter.priceAsc) {
-          // If it's already selected, unselect it
-          this.selectedFilter.priceAsc = false;
-        } else {
           // If it's not selected, select it and unselect the other
           this.selectedFilter.priceDesc = false;
           this.selectedFilter.priceAsc = true;
-        }
       } else if (sort === "priceDesc") {
-        if (this.selectedFilter.priceDesc) {
-          // If it's already selected, unselect it
-          this.selectedFilter.priceDesc = false;
-        } else {
           // If it's not selected, select it and unselect the other
           this.selectedFilter.priceAsc = false;
           this.selectedFilter.priceDesc = true;
-        }
       }
     },
     async initializeData() {
@@ -432,12 +446,12 @@ export default {
     return {
       filterMenu: [
         {
-          title: "Price Ascending",
+          title: "Price: Low to High",
           icon: "mdi-arrow-up-bold",
           sort: "priceAsc",
         },
         {
-          title: "Price Descending",
+          title: "Price: High to Low",
           icon: "mdi-arrow-down-bold",
           sort: "priceDesc",
         },
