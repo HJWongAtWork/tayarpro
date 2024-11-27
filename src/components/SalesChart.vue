@@ -124,7 +124,7 @@ export default {
                 isLoggedIn.value = false;
             }
             try {
-                const response = await axios.post('https://tayar.pro/get_sales_and_orders_data', {}, {
+                const response = await axios.post('https://tayarpro-service-1082564059873.us-central1.run.app/get_sales_and_orders_data', {}, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

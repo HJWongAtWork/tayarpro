@@ -36,7 +36,7 @@ export default {
                 return;
             }
             try {
-                const response = await axios.post('https://tayar.pro/get_registered_users', {}, {
+                const response = await axios.post('https://tayarpro-service-1082564059873.us-central1.run.app/get_registered_users', {}, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
