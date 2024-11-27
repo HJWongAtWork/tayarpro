@@ -109,13 +109,13 @@
                                     <template v-slot:item.action="{ item }">
 
                                         <v-btn v-if="item.isAdmin === 'Y'" color="error"
-                                            @click="confirmationRevokeAdmin(item.accountid)" size="x-small"
-                                            prepend-icon="mdi-close" variant="tonal">
+                                            @click="confirmationRevokeAdmin(item.accountid, item.email)" size="x-small"
+                                            prepend-icon="mdi-close" variant="flat">
                                             Revoke Admin
                                         </v-btn>
                                         <v-btn v-else color="success"
                                             @click="confirmationAddAdmin(item.accountid, item.email)" size="x-small"
-                                            prepend-icon="mdi-check" variant="tonal">
+                                            prepend-icon="mdi-check" variant="flat">
                                             Add As Admin
                                         </v-btn>
 
@@ -309,12 +309,26 @@
         <v-card>
             <v-card-title class="headline">Confirm Action</v-card-title>
             <v-card-text>
-                Are you sure you want to add {{ addToAdminEmail }} as an admin?
+                <div v-if="addAdminState">
+                    Are you sure you want to add {{ addToAdminEmail }} as an admin?
+                </div>
+                <div v-else>
+                    Are you sure you want to remove {{ addToAdminEmail }} as an admin?
+                </div>
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
+
+
+
+
                 <v-btn color="green darken-1" text @click="showConfirmDialog = false">Cancel</v-btn>
-                <v-btn color="green darken-1" text @click="addToAdmin">Confirm</v-btn>
+
+
+                <v-btn v-if="addAdminState" variant="flat" color="green darken-1" text @click="addToAdmin">Add Admin
+                    Access</v-btn>
+                <v-btn v-else color="red darken-1" variant="flat" text @click="revokeAdmin">Revoke Admin
+                    Access</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -462,6 +476,8 @@ export default {
         const servicePrice = ref('')
         const serviceStatus = ref('Choose Status')
         const updateState = ref(false)
+        const addAdminState = ref(false)
+
 
 
         const showConfirmDialog = ref(false)
@@ -471,7 +487,7 @@ export default {
         const snackbarMessage = ref('')
         const snackbarColor = ref('')
 
-        const baseUrl = 'https://tayar.pro'
+        const baseUrl = 'https://tayarpro-service-1082564059873.us-central1.run.app'
 
 
         const confirmationAddAdmin = async (accountid, email) => {
@@ -479,8 +495,18 @@ export default {
             addToAdminEmail.value = email
 
             showConfirmDialog.value = true
+            addAdminState.value = true
+
+        }
+
+        const confirmationRevokeAdmin = async (accountid, email) => {
+            addToAdminAccountID.value = accountid
+            addToAdminEmail.value = email
+            addAdminState.value = false
+            showConfirmDialog.value = true
             console.log(accountid)
         }
+
 
         const addToAdmin = async () => {
             const jwt = localStorage.getItem('jwt')
@@ -769,7 +795,10 @@ export default {
             tyreTitleDialog,
             updateState,
             setAddState,
-            updateTyre
+            updateTyre,
+            addAdminState,
+            confirmationRevokeAdmin
+
         }
 
     }

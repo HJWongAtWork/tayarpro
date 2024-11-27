@@ -22,7 +22,7 @@ import { ref, onMounted, onUnmounted } from "vue";
 
 export default {
     setup() {
-        const baseUrl = 'https://tayar.pro';
+        const baseUrl = 'https://tayarpro-service-1082564059873.us-central1.run.app';
 
         const activities = ref([]);
         const constantActivity = ref([]);
