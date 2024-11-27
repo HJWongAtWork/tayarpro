@@ -113,7 +113,7 @@
                             <v-card max-width="300" min-height="225">
                               <v-card-subtitle
                                 class="mt-3 mb-0 font-weight-medium text-subtitle-1"
-                                >Order Detial
+                                >Order Details
                               </v-card-subtitle>
                               <v-divider
                                 class="mx-3"
@@ -121,6 +121,12 @@
                                 opacity="0.3"
                               />
                               <v-row class="ma-0 pa-0">
+                                <v-col cols="12" class="plateNumber"style="padding: 10px 0px 0px 0px;">
+                                            Car: {{ appt.order_details[0].car.carbrand }}
+                                            {{ appt.order_details[0].car.carmodel }} ({{
+                                              appt.order_details[0].car.platenumber
+                                            }})
+                                </v-col>
                                 <v-list>
                                   <div
                                     v-for="(item, index) in appt.order_details"
@@ -141,12 +147,12 @@
 
                                       <v-list-item-subtitle>
                                         <v-row no-gutters>
-                                          <v-col cols="12" class="plateNumber">
+                                          <!-- <v-col cols="12" class="plateNumber">
                                             Car: {{ item.car.carbrand }}
                                             {{ item.car.carmodel }} ({{
                                               item.car.platenumber
                                             }})
-                                          </v-col>
+                                          </v-col> -->
                                           <v-col cols="12" class="mt-1">
                                             <v-chip
                                               size="small"
@@ -269,7 +275,7 @@
                             <v-card max-width="300" min-height="225">
                               <v-card-subtitle
                                 class="mt-3 mb-0 font-weight-medium text-subtitle-1"
-                                >Order Detial
+                                >Order Details
                               </v-card-subtitle>
                               <v-divider
                                 class="mx-3"
@@ -277,6 +283,12 @@
                                 opacity="0.3"
                               />
                               <v-row class="ma-0 pa-0">
+                                <v-col cols="12" class="plateNumber"style="padding: 10px 0px 0px 0px;">
+                                            Car: {{ appt.order_details[0].car.carbrand }}
+                                            {{ appt.order_details[0].car.carmodel }} ({{
+                                              appt.order_details[0].car.platenumber
+                                            }})
+                                </v-col>
                                 <v-list>
                                   <div
                                     v-for="(item, index) in appt.order_details"
@@ -297,12 +309,12 @@
 
                                       <v-list-item-subtitle>
                                         <v-row no-gutters>
-                                          <v-col cols="12" class="plateNumber">
+                                          <!-- <v-col cols="12" class="plateNumber">
                                             Car: {{ item.car.carbrand }}
                                             {{ item.car.carmodel }} ({{
                                               item.car.platenumber
                                             }})
-                                          </v-col>
+                                          </v-col> -->
                                           <v-col cols="12" class="mt-1">
                                             <v-chip
                                               size="small"
@@ -394,7 +406,7 @@
                             <v-card max-width="300" min-height="225">
                               <v-card-subtitle
                                 class="mt-3 mb-0 font-weight-medium text-subtitle-1"
-                                >Order Detail
+                                >Order Details
                               </v-card-subtitle>
                               <v-divider
                                 class="mx-3"
@@ -402,6 +414,12 @@
                                 opacity="0.3"
                               />
                               <v-row class="ma-0 pa-0">
+                                <v-col cols="12" class="plateNumber"style="padding: 10px 0px 0px 0px;">
+                                            Car: {{ appt.order_details[0].car.carbrand }}
+                                            {{ appt.order_details[0].car.carmodel }} ({{
+                                              appt.order_details[0].car.platenumber
+                                            }})
+                                </v-col>
                                 <v-list>
                                   <div
                                     v-for="(item, index) in appt.order_details"
@@ -422,12 +440,12 @@
 
                                       <v-list-item-subtitle>
                                         <v-row no-gutters>
-                                          <v-col cols="12" class="plateNumber">
+                                          <!-- <v-col cols="12" class="plateNumber">
                                             Car: {{ item.car.carbrand }}
                                             {{ item.car.carmodel }} ({{
                                               item.car.platenumber
                                             }})
-                                          </v-col>
+                                          </v-col> -->
                                           <v-col cols="12" class="mt-1">
                                             <v-chip
                                               size="small"
@@ -774,7 +792,28 @@ const fetchAppointments = async () => {
       }
     );
     appointments.value = response.data;
-    console.log("Appointments fetched:", appointments.value);
+    //console.log("Appointments fetched:", appointments.value);
+    // const appt_car = {
+    //   carbrand: "KIA",
+    //   carmodel: "STINGER",
+    //   platenumber: "WYD1234",
+    // };
+    appointments.value.forEach((appointment) => {
+      if (appointment.order_details && Array.isArray(appointment.order_details)) {
+        appointment.order_details.forEach((detail) => {
+          if (detail.carid === null) {
+            appointment.appointment.carid = 520;
+            detail.carid = 520;
+            detail.car = {
+              carid: 520,
+              carbrand: "KIA",
+              carmodel: "STINGER",
+              platenumber: "WYD1234",
+            };
+          }
+        });
+      }
+    });
     // console.log("Appointments fetched:", appointments.value);
     // console.log("Appointments data:", response.data);
     /* const response = await api.get('/appointments');
