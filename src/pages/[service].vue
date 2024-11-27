@@ -89,12 +89,13 @@ export default defineComponent({
     });
 
     const fetchService = async () => {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
         const serviceDescription = localStorage.getItem("serviceDescription");
         console.log(serviceDescription);
         if (serviceDescription) {
           const response = await axios.get<ServiceItem[]>(
-            `https://tayar.pro/service?description=${serviceDescription}`
+            `${baseUrl}/service?description=${serviceDescription}`
           );
           serviceData.value = response.data;
           if (serviceData.value.length > 0) {
