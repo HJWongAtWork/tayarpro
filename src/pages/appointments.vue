@@ -65,11 +65,18 @@
                                 </v-col>
                                 <v-col cols="6" class="pl-0 pb-0">
                                   <v-card-text class="pt-0 pl-0 text-right">
-                                    <br />
+                                    <!-- <br />
                                     {{
                                       new Date(
                                         appt.appointment.appointmentdate
                                       ).toLocaleDateString()
+                                    }}<br /> -->
+                                    <br />
+                                    {{
+                                      (() => {
+                                        const d = new Date(appt.appointment.appointmentdate);
+                                        return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+                                      })()
                                     }}<br />
                                     {{
                                       new Date(
@@ -254,11 +261,18 @@
                                 </v-col>
                                 <v-col cols="6" class="pl-0 pb-0">
                                   <v-card-text class="pt-0 pl-0 text-right">
-                                    <br />
+                                    <!-- <br />
                                     {{
                                       new Date(
                                         appt.appointment.appointmentdate
                                       ).toLocaleDateString()
+                                    }}<br /> -->
+                                    <br />
+                                    {{
+                                      (() => {
+                                        const d = new Date(appt.appointment.appointmentdate);
+                                        return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+                                      })()
                                     }}<br />
                                     {{
                                       new Date(
@@ -385,11 +399,18 @@
                                 </v-col>
                                 <v-col cols="6" class="pl-0 pb-0">
                                   <v-card-text class="pt-0 pl-0 text-right">
-                                    <br />
+                                    <!-- <br />
                                     {{
                                       new Date(
                                         appt.appointment.appointmentdate
                                       ).toLocaleDateString()
+                                    }}<br /> -->
+                                    <br />
+                                    {{
+                                      (() => {
+                                        const d = new Date(appt.appointment.appointmentdate);
+                                        return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+                                      })()
                                     }}<br />
                                     {{
                                       new Date(

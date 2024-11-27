@@ -44,6 +44,13 @@
       </v-row>
     </v-card>
   </v-container>
+
+  <ToastNotification
+    ref="toast"
+    :default-color="'info'"
+    :default-timeout="2000"
+    :max-toasts="5"
+  />
 </template>
 
 <style scoped>
@@ -83,6 +90,7 @@ export default defineComponent({
     const serviceData = ref<ServiceItem[]>(props.service);
     const loading = ref(true);
     const selectedType = ref<string | null>(null);
+    const toast = ref(null);
 
     const carTypes = computed(() => {
       return serviceData.value.map((item) => item.cartype);
@@ -158,7 +166,8 @@ export default defineComponent({
             },
           }
         );
-        alert("Services added to cart successfully!");
+        //alert("Services added to cart successfully!");
+        toast.value.addToast("Service added to the cart successfully!", 2000, 'red');
         console.log("Adding to cart:", newCartItem);
       } catch (error) {
         console.error("Error adding to cart:", error);
@@ -206,6 +215,7 @@ export default defineComponent({
       getPrice,
       updateSelectedType,
       initializeData,
+      toast,
     };
   },
 });
