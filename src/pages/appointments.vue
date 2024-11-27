@@ -506,6 +506,13 @@
     <AddCarInSchedule />
     <Schedule />
   </v-dialog> -->
+
+  <ToastNotification
+    ref="toast"
+    :default-color="'info'"
+    :default-timeout="2000"
+    :max-toasts="5"
+  />
 </template>
 
 <style scoped>
@@ -595,6 +602,8 @@ const selectedItem = computed(() => {
     ? { ...appointments.value[selectedIndex.value] }
     : {};
 });
+
+const toast = ref(null);
 
 const openDialog = (index) => {
   selectedIndex.value = index;
@@ -688,6 +697,7 @@ const handleSubmit = async (updatedData) => {
       if (response.status === 200 || response.status === 204) {
         console.log("Appointment updated successfully");
         fetchAppointments();
+        toast.value.addToast("Appointment updated successfully", 2000, 'red');
       } else {
         throw new Error("Failed to updated appointment");
       }
@@ -763,6 +773,7 @@ const handleCancel = async () => {
       if (response.status === 200 || response.status === 204) {
         console.log("Appointment deleted successfully");
         fetchAppointments();
+        toast.value.addToast("Appointment deleted successfully", 2000, 'red');
       } else {
         throw new Error("Failed to delete appointment");
       }

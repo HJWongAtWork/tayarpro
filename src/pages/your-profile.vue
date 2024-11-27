@@ -333,6 +333,13 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <ToastNotification
+    ref="toast"
+    :default-color="'info'"
+    :default-timeout="2000"
+    :max-toasts="5"
+  />
 </template>
 
 <script setup>
@@ -409,6 +416,8 @@ const inputs = reactive({
   lastName: { hasChanged: false },
   gender: { hasChanged: false },
 });
+
+const toast = ref(null);
 
 // Validation Rules
 const rules = {
@@ -523,7 +532,7 @@ const handleSubmitBtn = async () => {
       );
 
       if (response.status === 200) {
-        alert("Password changed successfully");
+        //alert("Password changed successfully");
         changePassword.value = false;
         // Reset form values
         currentPassword.value = "";
@@ -537,6 +546,7 @@ const handleSubmitBtn = async () => {
       );
     } finally {
       await initializeData();
+      toast.value.addToast("Password changed successfully", 2000, 'red');
     }
   }
 };
@@ -590,12 +600,13 @@ const handleSaveBtn = async () => {
       isChanged.value = false;
       removeCssClasses();
 
-      alert("Profile updated successfully");
+      //alert("Profile updated successfully");
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Error updating profile");
     } finally {
       await initializeData();
+      toast.value.addToast("Profile updated successfully", 2000, 'red');
     }
   } else if (isValidEdit.value) {
     isEdit.value = false;
@@ -611,7 +622,13 @@ const handleLogout = async () => {
     localStorage.removeItem("jwt");
     userStore.clearUser();
     confirmLogout.value = false;
-    router.push("/login");
+    toast.value.addToast("You have successfully logged out. Please wait while we finishing up.", 2000, 'red');
+
+    setTimeout(() => {
+          router.push('/login')
+    }, 2000);
+
+    //router.push("/login");
   } catch (error) {
     console.error("Logout error:", error);
     alert("Error during logout. Please try again.");
@@ -637,8 +654,13 @@ const handleDeleteAccount = async () => {
 
     userStore.clearUser();
     confirmDeleteAccount.value = false;
-    router.push("/login");
-    alert("Account successfully deleted");
+    toast.value.addToast("Account successfully deleted. You will be redirected to the login page.", 2000, 'red');
+
+    setTimeout(() => {
+      router.push('/login')
+    }, 2000);
+    //router.push("/login");
+    //alert("Account successfully deleted");
   } catch (error) {
     console.error("Account deletion error:", error);
     alert("Error deleting account. Please try again.");
