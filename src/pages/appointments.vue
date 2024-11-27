@@ -794,7 +794,7 @@ const handleCancel = async () => {
       if (response.status === 200 || response.status === 204) {
         console.log("Appointment deleted successfully");
         fetchAppointments();
-        toast.value.addToast("Appointment deleted successfully", 2000, 'red');
+        toast.value.addToast("Appointment cancelled successfully", 2000, 'red');
       } else {
         throw new Error("Failed to delete appointment");
       }

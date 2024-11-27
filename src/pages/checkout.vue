@@ -445,10 +445,10 @@ export default {
       if (data.message) {
         //console.log("Order placed successfully!");
         this.displayError("Order placed successfully!"); // Show success message
-        // setTimeout(() => {
-        //   this.handleClose(); // Close dialog after success
-        // }, 1000);
-        this.handleClose();
+        setTimeout(() => {
+          this.handleClose(); // Close dialog after success
+        }, 1000);
+        //this.handleClose();
       } else {
         this.displayError("Error placing order: " + data.message);
       }
