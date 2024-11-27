@@ -19,7 +19,7 @@
       <v-card class="pa-4">
         <v-card-title class="plateNumber">{{ car.plateNumber }}</v-card-title>
         <v-card-subtitle
-          >{{ car.brand }} {{ car.model }} ({{ car.year }})</v-card-subtitle
+          >{{ car.brand.toUpperCase() }} {{ car.model.toUpperCase() }} ({{ car.year }})</v-card-subtitle
         >
         <v-card-actions class="d-flex justify-end" style="padding-top: 20px">
           <v-icon

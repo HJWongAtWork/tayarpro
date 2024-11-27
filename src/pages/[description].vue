@@ -17,10 +17,10 @@
               tyre.description
             }}</v-card-title>
             <div class="d-flex pl-0">
-              <v-card-subtitle class="pl-0 ma-auto"
+              <!-- <v-card-subtitle class="pl-0 ma-auto"
                 >Brand: {{ tyre.brand_name }}</v-card-subtitle
-              >
-              <v-divider vertical class="mx-2"></v-divider>
+              > 
+              <v-divider vertical class="mx-2"></v-divider>  -->
               <v-card-subtitle class="ma-auto"
                 >Type: {{ tyre.cartype }}</v-card-subtitle
               >

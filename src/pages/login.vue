@@ -94,6 +94,14 @@
       </v-card-text>
     </v-card>
   </v-container>
+
+  <ToastNotification
+    ref="toast"
+    :default-color="'info'"
+    :default-timeout="2000"
+    :max-toasts="5"
+  />
+
 </template>
 
 <script setup>
@@ -101,6 +109,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useUserStore } from '@/stores/userStore'
+import ToastNotification from '@/components/ToastNotification.vue'
 
 // Refs
 const form = ref(null)
@@ -115,6 +124,7 @@ const passwordMessage = ref('')
 const isLoading = ref(false)
 const isLoggedIn = ref(false)
 const storedUsername = ref('')
+const toast = ref(null);
 
 // Router and Store
 const router = useRouter()
@@ -161,10 +171,15 @@ const handleLogout = () => {
   localStorage.removeItem('RedirectPath')
   userStore.clearUser() // Reset Pinia store
 
-  isLoggedIn.value = false
+  toast.value.addToast("You have been logged out. You will be redirected to the login page.", 2000, 'red');
+
+  //isLoggedIn.value = false
   storedUsername.value = ''
 
   // window.location.reload()
+  setTimeout(() => {
+    isLoggedIn.value = false;
+  }, 2000);
 }
 
 const handleLogin = async () => {
@@ -185,7 +200,12 @@ const handleLogin = async () => {
         localStorage.setItem('username', username.value)
 
         userStore.setUser(response.data.user_info)
-        router.push('/')
+        toast.value.addToast("You have logged in successfully. Please wait while we redirect you.", 2000, 'red');
+
+        setTimeout(() => {
+          router.push('/')
+        }, 2000);
+        // router.push('/')
       }
     } catch (error) {
       console.error('Login error:', error)
