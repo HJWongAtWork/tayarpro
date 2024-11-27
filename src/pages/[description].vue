@@ -131,6 +131,13 @@
     </v-card>
   </v-container> -->
   </v-container>
+
+  <ToastNotification
+    ref="toast"
+    :default-color="'info'"
+    :default-timeout="2000"
+    :max-toasts="5"
+  />
 </template>
 <style scoped>
 .product-spec span {
@@ -237,6 +244,7 @@ import { useUserStore } from "../stores/userStore";
 import { useRouter } from "vue-router";
 import { useVehicleStore } from "@/stores/vehicleStore";
 import { useCartStore } from "@/stores/cartStore";
+import ToastNotification from "@/components/ToastNotification.vue";
 
 export default defineComponent({
   props: {
@@ -249,6 +257,7 @@ export default defineComponent({
     const quantity = ref(1);
     const loading = ref(false);
     const recommendedTyres = ref<RecommendedTyre[]>([]);
+    const toast = ref(null);
 
     const vehicleStore = useVehicleStore();
     const cartStore = useCartStore();
@@ -406,7 +415,8 @@ export default defineComponent({
           accountid: userStore.currentUser.accountid,
           carid: vehicleStore.selectedCar.carid,
         });
-        alert("Items added to cart successfully !");
+        //alert("Items added to cart successfully !");
+        toast.value.addToast("Items added to the cart successfully!", 2000, 'red');
       } catch (error) {
         console.error("Error adding item to cart:", error);
       } finally {
@@ -482,6 +492,7 @@ export default defineComponent({
       goToTyreDetails,
       parsedDetails,
       initializeData,
+      toast,
     };
   },
 });
