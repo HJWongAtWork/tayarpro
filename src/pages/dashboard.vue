@@ -327,7 +327,7 @@
 
                 <v-btn v-if="addAdminState" variant="flat" color="green darken-1" text @click="addToAdmin">Add Admin
                     Access</v-btn>
-                <v-btn v-else color="red darken-1" variant="flat" text @click="revokeAdmin">Revoke Admin
+                <v-btn v-else color="red darken-1" variant="flat" text @click="removeAdmin">Revoke Admin
                     Access</v-btn>
             </v-card-actions>
         </v-card>
@@ -505,6 +505,28 @@ export default {
             addAdminState.value = false
             showConfirmDialog.value = true
             console.log(accountid)
+        }
+
+        const removeAdmin = async () => {
+            const jwt = localStorage.getItem('jwt')
+            try {
+                const response = await axios.post(baseUrl + `/remove_admin_rights?accountid=${addToAdminAccountID.value}`, {
+                    accountid: addToAdminAccountID.value
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${jwt}`
+                    }
+                });
+                console.log(response.data)
+                showConfirmDialog.value = false
+                snackbarMessage.value = `${addToAdminEmail.value} has been removed as an admin`
+                snackbarColor.value = 'success'
+                snackbar.value = true
+
+                getUsers()
+            } catch (error) {
+                console.error(error)
+            }
         }
 
 
@@ -797,7 +819,8 @@ export default {
             setAddState,
             updateTyre,
             addAdminState,
-            confirmationRevokeAdmin
+            confirmationRevokeAdmin,
+            removeAdmin
 
         }
 
