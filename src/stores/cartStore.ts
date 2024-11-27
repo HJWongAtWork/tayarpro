@@ -20,9 +20,10 @@ export const useCartStore = defineStore("cart", {
   actions: {
     // Fetch cart items from the API
     async fetchCartItems(accountId: string): Promise<void> {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       try {
         const response = await axios.post<CartItem[]>(
-          `https://tayar.pro/get_cart/`,
+          `${baseUrl}/get_cart/`,
           "",
           {
             headers: {
