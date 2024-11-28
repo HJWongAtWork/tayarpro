@@ -2,7 +2,7 @@
 
 This is the README file for TayarPro, a learning project built with Vuetify.js.
 
-This project was lovingly built by Group 4 of the Gamuda AI Academy, Malaysia. Everything done here - good or bad practices - has been from the process of learning.
+This project was lovingly built by Group 4 of the Gamuda AI Academy, Malaysia for educational purposes only. Everything done here - good or bad practices - has been from the process of learning.
 
 Hope any viewers will learn from our coded experiences too!!! As per disclaimer, none of this is intended for any form of commercial use, although if you want to use the framework, by all means (just get proper permission from the appropriate sources before commercialising).
 
