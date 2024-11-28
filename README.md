@@ -1,6 +1,12 @@
 # TayarPro - A Vuetify Project
 
-This is the README file for TayarPro, a project built with Vuetify.js.
+This is the README file for TayarPro, a learning project built with Vuetify.js.
+
+This project was lovingly built by Group 4 of the Gamuda AI Academy, Malaysia. Everything done here - good or bad practices - has been from the process of learning.
+
+Hope any viewers will learn from our coded experiences too!!! As per disclaimer, none of this is intended for any form of commercial use, although if you want to use the framework, by all means (just get proper permission from the appropriate sources before commercialising).
+
+To be used with Google's Cloud services, or with another repositories' back end [here](https://github.com/HJWongAtWork/tayarpro-be).
 
 ## Installation
 
@@ -23,10 +29,10 @@ This is the README file for TayarPro, a project built with Vuetify.js.
     - After installing dependencies, run the following command to start the development server:
 
       ```bash
-      npm run 1  serve
+      npm run dev
       ```
 
-    - This will start a development server typically at `http://localhost:8080` (the port may vary). 
+    - This will start a development server typically at `http://localhost:3000` (the port may vary). 
 
 2. **Development:**
     - Open the link in your browser to see the application running in development mode.
@@ -38,10 +44,4 @@ This is the README file for TayarPro, a project built with Vuetify.js.
 - This README file provides a basic overview of installation and development setup. Refer to the project code for further information on specific functionalities and configurations.
 
 
-**Note:** This is a basic README.md file. You can further customize it by adding information specific to your project, such as:
-
-- Project Description
-- Features
-- Available Scripts (if any)
-- Contributing guidelines
-- License information
+**Note:** This is a basic README.md file. License information as per Apache 2.0 standard.
